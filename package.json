@@ -1,0 +1,21 @@
+{
+  "name": "spider-byte",
+  "module": "./src/index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@marcrock22/eslint": "github:marcrock22/eslintcf",
+    "@types/bun": "latest",
+    "eslint": "^9.20.0",
+    "typescript-eslint": "^8.23.0",
+    "typia": "^7.6.3"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "seyfert": "^2.2.1-dev-13217859162.0"
+  },
+  "scripts": {
+    "start": "bun --env-file=.env ./src/index.ts"
+  }
+}

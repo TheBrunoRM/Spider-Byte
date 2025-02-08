@@ -1,0 +1,6 @@
+# bunfig.toml
+preload = ["./plugins/typia.ts"]
+
+# for using in tests
+[test]
+preload = ["./plugins/typia.ts"]

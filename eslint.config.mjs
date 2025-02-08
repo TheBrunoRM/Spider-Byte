@@ -5,7 +5,7 @@ export default config(
     theConfig,
     {
         ignores: [
-            'src/types/*.ts'
+            'src/types/dtos/*.ts'
         ]
     }
 )

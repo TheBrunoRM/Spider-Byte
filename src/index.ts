@@ -1,7 +1,9 @@
-import { type ParseLocales, type ParseClient, Client } from 'seyfert';
+import { type ParseLocales, type ParseClient, type UsingClient, Client } from 'seyfert';
 import { basename, join, sep } from 'node:path';
 
-const client = new Client();
+import { Api } from './lib/managers/api';
+
+const client = new Client() as UsingClient & Client;
 
 client.setServices({
     langs: {
@@ -21,18 +23,24 @@ client.langs.onFile = (locale, { path, file }) => file.default
     }
     : false;
 
+client.api = new Api((await client.getRC()).apiKey);
+
 await client.start();
 
 await client.uploadCommands({
     cachePath: join(process.cwd(), 'cache', 'seyfert_commands.json')
 });
 
+console.log(await client.api.getHeroes());
+
 declare module 'seyfert' {
     interface ExtendedRC {
         apiKey: string;
     }
 
-    interface UsingClient extends ParseClient<typeof client> { }
+    interface UsingClient extends ParseClient<Client<true>> {
+        api: Api;
+    }
 
     interface DefaultLocale extends ParseLocales<typeof import('./locales/en-US/_')['default']> { }
 }

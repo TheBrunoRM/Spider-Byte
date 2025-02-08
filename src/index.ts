@@ -23,8 +23,6 @@ client.langs.onFile = (locale, { path, file }) => file.default
 
 await client.start();
 
-console.log(client.langs);
-
 await client.uploadCommands({
     cachePath: join(process.cwd(), 'cache', 'seyfert_commands.json')
 });

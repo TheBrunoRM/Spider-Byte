@@ -6,16 +6,20 @@
     "@marcrock22/eslint": "github:marcrock22/eslintcf",
     "@types/bun": "latest",
     "eslint": "^9.20.0",
+    "rimraf": "^6.0.1",
+    "ts-patch": "^3.3.0",
     "typescript-eslint": "^8.23.0",
     "typia": "^7.6.3"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "~5.7.3"
   },
   "dependencies": {
     "seyfert": "^2.2.1-dev-13217859162.0"
   },
   "scripts": {
-    "start": "bun --env-file=.env ./src/index.ts"
+    "start": "bun run build && bun --env-file=.env ./dist/index.ts",
+    "prepare": "ts-patch install && typia patch",
+    "build": "bunx rimraf dist && typia generate --input src --output dist --project tsconfig.json"
   }
 }

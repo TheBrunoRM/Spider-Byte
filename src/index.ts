@@ -14,14 +14,16 @@ client.setServices({
 
 client.langs.filter = (path) => basename(path) === '_.ts';
 
-client.langs.onFile = (locale, file) => file.file.default
+client.langs.onFile = (locale, { path, file }) => file.default
     ? {
-        file: file.file.default,
-        locale: file.path.split(sep).at(-2) ?? locale
+        file: file.default,
+        locale: path.split(sep).at(-2) ?? locale
     }
     : false;
 
 await client.start();
+
+console.log(client.langs);
 
 await client.uploadCommands({
     cachePath: join(process.cwd(), 'cache', 'seyfert_commands.json')

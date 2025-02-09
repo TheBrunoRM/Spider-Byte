@@ -76,7 +76,7 @@ export async function generateRankGraph(data: RankHistory[], player: PlayerDTO) 
             }
 
             const toX = CANVAS_WIDTH - 50 / data.length * (i + 1) + PADDING;
-            const toY = CANVAS_HEIGHT - normalizeScore(before.score_progression.total_score + before.score_progression.add_score) - PADDING;
+            const toY = CANVAS_HEIGHT - normalizeScore(before.score_progression.total_score) - PADDING;
 
             drawLine(ctx, fromX, fromY, toX, toY, getRank(actual.level_progression.from).color);
             await drawImage(ctx, fromX, fromY, getRank(actual.level_progression.from).image);

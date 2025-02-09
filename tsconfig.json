@@ -9,26 +9,25 @@
     "module": "ESNext",
     "moduleDetection": "force",
     "jsx": "react-jsx",
-    // Bundler mode
     "moduleResolution": "bundler",
     "verbatimModuleSyntax": true,
-    // Best practices
     "strict": true,
     "skipLibCheck": true,
     "noFallthroughCasesInSwitch": true,
-    // Some stricter flags (disabled by default)
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noPropertyAccessFromIndexSignature": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noPropertyAccessFromIndexSignature": true,
     "allowImportingTsExtensions": true,
     "noEmit": true,
+    "strictNullChecks": true,
+    "alwaysStrict": true,
+    "assumeChangesOnlyAffectDirectDependencies": true,
+    "noImplicitAny": true,
     "plugins": [
       {
         "transform": "typia/lib/transform"
       }
-    ],
-    "strictNullChecks": true,
-    "alwaysStrict": true,
+    ]
   },
   "exclude": [
     "dist"

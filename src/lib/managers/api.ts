@@ -46,6 +46,10 @@ export class Api {
 
   // Métodos públicos para los endpoints
 
+  public buildImage(path: string) {
+    return `${this.cdnUrl}${path}`;
+  }
+
   // Players
 
   public searchPlayer(username: string) {

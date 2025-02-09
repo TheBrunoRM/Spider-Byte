@@ -4,14 +4,14 @@ import { GlobalFonts } from '@napi-rs/canvas';
 
 import { Api } from './lib/managers/api';
 
+// Register fonts
+GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'RefrigeratorDeluxe.ttf'), 'RrefrigeratorDeluxe');
+GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'RefrigeratorDeluxeBold.ttf'), 'RefrigeratorDeluxeBold');
+
 const client = new Client({
     commands: {
         defaults: {
             async onRunError(ctx, error) {
-                if (ctx.isMenu()) {
-                    return undefined;
-                }
-
                 await ctx.editOrReply({
                     content: error instanceof Error
                         ? error.message
@@ -41,10 +41,6 @@ client.langs.onFile = (locale, { path, file }) => file.default
     : false;
 
 client.api = new Api((await client.getRC()).apiKey);
-
-// Register fonts
-GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'RefrigeratorDeluxe.ttf'), 'RrefrigeratorDeluxe');
-GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'RefrigeratorDeluxeBold.ttf'), 'RefrigeratorDeluxeBold');
 
 await client.start();
 

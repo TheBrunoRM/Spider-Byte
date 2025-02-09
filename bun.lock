@@ -9,9 +9,9 @@
         "sharp": "^0.33.5",
       },
       "devDependencies": {
+        "@marcrock22/eslint": "github:marcrock22/eslintcf",
         "@types/bun": "latest",
         "eslint": "^9.20.0",
-        "@marcrock22/eslint": "github:marcrock22/eslintcf",
         "rimraf": "^6.0.1",
         "ts-patch": "^3.3.0",
         "typescript-eslint": "^8.23.0",

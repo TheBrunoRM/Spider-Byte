@@ -20,7 +20,7 @@ const LINE_WIDTH = 5;
 const PADDING = 20;
 
 export async function generateRankGraph(data: RankHistory[], player: PlayerDTO) {
-    data = data.toReversed();
+    data = data.toReversed().slice(0, 15);
 
     const canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
     const ctx = canvas.getContext('2d');

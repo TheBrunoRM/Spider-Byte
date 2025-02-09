@@ -43,17 +43,17 @@ interface RankInfo {
 }
 
 export function getRank(level: number): RankInfo {
-    const BASE_IMAGE_URL = 'https://marvelrivalsapi.com/rivals';
+    // const BASE_IMAGE_URL = 'https://marvelrivalsapi.com/rivals';
     const rankedImages: string[] = [
-        '/bronze.png',
-        '/silver.png',
-        '/gold.png',
-        '/platinum.png',
-        '/diamond.png',
-        '/grandmaster.png',
-        '/celestial.png',
-        '/eternity.png',
-        '/one_above_all.png'
+        'bronze.png',
+        'silver.png',
+        'gold.png',
+        'platinum.png',
+        'diamond.png',
+        'grandmaster.png',
+        'celestial.png',
+        'eternity.png',
+        'one_above_all.png'
     ];
     const rankedColors: string[] = [
         '#A7693F', // Bronze
@@ -122,7 +122,7 @@ export function getRank(level: number): RankInfo {
                 return {
                     rank: name,
                     color: rankedColors[i],
-                    image: `${BASE_IMAGE_URL}/ranked${rankedImages[i]}`
+                    image: rankedImages[i]
                 };
             }
             const tierIndex = (level - levels[0]) % 3;
@@ -130,7 +130,7 @@ export function getRank(level: number): RankInfo {
             return {
                 rank: `${name} ${tier}`,
                 color: rankedColors[i],
-                image: `${BASE_IMAGE_URL}/ranked${rankedImages[i]}`
+                image: rankedImages[i]
             };
         }
     }

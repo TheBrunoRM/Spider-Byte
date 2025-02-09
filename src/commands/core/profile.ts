@@ -23,7 +23,6 @@ export default class ProfileCommand extends SubCommand {
     }
 
     const player = await ctx.client.api.getPlayer(nameOrId);
-    console.log(player?.name);
     if (!player) {
       return ctx.editOrReply({
         content: 'Player not found. Please provide a valid player name or id'

@@ -44,7 +44,7 @@ export class Api {
 
   private readonly baseUrl: string = 'https://marvelrivalsapi.com';
 
-  private readonly cdnUrl: string = this.baseUrl;
+  private readonly cdnUrl: string = `${this.baseUrl}/rivals`;
 
   private readonly apiUrl: string = `${this.baseUrl}/api/v1`;
 
@@ -129,8 +129,7 @@ export class Api {
       const check = validator(data);
 
       if (!check.success) {
-        this.logger.error('Unexpected data format:', check.errors.map((err) => `Expected: ${err.expected} on ${err.path}`));
-        return null;
+        throw new Error(check.errors.map((err) => `Expected: ${err.expected} on ${err.path}`).join('\n'));
       }
 
       return check.data;

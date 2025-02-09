@@ -5,6 +5,8 @@ import didYouMean, { ReturnTypeEnums } from 'didyoumean2';
 
 import type { LeaderboardPlayerHeroDTO } from '../../types/dtos/LeaderboardPlayerHeroDTO';
 
+import { callbackPaginator } from '../../utils/paginator';
+
 const options = {
     query: createStringOption({
         description: 'The hero you want to get information about',
@@ -15,10 +17,12 @@ const options = {
                 threshold: 0.1
             }).slice(0, 25);
 
-            return interaction.respond(result.map((heroName) => ({
-                name: heroName,
-                value: heroName
-            })));
+            if (result.length) {
+                return interaction.respond(result.map((heroName) => ({
+                    name: heroName,
+                    value: heroName
+                })));
+            }
         },
         async value({ value, context: ctx }, ok: OKFunction<LeaderboardPlayerHeroDTO>, fail) {
             const hero = (await ctx.client.api.getHeroes()).find((h) => h.name === value);
@@ -43,7 +47,22 @@ const options = {
 })
 @Options(options)
 export default class Ping extends SubCommand {
-    run(ctx: CommandContext<typeof options>) {
-        console.log(ctx.options.query, '???');
+    async run(ctx: CommandContext<typeof options>) {
+        await ctx.deferReply();
+
+        await ctx.editOrReply({
+            files: [{
+                filename: 'owo.json',
+                data: Buffer.from(JSON.stringify(ctx.options.query, null, 2))
+            }]
+        });
+
+        // await callbackPaginator(ctx, ctx.options.query.players, {
+        //     callback() {
+        //         return {
+        //             content: 'xd'
+        //         };
+        //     }
+        // });
     }
 }

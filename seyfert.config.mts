@@ -15,7 +15,7 @@ if (!API_KEY?.length) {
 export default config.bot({
     token: BOT_TOKEN,
     locations: {
-        base: 'src',
+        base: 'dist',
         commands: 'commands',
         langs: 'locales'
     },

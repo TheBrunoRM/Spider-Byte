@@ -1,10 +1,10 @@
 import type { ComponentInteractionMessageUpdate, Awaitable } from 'seyfert/lib/common';
-import type { APIButtonComponent } from 'seyfert/lib/types';
+import type { APIButtonComponentWithCustomId } from 'seyfert/lib/types';
 import type { ButtonInteraction } from 'seyfert';
 
-import { type ListenerOptions, type CommandContext, ActionRow, Button } from 'seyfert';
+import { type ListenerOptions, type CommandContext, ActionRow } from 'seyfert';
 import { DynamicBucket } from 'seyfert/lib/websocket/structures';
-import { ButtonStyle } from 'seyfert/lib/types';
+import { ComponentType, ButtonStyle } from 'seyfert/lib/types';
 
 export async function callbackPaginator<T>(ctx: CommandContext, data: T[], options: { callback: (data: T[]) => Awaitable<ComponentInteractionMessageUpdate> } & ListenerOptions = {
     idle: 60e3,
@@ -16,7 +16,7 @@ export async function callbackPaginator<T>(ctx: CommandContext, data: T[], optio
 
     let pageIndex = 0;
     const message = await ctx.editOrReply({
-        components: [createButtonRow()],
+        components: [createButtonRow(chunks, pageIndex)],
         content: 'xd'
     }, true);
 
@@ -24,68 +24,75 @@ export async function callbackPaginator<T>(ctx: CommandContext, data: T[], optio
 
     collector.run<ButtonInteraction>('first', async (interaction) => {
         pageIndex = 0;
+        await interaction.deferUpdate();
         const content = await options.callback(chunks[pageIndex]);
-        content.components = [createButtonRow()];
-        await interaction.update(content);
+        content.components = [createButtonRow(chunks, pageIndex)];
+        await interaction.editResponse(content);
     });
     collector.run<ButtonInteraction>('back', async (interaction) => {
         pageIndex--;
+        await interaction.deferUpdate();
         const content = await options.callback(chunks[pageIndex]);
-        content.components = [createButtonRow()];
-        await interaction.update(content);
+        content.components = [createButtonRow(chunks, pageIndex)];
+        await interaction.editResponse(content);
     });
     collector.run<ButtonInteraction>('stop', async (interaction) => {
         collector.stop('user_interaction');
+        await interaction.deferUpdate();
         const content = await options.callback(chunks[pageIndex]);
-        content.components = [createButtonRow()];
-        await interaction.update(content);
+        content.components = [createButtonRow(chunks, pageIndex, true)];
+        await interaction.editResponse(content);
     });
     collector.run<ButtonInteraction>('next', async (interaction) => {
         pageIndex++;
+        await interaction.deferUpdate();
         const content = await options.callback(chunks[pageIndex]);
-        content.components = [createButtonRow()];
-        await interaction.update(content);
+        content.components = [createButtonRow(chunks, pageIndex)];
+        await interaction.editResponse(content);
     });
     collector.run<ButtonInteraction>('last', async (interaction) => {
-        pageIndex = data.length - 1;
+        pageIndex = chunks.length - 1;
+        await interaction.deferUpdate();
         const content = await options.callback(chunks[pageIndex]);
-        content.components = [createButtonRow()];
-        await interaction.update(content);
+        content.components = [createButtonRow(chunks, pageIndex)];
+        await interaction.editResponse(content);
     });
 }
 
-function createButton({ custom_id, label }: {
-    label: string;
-    custom_id: string;
-}) {
-    return new Button({
-        custom_id,
-        label,
-        style: ButtonStyle.Danger
-    }).toJSON() as APIButtonComponent;
+function createButton(data: Omit<APIButtonComponentWithCustomId, 'style' | 'type'>) {
+    return {
+        ...data,
+        style: ButtonStyle.Danger,
+        type: ComponentType.Button
+    } satisfies APIButtonComponentWithCustomId;
 }
 
-function createButtonRow() {
-    const buttons: APIButtonComponent[] = [
+function createButtonRow<T>(chunks: T[][], pageIndex = 0, disabled?: true) {
+    const buttons: APIButtonComponentWithCustomId[] = [
         createButton({
             custom_id: 'first',
-            label: 'First'
+            label: 'First',
+            disabled: pageIndex === 0 || disabled
         }),
         createButton({
             custom_id: 'back',
-            label: 'Back'
+            label: 'Back',
+            disabled: pageIndex === 0 || disabled
         }),
         createButton({
             custom_id: 'stop',
-            label: 'Stop'
+            label: 'Stop',
+            disabled
         }),
         createButton({
             custom_id: 'next',
-            label: 'Next'
+            label: 'Next',
+            disabled: pageIndex + 1 === chunks.length || disabled
         }),
         createButton({
             custom_id: 'last',
-            label: 'Last'
+            label: 'Last',
+            disabled: pageIndex + 1 === chunks.length || disabled
         })
     ];
 

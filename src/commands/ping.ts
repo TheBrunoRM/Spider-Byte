@@ -4,7 +4,9 @@ import { Command, Declare } from 'seyfert';
 
 @Declare({
     name: 'ping',
-    description: 'pong'
+    description: 'pong',
+    contexts: ['BotDM', 'Guild', 'PrivateChannel'],
+    integrationTypes: ['GuildInstall', 'UserInstall']
 })
 export default class Ping extends Command {
     async run(ctx: CommandContext) {

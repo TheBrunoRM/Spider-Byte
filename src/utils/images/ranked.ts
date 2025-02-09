@@ -1,4 +1,5 @@
-import { type SKRSContext2D, GlobalFonts } from '@napi-rs/canvas';
+import type { SKRSContext2D } from '@napi-rs/canvas';
+
 import { createCanvas, loadImage } from '@napi-rs/canvas';
 import { join } from 'node:path';
 import sharp from 'sharp';
@@ -18,12 +19,9 @@ const FONT_COLOR_GRAY = '#C9C9C9';
 const LINE_WIDTH = 5;
 const PADDING = 20;
 
-// Register fonts
-GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'RefrigeratorDeluxe.ttf'), 'RrefrigeratorDeluxe');
-GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'RefrigeratorDeluxeBold.ttf'), 'RefrigeratorDeluxeBold');
-
 export async function generateRankGraph(data: RankHistory[], player: PlayerDTO) {
-    data.reverse();
+    data = data.toReversed();
+
     const canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
     const ctx = canvas.getContext('2d');
 
@@ -110,6 +108,5 @@ async function drawImage(ctx: SKRSContext2D, x: number, y: number, url: string, 
     const bufferImage = await Bun.file(join(process.cwd(), 'assets', 'ranks', url)).bytes();
     const resizedImage = await sharp(bufferImage).resize(imageSize, imageSize).toBuffer();
     const image = await loadImage(resizedImage);
-
     ctx.drawImage(image, x - subImageSize, y - subImageSize, imageSize, imageSize);
 }

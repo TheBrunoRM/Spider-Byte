@@ -1,9 +1,26 @@
 import { type ParseLocales, type ParseClient, type UsingClient, Client } from 'seyfert';
 import { basename, join, sep } from 'node:path';
+import { GlobalFonts } from '@napi-rs/canvas';
 
 import { Api } from './lib/managers/api';
 
-const client = new Client() as UsingClient & Client;
+const client = new Client({
+    commands: {
+        defaults: {
+            async onRunError(ctx, error) {
+                if (ctx.isMenu()) {
+                    return undefined;
+                }
+
+                await ctx.editOrReply({
+                    content: error instanceof Error
+                        ? error.message
+                        : String(error)
+                });
+            }
+        }
+    }
+}) as UsingClient & Client;
 
 client.setServices({
     langs: {
@@ -24,6 +41,10 @@ client.langs.onFile = (locale, { path, file }) => file.default
     : false;
 
 client.api = new Api((await client.getRC()).apiKey);
+
+// Register fonts
+GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'RefrigeratorDeluxe.ttf'), 'RrefrigeratorDeluxe');
+GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'RefrigeratorDeluxeBold.ttf'), 'RefrigeratorDeluxeBold');
 
 await client.start();
 

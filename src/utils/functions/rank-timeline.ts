@@ -1,25 +1,28 @@
-interface RankHistoryEntry {
-    match_time_stamp: number;
-    level_progression: {
-        from: number;
-        to: number;
-    };
-    score_progression: {
-        add_score: number;
-        total_score: number;
-    };
-}
+export const rankedImages: string[] = [
+    'bronze.png',
+    'silver.png',
+    'gold.png',
+    'platinum.png',
+    'diamond.png',
+    'grandmaster.png',
+    'celestial.png',
+    'eternity.png',
+    'one_above_all.png'
+];
 
-interface TimelineEntry {
-    timestamp: number;
-    lastRank: string;
-    newRank: string;
-    totalScore: number;
-}
-
+export const rankedColors: string[] = [
+    '#A7693F', // Bronze
+    '#7B9196', // Silver
+    '#FFDA57', // Gold
+    '#58E1E8', // Platinum
+    '#1680FF', // Diamond
+    '#EB46FF', // Grandmaster
+    '#FE5A1D', // Celestial
+    '#FF4F4D', // Eternity
+    '#FF4F4D' // One Above All
+];
 
 export function createRankTimeline(rankHistory: RankHistoryEntry[]): TimelineEntry[] {
-
     const timeline: TimelineEntry[] = [];
 
     rankHistory.forEach((entry) => {
@@ -36,37 +39,7 @@ export function createRankTimeline(rankHistory: RankHistoryEntry[]): TimelineEnt
     return timeline;
 }
 
-interface RankInfo {
-    rank: string;
-    color: string;
-    image: string;
-}
-
 export function getRank(level: number): RankInfo {
-    // const BASE_IMAGE_URL = 'https://marvelrivalsapi.com/rivals';
-    const rankedImages: string[] = [
-        'bronze.png',
-        'silver.png',
-        'gold.png',
-        'platinum.png',
-        'diamond.png',
-        'grandmaster.png',
-        'celestial.png',
-        'eternity.png',
-        'one_above_all.png'
-    ];
-    const rankedColors: string[] = [
-        '#A7693F', // Bronze
-        '#7B9196', // Silver
-        '#FFDA57', // Gold
-        '#58E1E8', // Platinum
-        '#1680FF', // Diamond
-        '#EB46FF', // Grandmaster
-        '#FE5A1D', // Celestial
-        '#FF4F4D', // Eternity
-        '#FF4F4D' // One Above All
-    ];
-
     const ranks: {
         name: string;
         levels: number[];
@@ -136,4 +109,29 @@ export function getRank(level: number): RankInfo {
     }
 
     throw new Error('Invalid rank level');
+}
+
+export interface RankHistoryEntry {
+    match_time_stamp: number;
+    level_progression: {
+        from: number;
+        to: number;
+    };
+    score_progression: {
+        add_score: number;
+        total_score: number;
+    };
+}
+
+export interface TimelineEntry {
+    timestamp: number;
+    lastRank: string;
+    newRank: string;
+    totalScore: number;
+}
+
+export interface RankInfo {
+    rank: string;
+    color: string;
+    image: string;
 }

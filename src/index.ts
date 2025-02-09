@@ -1,4 +1,5 @@
 import { type ParseLocales, type ParseClient, type UsingClient, Client } from 'seyfert';
+import { MessageFlags } from 'seyfert/lib/types';
 import { basename, join, sep } from 'node:path';
 import { GlobalFonts } from '@napi-rs/canvas';
 
@@ -11,11 +12,26 @@ GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'Refrigerato
 const client = new Client({
     commands: {
         defaults: {
-            async onRunError(ctx, error) {
-                await ctx.editOrReply({
-                    content: error instanceof Error
-                        ? error.message
-                        : String(error)
+            onRunError(ctx, error) {
+                client.logger.error(
+                    ctx.author.id,
+                    ctx.author.username,
+                    ctx.fullCommandName,
+                    error
+                );
+                const content = `\`\`\`${error instanceof Error
+                    ? error.stack ?? error.message
+                    : String(error) || 'Unknown error'
+                    }\`\`\``;
+
+                return ctx.editOrReply({
+                    content
+                });
+            },
+            onMiddlewaresError(ctx, error) {
+                return ctx.editOrReply({
+                    content: error,
+                    flags: MessageFlags.Ephemeral
                 });
             }
         }
@@ -40,7 +56,9 @@ client.langs.onFile = (locale, { path, file }) => file.default
     }
     : false;
 
-client.api = new Api((await client.getRC()).apiKey);
+client.api = new Api((await client.getRC()).apiKeys);
+
+await client.api.getHeroes();
 
 await client.start();
 
@@ -50,7 +68,7 @@ await client.uploadCommands({
 
 declare module 'seyfert' {
     interface ExtendedRC {
-        apiKey: string;
+        apiKeys: string[];
     }
 
     interface UsingClient extends ParseClient<Client<true>> {

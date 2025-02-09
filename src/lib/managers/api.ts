@@ -2,6 +2,7 @@ import { type IValidation, createValidate } from 'typia';
 import { Logger, delay } from 'seyfert/lib/common';
 import { LimitedCollection } from 'seyfert';
 
+import type { LeaderboardPlayerHeroDTO } from '../../types/dtos/LeaderboardPlayerHeroDTO';
 import type { FindedPlayerDTO } from '../../types/dtos/FindedPlayerDTO';
 import type { MatchHistoryDTO } from '../../types/dtos/MatchHistoryDTO';
 import type { HeroesDTO } from '../../types/dtos/HeroesDTO';
@@ -16,6 +17,7 @@ export const isHero = createValidate<HeroDTO>();
 export const isPlayer = createValidate<PlayerDTO>();
 export const isFindedPlayer = createValidate<FindedPlayerDTO>();
 export const isMatchHistory = createValidate<MatchHistoryDTO>();
+export const isLeaderboardPlayerHero = createValidate<LeaderboardPlayerHeroDTO>();
 
 export class Api {
   logger = new Logger({
@@ -29,7 +31,11 @@ export class Api {
     }),
     fetchPlayer: new LimitedCollection<string, PlayerDTO | null>({
       expire: 60e3
-    })
+    }),
+    leaderboardPlayerHero: new LimitedCollection<string, LeaderboardPlayerHeroDTO | null>({
+      expire: 60e3
+    }),
+    heroes: [] as HeroesDTO[]
   };
 
   private readonly retryDelay: number = 1_000; // Retardo entre reintentos en milisegundos
@@ -42,7 +48,17 @@ export class Api {
 
   private readonly apiUrl: string = `${this.baseUrl}/api/v1`;
 
-  constructor(private readonly apiKey: string) { }
+  private apiKeyIndex = 0;
+
+  constructor(private readonly apiKeys: string[]) { }
+
+  private rotateApiKey() {
+    const i = this.apiKeyIndex++;
+    if (this.apiKeyIndex >= this.apiKeys.length) {
+      this.apiKeyIndex = 0;
+    }
+    return this.apiKeys[i];
+  }
 
   // Métodos públicos para los endpoints
 
@@ -51,7 +67,6 @@ export class Api {
   }
 
   // Players
-
   public searchPlayer(username: string) {
     return this.fetchWithCacheRetry(`find-player/${username}`, isFindedPlayer, this.cache.searchPlayer);
   }
@@ -73,14 +88,26 @@ export class Api {
   }
 
   // Heroes
+  public getLeaderboardHero(nameOrId: string) {
+    return this.fetchWithCacheRetry(`heroes/leaderboard/${nameOrId}`, isLeaderboardPlayerHero, this.cache.leaderboardPlayerHero);
+  }
 
-  public getHeroes() {
-    return this.fetchWithRetry('heroes', isHeroes);
+  public async getHeroes() {
+    if (this.cache.heroes.length) {
+      return this.cache.heroes;
+    }
+    const heroes = await this.fetchWithRetry('heroes', isHeroes);
+    if (heroes) {
+      this.cache.heroes = heroes;
+    }
+    return [];
   }
 
   public getHero(nameOrId: string) {
     return this.fetchWithRetry(`heroes/${nameOrId}`, isHero);
   }
+
+  // api
 
   private async fetchWithRetry<T>(
     endpoint: string,
@@ -102,7 +129,7 @@ export class Api {
       const check = validator(data);
 
       if (!check.success) {
-        this.logger.error('Unexpected data format:', data, check.errors);
+        this.logger.error('Unexpected data format:', check.errors.map((err) => `Expected: ${err.expected} on ${err.path}`));
         return null;
       }
 
@@ -136,7 +163,7 @@ export class Api {
     const url = `${this.apiUrl}/${endpoint}`;
 
     const headers = {
-      'x-api-key': this.apiKey,
+      'x-api-key': this.rotateApiKey(),
       'Content-Type': 'application/json'
     };
 

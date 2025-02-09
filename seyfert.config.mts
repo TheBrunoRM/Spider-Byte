@@ -6,9 +6,9 @@ if (!BOT_TOKEN?.trim()) {
     throw new Error('Bun.env.BOT_TOKEN is not a valid token');
 }
 
-const API_KEY = Bun.env.API_KEY;
+const API_KEY = Bun.env.API_KEY?.split(',');
 
-if (!API_KEY?.trim()) {
+if (!API_KEY?.length) {
     throw new Error('Bun.env.API_KEY is not a valid api key');
 }
 
@@ -19,5 +19,5 @@ export default config.bot({
         commands: 'commands',
         langs: 'locales'
     },
-    apiKey: API_KEY
+    apiKeys: API_KEY
 });

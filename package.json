@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@napi-rs/canvas": "^0.1.67",
+    "didyoumean2": "^7.0.4",
     "seyfert": "^2.2.1-dev-13217859162.0",
     "sharp": "^0.33.5"
   },

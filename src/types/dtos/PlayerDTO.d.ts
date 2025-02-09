@@ -86,13 +86,18 @@ export interface PlayerPerformance {
   kills: number;
   deaths: number;
   assists: number;
-  is_win: number;
+  is_win: IsWin;
   disconnected: boolean;
   camp: number;
   score_change: number | null;
   level: number | null;
   new_level: number | null;
   new_score: number | null;
+}
+
+export interface IsWin {
+  score: number;
+  is_win: boolean;
 }
 
 export interface ScoreInfo {
@@ -120,9 +125,15 @@ export interface Player {
   uid: number;
   level: string;
   name: string;
+  icon: Icon;
   rank: Rank;
   team: Team;
   info: Info;
+}
+
+export interface Icon {
+  player_icon_id: string;
+  player_icon: string;
 }
 
 export interface Info {

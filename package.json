@@ -15,7 +15,9 @@
     "typescript": "~5.7.3"
   },
   "dependencies": {
-    "seyfert": "^2.2.1-dev-13217859162.0"
+    "@napi-rs/canvas": "^0.1.67",
+    "seyfert": "^2.2.1-dev-13217859162.0",
+    "sharp": "^0.33.5"
   },
   "scripts": {
     "start": "bun run build && bun --env-file=.env ./dist/index.ts",

@@ -39,9 +39,22 @@ export function createRankTimeline(rankHistory: RankHistoryEntry[]): TimelineEnt
 interface RankInfo {
     rank: string;
     color: string;
+    image: string;
 }
 
-function getRank(level: number): RankInfo {
+export function getRank(level: number): RankInfo {
+    const BASE_IMAGE_URL = 'https://marvelrivalsapi.com/rivals';
+    const rankedImages: string[] = [
+        '/bronze.png',
+        '/silver.png',
+        '/gold.png',
+        '/platinum.png',
+        '/diamond.png',
+        '/grandmaster.png',
+        '/celestial.png',
+        '/eternity.png',
+        '/one_above_all.png'
+    ];
     const rankedColors: string[] = [
         '#A7693F', // Bronze
         '#7B9196', // Silver
@@ -108,20 +121,19 @@ function getRank(level: number): RankInfo {
             if (name === 'Eternity' || name === 'One Above All') {
                 return {
                     rank: name,
-                    color: rankedColors[i]
+                    color: rankedColors[i],
+                    image: `${BASE_IMAGE_URL}/ranked${rankedImages[i]}`
                 };
             }
             const tierIndex = (level - levels[0]) % 3;
             const tier = tiers[tierIndex];
             return {
                 rank: `${name} ${tier}`,
-                color: rankedColors[i]
+                color: rankedColors[i],
+                image: `${BASE_IMAGE_URL}/ranked${rankedImages[i]}`
             };
         }
     }
 
-    return {
-        rank: 'Invalid level',
-        color: '#000000' // Color por defecto para niveles inválidos
-    };
+    throw new Error('Invalid rank level');
 }

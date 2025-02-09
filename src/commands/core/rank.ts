@@ -1,6 +1,6 @@
 import { type CommandContext, createStringOption, SubCommand, Declare, Options } from 'seyfert';
 
-import { createRankTimeline } from '../../utils/functions/rank-timeline';
+import { generateRankGraph } from '../../utils/images/ranked';
 
 const options = {
     'name-or-id': createStringOption({
@@ -25,21 +25,20 @@ export default class RankCommand extends SubCommand {
         }
 
         const player = await ctx.client.api.getPlayer(nameOrId);
-        console.log(player?.name);
         if (!player) {
             return ctx.editOrReply({
                 content: 'Player not found. Please provide a valid player name or id'
             });
         }
 
-        const timeline = createRankTimeline(player.rank_history);
+        const bufferGraph = await generateRankGraph(player.rank_history, player);
 
         return ctx.editOrReply({
-            content: [
-                `**${player.name}#${player.player.team.club_team_mini_name}** (${player.uid})`,
-                'Ranked Timeline:',
-                timeline.map((entry) => `\`${entry.lastRank}\` -> \`${entry.newRank}\`. ${entry.totalScore.toFixed(1)} score (<t:${entry.timestamp}:R>)`).join('\n')
-            ].join('\n')
+            content: `**${player.name}#${player.player.team.club_team_mini_name}** is a \`${player.player.rank.rank}\``,
+            files: [{
+                filename: 'rank.png',
+                data: bufferGraph
+            }]
         });
 
     }

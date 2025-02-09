@@ -28,6 +28,9 @@
       }
     ],
     "strictNullChecks": true,
-    "alwaysStrict": true
-  }
+    "alwaysStrict": true,
+  },
+  "exclude": [
+    "dist"
+  ]
 }

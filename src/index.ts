@@ -31,8 +31,6 @@ await client.uploadCommands({
     cachePath: join(process.cwd(), 'cache', 'seyfert_commands.json')
 });
 
-console.log(await client.api.getHeroes());
-
 declare module 'seyfert' {
     interface ExtendedRC {
         apiKey: string;

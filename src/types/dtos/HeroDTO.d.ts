@@ -27,36 +27,36 @@ export interface Ability {
 
 export interface AdditionalFields {
   Key?: string;
-  'Special Mechanic'?: string;
+  "Special Mechanic"?: string;
   Kick?: string;
   Punch?: string;
   Damage?: string;
   Casting?: string;
-  'Attack Interval'?: string;
-  'Maximum Distance'?: string;
+  "Attack Interval"?: string;
+  "Maximum Distance"?: string;
   Cooldown?: string;
-  'Kick Damage'?: string;
-  'Kicking Distance'?: string;
-  'Projectile Speed'?: string;
-  'Projectile Damage'?: string;
+  "Kick Damage"?: string;
+  "Kicking Distance"?: string;
+  "Projectile Speed"?: string;
+  "Projectile Damage"?: string;
   Range?: string;
   Duration?: string;
-  'Energy Cost'?: string;
-  'Slow Effect'?: string;
-  'Slow Duration'?: string;
-  'Stun Duration'?: string;
-  'Special Effect'?: string;
-  'Bonus Health (Self)'?: string;
-  'Hits Required to Stun'?: string;
-  'Disappearance Time To Trigger Detection'?: string;
+  "Energy Cost"?: string;
+  "Slow Effect"?: string;
+  "Slow Duration"?: string;
+  "Stun Duration"?: string;
+  "Special Effect"?: string;
+  "Bonus Health (Self)"?: string;
+  "Hits Required to Stun"?: string;
+  "Disappearance Time To Trigger Detection"?: string;
   Charges?: string;
-  'Recharge Speed'?: string;
-  'Maximum Webbing Length'?: string;
-  'Sprinting Speed'?: string;
-  'Wall-Crawling Speed'?: string;
+  "Recharge Speed"?: string;
+  "Maximum Webbing Length"?: string;
+  "Sprinting Speed"?: string;
+  "Wall-Crawling Speed"?: string;
   Health?: string;
-  'Movement Speed'?: string;
-  'Team-Up Bonus'?: string;
+  "Movement Speed"?: string;
+  "Team-Up Bonus"?: string;
 }
 
 export interface Costume {

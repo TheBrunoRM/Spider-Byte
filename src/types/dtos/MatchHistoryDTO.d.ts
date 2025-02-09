@@ -51,6 +51,6 @@ export interface MatchPlayerScoreInfo {
 }
 
 export interface MatchHistoryScoreInfo {
-  '0'?: number;
-  '1'?: number;
+  "0"?: number;
+  "1"?: number;
 }

@@ -15,13 +15,20 @@ export interface PlayerDTO {
 }
 
 export interface HeroMatchup {
-  hero_id: number;
+  hero_id: number | null;
   hero_name: string;
-  hero_class: string;
-  hero_thumbnail: string;
+  hero_class: HeroClass;
+  hero_thumbnail: null | string;
   matches: number;
   wins: number;
   win_rate: string;
+}
+
+export enum HeroClass {
+  Duelist = "Duelist",
+  Strategist = "Strategist",
+  Unknown = "Unknown",
+  Vanguard = "Vanguard",
 }
 
 export interface HeroesRanked {
@@ -89,8 +96,8 @@ export interface PlayerPerformance {
 }
 
 export interface ScoreInfo {
-  '0'?: number;
-  '1'?: number;
+  "0"?: number;
+  "1"?: number;
 }
 
 export interface OverallStats {
@@ -125,10 +132,11 @@ export interface Info {
 }
 
 export interface RankGameSeason {
-  '1001001': The1001001;
+  "1001001": The100100;
+  "1001002": The100100;
 }
 
-export interface The1001001 {
+export interface The100100 {
   rank_game_id: number;
   level: number;
   rank_score: number;
@@ -142,8 +150,8 @@ export interface The1001001 {
 
 export interface Rank {
   rank: string;
-  image: null;
-  color: null;
+  image: string;
+  color: string;
 }
 
 export interface Team {
@@ -183,7 +191,7 @@ export interface PlayerInfo {
 
 export interface Updates {
   info_update_time: string;
-  last_history_update: null;
-  last_inserted_match: null;
-  last_update_request: null;
+  last_history_update: string;
+  last_inserted_match: string;
+  last_update_request: string;
 }

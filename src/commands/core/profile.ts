@@ -31,7 +31,10 @@ export default class ProfileCommand extends SubCommand {
 
     return ctx.editOrReply({
       content: [
-        `**${player.name}#${player.player.team.club_team_mini_name}** (${player.uid})`,
+        `**${player.name}${player.player.team.club_team_id === ''
+          ? '** '
+          : `#${player.player.team.club_team_mini_name}** `
+        }(${player.uid})`,
         `Level: ${player.player.level}`,
         `Rank: ${player.player.rank.rank}`
       ].join('\n')

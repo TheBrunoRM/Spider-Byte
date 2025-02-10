@@ -33,7 +33,7 @@ Click [here](https://discord.com/oauth2/authorize?client_id=1337677960546881587&
 
 ## 📢 Support & Community
 
-Join our [Discord Server](#) for support, feature requests, and discussions!
+Join our [Discord Server](https://discord.gg/AcruVkyYHm) for support, feature requests, and discussions!
 
 ---
 

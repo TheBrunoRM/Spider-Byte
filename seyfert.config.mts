@@ -17,7 +17,9 @@ export default config.bot({
     locations: {
         base: 'dist',
         commands: 'commands',
-        langs: 'locales'
+        langs: 'locales',
+        events: 'events'
     },
-    apiKeys: API_KEY
+    apiKeys: API_KEY,
+    intents: ['GuildMessages']
 });

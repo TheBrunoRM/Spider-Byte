@@ -3,7 +3,7 @@
  * @param formatedTime string - Time in format '1h 30m 20s'
  * @returns number - Time in seconds
  */
-export function convertirASegundos(time: string): number {
+export function timeToSeconds(time: string): number {
     const regex = /(\d+)h\s*(\d+)m\s*(\d+)s/;
     const match = regex.exec(time);
 

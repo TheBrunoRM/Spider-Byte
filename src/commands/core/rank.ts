@@ -31,10 +31,16 @@ export default class RankCommand extends SubCommand {
             });
         }
 
+        if (!player.rank_history.length) {
+            return ctx.editOrReply({
+                content: `**${player.name}** (${player.uid}) has no rank history`
+            });
+        }
+
         const bufferGraph = await generateRankGraph(player.rank_history, player);
 
         return ctx.editOrReply({
-            content: `**${player.name}#${player.player.team.club_team_mini_name}** is a \`${player.player.rank.rank}\``,
+            content: `**${player.name}** (${player.uid}) is a \`${player.player.rank.rank}\``,
             files: [{
                 filename: 'rank.png',
                 data: bufferGraph

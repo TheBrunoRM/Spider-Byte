@@ -73,8 +73,12 @@ export class Api {
     return this.fetchWithCacheRetry(`find-player/${username}`, isFindedPlayer, this.cache.searchPlayer);
   }
 
-  public async getPlayer(name: string) {
-    const playerFound = await this.searchPlayer(name);
+  public async getPlayer(nameOrId: string) {
+    if (/^\d+$/.exec(nameOrId)) {
+      return this.fetchPlayer(nameOrId);
+    }
+
+    const playerFound = await this.searchPlayer(nameOrId);
     if (!playerFound) {
       return playerFound;
     }

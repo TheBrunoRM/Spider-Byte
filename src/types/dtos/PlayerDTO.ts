@@ -139,7 +139,7 @@ export interface Icon {
 export interface Info {
   completed_achievements: string;
   login_os: string;
-  rank_game_season: RankGameSeason;
+  rank_game_season: RankGameSeason | {};
 }
 
 export interface RankGameSeason {
@@ -161,8 +161,8 @@ export interface The100100 {
 
 export interface Rank {
   rank: string;
-  image: string;
-  color: string;
+  image: string | null;
+  color: string | null;
 }
 
 export interface Team {
@@ -202,7 +202,7 @@ export interface PlayerInfo {
 
 export interface Updates {
   info_update_time: string;
-  last_history_update: string;
-  last_inserted_match: string;
-  last_update_request: string;
+  last_history_update: string | null;
+  last_inserted_match: string | null;
+  last_update_request: string | null;
 }

@@ -95,7 +95,8 @@ export function getRank(level: number): RankInfo {
                 return {
                     rank: name,
                     color: rankedColors[i],
-                    image: rankedImages[i]
+                    image: rankedImages[i],
+                    imageURL: `https://marvelrivalsapi.com/rivals/ranked/${rankedImages[i]}`
                 };
             }
             const tierIndex = (level - levels[0]) % 3;
@@ -103,7 +104,8 @@ export function getRank(level: number): RankInfo {
             return {
                 rank: `${name} ${tier}`,
                 color: rankedColors[i],
-                image: rankedImages[i]
+                image: rankedImages[i],
+                imageURL: `https://marvelrivalsapi.com/rivals/ranked/${rankedImages[i]}`
             };
         }
     }
@@ -134,4 +136,5 @@ export interface RankInfo {
     rank: string;
     color: string;
     image: string;
+    imageURL: string;
 }

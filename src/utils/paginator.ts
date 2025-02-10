@@ -6,7 +6,7 @@ import { type ListenerOptions, type CommandContext, ActionRow } from 'seyfert';
 import { DynamicBucket } from 'seyfert/lib/websocket/structures';
 import { ComponentType, ButtonStyle } from 'seyfert/lib/types';
 
-export async function callbackPaginator<T>(ctx: CommandContext, data: T[], options: { callback: (data: T[]) => Awaitable<ComponentInteractionMessageUpdate> } & ListenerOptions = {
+export async function callbackPaginator<T>(ctx: CommandContext, data: T[], options: { callback: (data: T[], pageIndex: number) => Awaitable<ComponentInteractionMessageUpdate> } & ListenerOptions = {
     idle: 60e3,
     callback() {
         return { content: 'xd' };
@@ -25,35 +25,35 @@ export async function callbackPaginator<T>(ctx: CommandContext, data: T[], optio
     collector.run<ButtonInteraction>('first', async (interaction) => {
         pageIndex = 0;
         await interaction.deferUpdate();
-        const content = await options.callback(chunks[pageIndex]);
+        const content = await options.callback(chunks[pageIndex], pageIndex);
         content.components = [createButtonRow(chunks, pageIndex)];
         await interaction.editResponse(content);
     });
     collector.run<ButtonInteraction>('back', async (interaction) => {
         pageIndex--;
         await interaction.deferUpdate();
-        const content = await options.callback(chunks[pageIndex]);
+        const content = await options.callback(chunks[pageIndex], pageIndex);
         content.components = [createButtonRow(chunks, pageIndex)];
         await interaction.editResponse(content);
     });
     collector.run<ButtonInteraction>('stop', async (interaction) => {
         collector.stop('user_interaction');
         await interaction.deferUpdate();
-        const content = await options.callback(chunks[pageIndex]);
+        const content = await options.callback(chunks[pageIndex], pageIndex);
         content.components = [createButtonRow(chunks, pageIndex, true)];
         await interaction.editResponse(content);
     });
     collector.run<ButtonInteraction>('next', async (interaction) => {
         pageIndex++;
         await interaction.deferUpdate();
-        const content = await options.callback(chunks[pageIndex]);
+        const content = await options.callback(chunks[pageIndex], pageIndex);
         content.components = [createButtonRow(chunks, pageIndex)];
         await interaction.editResponse(content);
     });
     collector.run<ButtonInteraction>('last', async (interaction) => {
         pageIndex = chunks.length - 1;
         await interaction.deferUpdate();
-        const content = await options.callback(chunks[pageIndex]);
+        const content = await options.callback(chunks[pageIndex], pageIndex);
         content.components = [createButtonRow(chunks, pageIndex)];
         await interaction.editResponse(content);
     });

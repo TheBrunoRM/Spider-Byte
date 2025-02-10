@@ -33,7 +33,7 @@ export class Api {
       expire: 60e3
     }),
     leaderboardPlayerHero: new LimitedCollection<string, LeaderboardPlayerHeroDTO | null>({
-      expire: 60e3
+      expire: 15 * 60e3
     }),
     heroes: [] as HeroesDTO[]
   };

@@ -5,6 +5,7 @@ import didYouMean, { ReturnTypeEnums } from 'didyoumean2';
 
 import type { LeaderboardPlayerHeroDTO } from '../../types/dtos/LeaderboardPlayerHeroDTO';
 
+import { generateLeaderboard } from '../../utils/images/leaderboard';
 import { callbackPaginator } from '../../utils/paginator';
 
 const options = {
@@ -51,18 +52,23 @@ export default class Ping extends SubCommand {
         await ctx.deferReply();
 
         await ctx.editOrReply({
+            content: 'xd',
             files: [{
-                filename: 'owo.json',
-                data: Buffer.from(JSON.stringify(ctx.options.query, null, 2))
+                filename: 'leaderboard.png',
+                data: await generateLeaderboard(ctx.options.query.players, 0)
             }]
         });
 
-        // await callbackPaginator(ctx, ctx.options.query.players, {
-        //     callback() {
-        //         return {
-        //             content: 'xd'
-        //         };
-        //     }
-        // });
+        await callbackPaginator(ctx, ctx.options.query.players, {
+            async callback(chunk, pageIndex) {
+                return {
+                    content: 'xd',
+                    files: [{
+                        filename: 'leaderboard.png',
+                        data: await generateLeaderboard(chunk, pageIndex)
+                    }]
+                };
+            }
+        }, 9);
     }
 }

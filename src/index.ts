@@ -3,11 +3,13 @@ import { MessageFlags } from 'seyfert/lib/types';
 import { basename, join, sep } from 'node:path';
 import { GlobalFonts } from '@napi-rs/canvas';
 
+import { isProduction } from './lib/constants';
 import { Api } from './lib/managers/api';
 
 // Register fonts
 GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'RefrigeratorDeluxe.ttf'), 'RrefrigeratorDeluxe');
 GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'RefrigeratorDeluxeBold.ttf'), 'RefrigeratorDeluxeBold');
+GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'leaderboard.ttf'), 'leaderboard');
 
 const client = new Client({
     commands: {
@@ -19,6 +21,7 @@ const client = new Client({
                     ctx.fullCommandName,
                     error
                 );
+
                 const content = `\`\`\`${error instanceof Error
                     ? error.stack ?? error.message
                     : String(error) || 'Unknown error'
@@ -59,6 +62,19 @@ client.langs.onFile = (locale, { path, file }) => file.default
 client.api = new Api((await client.getRC()).apiKeys);
 
 await client.api.getHeroes();
+
+if (isProduction) {
+    const run = async () => {
+        for (const i of await client.api.getHeroes()) {
+            client.api.logger.debug(`Caching ${i.name} leaderboard`);
+            await client.api.getLeaderboardHero(i.id);
+        }
+    };
+    void run();
+    setInterval(() => {
+        void run();
+    }, 17 * 60e3);
+}
 
 await client.start();
 

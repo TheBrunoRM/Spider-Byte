@@ -36,30 +36,32 @@ export async function generateRankGraph(data: RankHistory[], player: PlayerDTO) 
     // Draw rank information
     const currentRank = player.player.rank;
     const score = player.rank_history.at(-1)?.score_progression.total_score.toFixed(0);
-    const rankImage = await loadImage(await Bun.file(join(process.cwd(), 'assets', 'ranks', `${currentRank.image.split('/').at(-1)}`)).bytes());
-    const rankText = currentRank.rank;
+
 
     ctx.fillStyle = FONT_COLOR_WHITE;
     ctx.textAlign = 'left';
     ctx.font = `bold ${FONT_SIZE_LARGE}px RefrigeratorDeluxeBold`;
 
-    const textWidth = ctx.measureText(rankText).width;
-    const spacing = 2;
-    const totalWidth = RANK_IMAGE_SIZE + spacing + textWidth;
-    const rankX = (CANVAS_WIDTH - totalWidth) / 2;
-    const rankY = 50;
+    if (currentRank.image) {
+        const rankImage = await loadImage(await Bun.file(join(process.cwd(), 'assets', 'ranks', `${currentRank.image.split('/').at(-1)}`)).bytes());
+        const rankText = currentRank.rank;
 
-    ctx.drawImage(rankImage, rankX, rankY - 10, RANK_IMAGE_SIZE, RANK_IMAGE_SIZE);
-    ctx.fillText(rankText, rankX + RANK_IMAGE_SIZE + spacing, rankY + RANK_IMAGE_SIZE / 2);
+        const textWidth = ctx.measureText(rankText).width;
+        const spacing = 2;
+        const totalWidth = RANK_IMAGE_SIZE + spacing + textWidth;
+        const rankX = (CANVAS_WIDTH - totalWidth) / 2;
+        const rankY = 50;
 
-    ctx.font = `${FONT_SIZE_SMALL}px RefrigeratorDeluxe`;
-    ctx.fillStyle = FONT_COLOR_GRAY;
-    const pointsText = `${score} RP`;
-    const pointsTextWidth = ctx.measureText(pointsText).width;
-    const pointsX = rankX + RANK_IMAGE_SIZE + spacing + (textWidth - pointsTextWidth) / 2;
-    const pointsY = rankY + RANK_IMAGE_SIZE / 2 + 25;
-
-    ctx.fillText(pointsText, pointsX, pointsY);
+        ctx.drawImage(rankImage, rankX, rankY - 10, RANK_IMAGE_SIZE, RANK_IMAGE_SIZE);
+        ctx.fillText(rankText, rankX + RANK_IMAGE_SIZE + spacing, rankY + RANK_IMAGE_SIZE / 2);
+        ctx.font = `${FONT_SIZE_SMALL}px RefrigeratorDeluxe`;
+        ctx.fillStyle = FONT_COLOR_GRAY;
+        const pointsText = `${score} RP`;
+        const pointsTextWidth = ctx.measureText(pointsText).width;
+        const pointsX = rankX + RANK_IMAGE_SIZE + spacing + (textWidth - pointsTextWidth) / 2;
+        const pointsY = rankY + RANK_IMAGE_SIZE / 2 + 25;
+        ctx.fillText(pointsText, pointsX, pointsY);
+    }
 
     // Draw rank progression lines and images
     for (let i = 0; i < data.length; i++) {

@@ -1,5 +1,5 @@
 import { type ParseLocales, type ParseClient, type UsingClient, Client } from 'seyfert';
-import { MessageFlags } from 'seyfert/lib/types';
+import { PresenceUpdateStatus, ActivityType, MessageFlags } from 'seyfert/lib/types';
 import { basename, join, sep } from 'node:path';
 import { GlobalFonts } from '@napi-rs/canvas';
 
@@ -38,6 +38,18 @@ const client = new Client({
                 });
             }
         }
+    },
+    presence() {
+        return {
+            activities: [{
+                name: 'Gonna get sticky',
+                type: ActivityType.Custom,
+                state: 'Gonna get sticky!'
+            }],
+            afk: false,
+            since: Date.now(),
+            status: PresenceUpdateStatus.Online
+        };
     }
 }) as UsingClient & Client;
 
@@ -66,7 +78,7 @@ await client.api.getHeroes();
 if (isProduction) {
     const run = async () => {
         for (const i of await client.api.getHeroes()) {
-            client.api.logger.debug(`Caching ${i.name} leaderboard`);
+            client.api.logger.info(`Caching ${i.name} leaderboard`);
             await client.api.getLeaderboardHero(i.id);
         }
     };

@@ -1,5 +1,5 @@
+import { LogLevels, Logger, delay } from 'seyfert/lib/common';
 import { type IValidation, createValidate } from 'typia';
-import { Logger, delay } from 'seyfert/lib/common';
 import { LimitedCollection } from 'seyfert';
 
 import type { LeaderboardPlayerHeroDTO } from '../../types/dtos/LeaderboardPlayerHeroDTO';
@@ -22,7 +22,9 @@ export const isLeaderboardPlayerHero = createValidate<LeaderboardPlayerHeroDTO>(
 export class Api {
   logger = new Logger({
     name: '[Rivals]',
-    active: !isProduction
+    logLevel: isProduction
+      ? LogLevels.Info
+      : LogLevels.Debug
   });
 
   cache = {

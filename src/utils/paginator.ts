@@ -9,53 +9,52 @@ import { ComponentType, ButtonStyle } from 'seyfert/lib/types';
 export async function callbackPaginator<T>(ctx: CommandContext, data: T[], options: { callback: (data: T[], pageIndex: number) => Awaitable<ComponentInteractionMessageUpdate> } & ListenerOptions = {
     idle: 60e3,
     callback() {
-        return { content: 'xd' };
+        return {};
     }
 }, pageSize = 10) {
     const chunks = DynamicBucket.chunk(data, pageSize);
 
     let pageIndex = 0;
     const message = await ctx.editOrReply({
-        components: [createButtonRow(chunks, pageIndex)],
-        content: 'xd'
+        components: [createButtonRow(chunks, pageIndex)]
     }, true);
 
     const collector = message.createComponentCollector(options);
 
     collector.run<ButtonInteraction>('first', async (interaction) => {
         pageIndex = 0;
-        await interaction.deferUpdate();
         const content = await options.callback(chunks[pageIndex], pageIndex);
         content.components = [createButtonRow(chunks, pageIndex)];
-        await interaction.editResponse(content);
+        await ctx.editResponse(content);
+        await interaction.deferUpdate().catch(() => null);
     });
     collector.run<ButtonInteraction>('back', async (interaction) => {
         pageIndex--;
-        await interaction.deferUpdate();
         const content = await options.callback(chunks[pageIndex], pageIndex);
         content.components = [createButtonRow(chunks, pageIndex)];
-        await interaction.editResponse(content);
+        await ctx.editResponse(content);
+        await interaction.deferUpdate().catch(() => null);
     });
-    collector.run<ButtonInteraction>('stop', async (interaction) => {
+    collector.run<ButtonInteraction>('stop', async () => {
         collector.stop('user_interaction');
-        await interaction.deferUpdate();
+        // await interaction.deferUpdate();
         const content = await options.callback(chunks[pageIndex], pageIndex);
         content.components = [createButtonRow(chunks, pageIndex, true)];
-        await interaction.editResponse(content);
+        await ctx.editResponse(content);
     });
     collector.run<ButtonInteraction>('next', async (interaction) => {
         pageIndex++;
-        await interaction.deferUpdate();
         const content = await options.callback(chunks[pageIndex], pageIndex);
         content.components = [createButtonRow(chunks, pageIndex)];
-        await interaction.editResponse(content);
+        await ctx.editResponse(content);
+        await interaction.deferUpdate().catch(() => null);
     });
     collector.run<ButtonInteraction>('last', async (interaction) => {
         pageIndex = chunks.length - 1;
-        await interaction.deferUpdate();
         const content = await options.callback(chunks[pageIndex], pageIndex);
         content.components = [createButtonRow(chunks, pageIndex)];
-        await interaction.editResponse(content);
+        await ctx.editResponse(content);
+        await interaction.deferUpdate().catch(() => null);
     });
 }
 

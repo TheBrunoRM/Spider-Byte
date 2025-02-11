@@ -52,7 +52,6 @@ export default class Ping extends SubCommand {
         await ctx.deferReply();
 
         await ctx.editOrReply({
-            content: 'xd',
             files: [{
                 filename: 'leaderboard.png',
                 data: await generateLeaderboard(ctx.options.query.players, 0)
@@ -62,7 +61,6 @@ export default class Ping extends SubCommand {
         await callbackPaginator(ctx, ctx.options.query.players, {
             async callback(chunk, pageIndex) {
                 return {
-                    content: 'xd',
                     files: [{
                         filename: 'leaderboard.png',
                         data: await generateLeaderboard(chunk, pageIndex)

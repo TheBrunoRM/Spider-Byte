@@ -77,7 +77,6 @@ export async function generateLeaderboard(data: LeaderboardPlayerHeroDTO['player
         const labelWins = 'Victories';
         const labelWinsMetricts = ctx.measureText(labelWins);
         ctx.fillText(labelWins, 765 - labelWinsMetricts.width / 2, y + 37);
-        console.log(x, y, player);
     }
 
     return canvas.encode('png');
@@ -114,7 +113,6 @@ async function loadRankIcon(level: number) {
     }
 
     const { imageURL } = getRank(level);
-    console.log({ imageURL });
     const response = await fetch(imageURL);
     const bytes = await response.bytes();
     await Bun.write(path, bytes);

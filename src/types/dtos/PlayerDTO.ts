@@ -76,7 +76,7 @@ export interface MatchHistory {
   match_time_stamp: number;
   play_mode_id: number;
   game_mode_id: number;
-  score_info: ScoreInfo;
+  score_info: ScoreInfo | null;
   player_performance: PlayerPerformance;
 }
 

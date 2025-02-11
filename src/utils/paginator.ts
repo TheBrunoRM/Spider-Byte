@@ -10,6 +10,9 @@ export async function callbackPaginator<T>(ctx: CommandContext, data: T[], optio
     idle: 60e3,
     callback() {
         return {};
+    },
+    filter(interaction) {
+        return interaction.user.id === ctx.author.id;
     }
 }, pageSize = 10) {
     const chunks = DynamicBucket.chunk(data, pageSize);
@@ -19,12 +22,7 @@ export async function callbackPaginator<T>(ctx: CommandContext, data: T[], optio
         components: [createButtonRow(chunks, pageIndex)]
     }, true);
 
-    const collector = message.createComponentCollector({
-        ...options,
-        filter(interaction) {
-            return interaction.user.id === ctx.author.id;
-        }
-    });
+    const collector = message.createComponentCollector(options);
 
     collector.run<ButtonInteraction>('first', async (interaction) => {
         pageIndex = 0;

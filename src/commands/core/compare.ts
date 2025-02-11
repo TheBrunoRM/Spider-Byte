@@ -1,6 +1,7 @@
 import { type CommandContext, createStringOption, SubCommand, Declare, Options } from 'seyfert';
 
-import { comparePlayers } from '../../utils/functions/comparePlayers';
+// import { comparePlayers } from '../../utils/functions/comparePlayers';
+import { getEmoji } from '../../utils/functions/getEmoji';
 
 const options = {
     'name-or-id': createStringOption({
@@ -36,8 +37,8 @@ export default class CompareCommand extends SubCommand {
             });
         }
 
-        const comparison = comparePlayers(playerOneData, playerTwoData);
-        console.log(comparison);
+        // const comparison = comparePlayers(playerOneData, playerTwoData);
+        console.log(await getEmoji(ctx, 'SilverRank'));
 
         return ctx.editOrReply({
             content: 'Command under development. Please check back later. Sorry for the inconvenience'

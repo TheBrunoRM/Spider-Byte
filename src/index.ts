@@ -3,7 +3,6 @@ import { PresenceUpdateStatus, ActivityType, MessageFlags } from 'seyfert/lib/ty
 import { basename, join, sep } from 'node:path';
 import { GlobalFonts } from '@napi-rs/canvas';
 
-import { isProduction } from './lib/constants';
 import { Api } from './lib/managers/api';
 
 // Register fonts
@@ -74,19 +73,6 @@ client.langs.onFile = (locale, { path, file }) => file.default
 client.api = new Api((await client.getRC()).apiKeys);
 
 await client.api.getHeroes();
-
-if (isProduction) {
-    const run = async () => {
-        for (const i of await client.api.getHeroes()) {
-            client.api.logger.info(`Caching ${i.name} leaderboard`);
-            await client.api.getLeaderboardHero(i.id);
-        }
-    };
-    void run();
-    setInterval(() => {
-        void run();
-    }, 17 * 60e3);
-}
 
 await client.start();
 

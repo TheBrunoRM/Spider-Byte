@@ -119,6 +119,7 @@ export interface Ranked {
   total_deaths: number;
   total_kills: number;
   total_time_played: string;
+  total_time_played_raw: number
 }
 
 export interface Player {

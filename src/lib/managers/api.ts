@@ -120,6 +120,7 @@ export class Api {
     validator: (data: unknown) => IValidation<T>, // Validador de types
     retries: number = this.maxRetries
   ): Promise<null | T> {
+    let data: unknown;
     try {
       this.logger.debug(endpoint);
 
@@ -130,15 +131,7 @@ export class Api {
         return null;
       }
 
-      const data = await response.json();
-
-      const check = validator(data);
-
-      if (!check.success) {
-        throw new Error(check.errors.map((err) => `Expected: ${err.expected} on ${err.path}`).join('\n'));
-      }
-
-      return check.data;
+      data = await response.json();
     } catch (error) {
       if (retries > 0) {
         await delay(this.retryDelay);
@@ -146,6 +139,14 @@ export class Api {
       }
       throw error;
     }
+
+    const check = validator(data);
+
+    if (!check.success) {
+      throw new Error(check.errors.map((err) => `Expected: ${err.expected} on ${err.path}`).join('\n'));
+    }
+
+    return check.data;
   }
 
   private async fetchWithCacheRetry<T>(

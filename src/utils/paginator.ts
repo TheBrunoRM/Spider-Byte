@@ -19,7 +19,12 @@ export async function callbackPaginator<T>(ctx: CommandContext, data: T[], optio
         components: [createButtonRow(chunks, pageIndex)]
     }, true);
 
-    const collector = message.createComponentCollector(options);
+    const collector = message.createComponentCollector({
+        ...options,
+        filter(interaction) {
+            return interaction.user.id === ctx.author.id;
+        }
+    });
 
     collector.run<ButtonInteraction>('first', async (interaction) => {
         pageIndex = 0;

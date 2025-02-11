@@ -32,7 +32,7 @@ export enum HeroClass {
 }
 
 export interface HeroesRanked {
-  hero_id: number;
+  hero_id: number | null;
   hero_name: string;
   matches: number;
   wins: number;
@@ -82,7 +82,7 @@ export interface MatchHistory {
 
 export interface PlayerPerformance {
   player_uid: number;
-  hero_id: number;
+  hero_id: number | null;
   kills: number;
   deaths: number;
   assists: number;

@@ -24,6 +24,11 @@ const options = {
                     value: heroName
                 })));
             }
+
+            return interaction.respond(heroes.slice(0, 25).map((hero) => ({
+                name: hero.name,
+                value: hero.name
+            })));
         },
         async value({ value, context: ctx }, ok: OKFunction<LeaderboardPlayerHeroDTO>, fail) {
             const hero = (await ctx.client.api.getHeroes()).find((h) => h.name === value);

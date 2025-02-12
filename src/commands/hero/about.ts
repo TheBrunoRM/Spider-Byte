@@ -59,11 +59,18 @@ const options = {
                     name: heroName,
                     value: heroName
                 }));
+
             if (result.length) {
                 return interaction.respond(
                     result
                 );
             }
+
+            return interaction.respond(heroes.slice(0, 25).map((hero) => ({
+                name: hero.name,
+                value: hero.name
+            })));
+
         },
         async value({ value, context: ctx }, ok: OKFunction<HeroesDTO>, fail) {
             const hero = (await ctx.client.api.getHeroes()).find(

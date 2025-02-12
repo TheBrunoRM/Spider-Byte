@@ -1,8 +1,10 @@
 import { type ParseLocales, type ParseClient, type UsingClient, Client } from 'seyfert';
 import { PresenceUpdateStatus, ActivityType, MessageFlags } from 'seyfert/lib/types';
+import { CooldownManager } from '@slipher/cooldown';
 import { basename, join, sep } from 'node:path';
 import { GlobalFonts } from '@napi-rs/canvas';
 
+import { middlewares } from './middlewares';
 import { Api } from './lib/managers/api';
 
 // Register fonts
@@ -58,7 +60,8 @@ client.setServices({
             'es-419': ['es-ES'],
             'en-US': ['en-GB']
         }
-    }
+    },
+    middlewares
 });
 
 client.langs.filter = (path) => basename(path) === '_.ts';
@@ -71,6 +74,7 @@ client.langs.onFile = (locale, { path, file }) => file.default
     : false;
 
 client.api = new Api((await client.getRC()).apiKeys);
+client.cooldown = new CooldownManager(client);
 
 await client.api.getHeroes();
 
@@ -87,6 +91,7 @@ declare module 'seyfert' {
 
     interface UsingClient extends ParseClient<Client<true>> {
         api: Api;
+        cooldown: CooldownManager;
     }
 
     interface DefaultLocale extends ParseLocales<typeof import('./locales/en-US/_')['default']> { }

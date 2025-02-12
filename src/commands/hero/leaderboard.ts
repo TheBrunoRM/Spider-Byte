@@ -66,7 +66,8 @@ export default class Ping extends SubCommand {
                         data: await generateLeaderboard(chunk, pageIndex)
                     }]
                 };
-            }
-        }, 9);
+            },
+            pageSize: 9
+        });
     }
 }

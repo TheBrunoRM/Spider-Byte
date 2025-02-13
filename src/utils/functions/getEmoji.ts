@@ -8,9 +8,10 @@ export async function getEmoji(
     ctx: CommandContext,
     input: string
 ): Promise<APIEmoji | null> {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const emojis = (await ctx.client.applications.listEmojis(
         ctx.client.applicationId
-    )).emojis;
+    )).emojis ?? [];
 
     if (!emojis.length) {
         return null;

@@ -1,11 +1,11 @@
 import type { CommandContext } from 'seyfert';
 
 import { CooldownType, Cooldown } from '@slipher/cooldown';
-import { Command, Declare } from 'seyfert';
+import { Middlewares, Command, Declare } from 'seyfert';
 
 @Declare({
     name: 'ping',
-    description: 'pong',
+    description: 'Check the bot\'s latency',
     contexts: ['BotDM', 'Guild', 'PrivateChannel'],
     integrationTypes: ['GuildInstall', 'UserInstall']
 })
@@ -16,6 +16,7 @@ import { Command, Declare } from 'seyfert';
         default: 1
     }
 })
+@Middlewares(['cooldown'])
 export default class Ping extends Command {
     async run(ctx: CommandContext) {
         const avgLatency = ctx.client.gateway.latency;

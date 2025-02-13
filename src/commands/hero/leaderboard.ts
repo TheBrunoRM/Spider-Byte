@@ -1,6 +1,7 @@
 import type { CommandContext, OKFunction } from 'seyfert';
 
-import { createStringOption, SubCommand, Declare, Options } from 'seyfert';
+import { createStringOption, Middlewares, SubCommand, Declare, Options } from 'seyfert';
+import { CooldownType, Cooldown } from '@slipher/cooldown';
 import didYouMean, { ReturnTypeEnums } from 'didyoumean2';
 
 import type { LeaderboardPlayerHeroDTO } from '../../types/dtos/LeaderboardPlayerHeroDTO';
@@ -9,7 +10,7 @@ import { generateLeaderboard } from '../../utils/images/leaderboard';
 import { callbackPaginator } from '../../utils/paginator';
 
 const options = {
-    query: createStringOption({
+    hero: createStringOption({
         description: 'The hero you want to get information about',
         async autocomplete(interaction) {
             const heroes = await interaction.client.api.getHeroes();
@@ -52,6 +53,14 @@ const options = {
     description: 'View a specific heros leaderboard'
 })
 @Options(options)
+@Cooldown({
+  type: CooldownType.User,
+  interval: 1_000 * 15,
+  uses: {
+    default: 1
+  }
+})
+@Middlewares(['cooldown'])
 export default class Ping extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
         await ctx.deferReply();
@@ -59,11 +68,11 @@ export default class Ping extends SubCommand {
         await ctx.editOrReply({
             files: [{
                 filename: 'leaderboard.png',
-                data: await generateLeaderboard(ctx.options.query.players, 0)
+                data: await generateLeaderboard(ctx.options.hero.players, 0)
             }]
         });
 
-        await callbackPaginator(ctx, ctx.options.query.players, {
+        await callbackPaginator(ctx, ctx.options.hero.players, {
             async callback(chunk, pageIndex) {
                 return {
                     files: [{

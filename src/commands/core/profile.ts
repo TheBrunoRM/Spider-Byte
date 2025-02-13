@@ -1,4 +1,5 @@
-import { type CommandContext, createStringOption, SubCommand, Declare, Options } from 'seyfert';
+import { type CommandContext, createStringOption, Middlewares, SubCommand, Declare, Options } from 'seyfert';
+import { CooldownType, Cooldown } from '@slipher/cooldown';
 
 const options = {
   'name-or-id': createStringOption({
@@ -8,9 +9,17 @@ const options = {
 
 @Declare({
   name: 'profile',
-  description: 'get player profile'
+  description: 'Get player stats like roles, rank, top heroes, and more'
 })
 @Options(options)
+@Cooldown({
+  type: CooldownType.User,
+  interval: 1_000 * 15,
+  uses: {
+    default: 1
+  }
+})
+@Middlewares(['cooldown'])
 export default class ProfileCommand extends SubCommand {
   async run(ctx: CommandContext<typeof options>) {
     await ctx.deferReply();

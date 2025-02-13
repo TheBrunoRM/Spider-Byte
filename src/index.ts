@@ -1,4 +1,4 @@
-import { type ParseLocales, type ParseClient, type UsingClient, Client } from 'seyfert';
+import { type ParseMiddlewares, type ParseLocales, type ParseClient, type UsingClient, Client } from 'seyfert';
 import { PresenceUpdateStatus, ActivityType, MessageFlags } from 'seyfert/lib/types';
 import { CooldownManager } from '@slipher/cooldown';
 import { basename, join, sep } from 'node:path';
@@ -88,6 +88,9 @@ await client.uploadCommands({
 });
 
 declare module 'seyfert' {
+    interface RegisteredMiddlewares
+        extends ParseMiddlewares<typeof middlewares> { }
+
     interface ExtendedRC {
         apiKeys: string[];
     }

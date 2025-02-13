@@ -1,5 +1,5 @@
+import { Middlewares, AutoLoad, Declare, Command } from 'seyfert';
 import { CooldownType, Cooldown } from '@slipher/cooldown';
-import { AutoLoad, Declare, Command } from 'seyfert';
 
 
 @Declare({
@@ -16,4 +16,5 @@ import { AutoLoad, Declare, Command } from 'seyfert';
     }
 })
 @AutoLoad()
+@Middlewares(['cooldown'])
 export default class HeroCommand extends Command { }

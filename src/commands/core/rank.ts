@@ -1,5 +1,4 @@
-import { type CommandContext, createStringOption, Middlewares, SubCommand, Declare, Options } from 'seyfert';
-import { CooldownType, Cooldown } from '@slipher/cooldown';
+import { type CommandContext, createStringOption, SubCommand, Declare, Options } from 'seyfert';
 
 import { generateRankGraph } from '../../utils/images/ranked';
 
@@ -14,14 +13,6 @@ const options = {
     description: 'Get player rank timeline graph'
 })
 @Options(options)
-@Cooldown({
-  type: CooldownType.User,
-  interval: 1_000 * 15,
-  uses: {
-    default: 1
-  }
-})
-@Middlewares(['cooldown'])
 export default class RankCommand extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
         await ctx.deferReply();

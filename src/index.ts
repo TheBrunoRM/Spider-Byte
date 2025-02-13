@@ -1,8 +1,9 @@
 import { type ParseMiddlewares, type ParseLocales, type ParseClient, type UsingClient, Client } from 'seyfert';
 import { PresenceUpdateStatus, ActivityType, MessageFlags } from 'seyfert/lib/types';
-import { CooldownManager } from '@slipher/cooldown';
 import { basename, join, sep } from 'node:path';
 import { GlobalFonts } from '@napi-rs/canvas';
+
+import type { Ratelimit } from './middlewares/cooldown';
 
 import { middlewares } from './middlewares';
 import { Api } from './lib/managers/api';
@@ -74,10 +75,6 @@ client.langs.onFile = (locale, { path, file }) => file.default
     : false;
 
 client.api = new Api((await client.getRC()).apiKeys);
-client.cooldown = new CooldownManager(
-    // @ts-expect-error
-    client
-);
 
 await client.api.getHeroes();
 
@@ -97,8 +94,14 @@ declare module 'seyfert' {
 
     interface UsingClient extends ParseClient<Client<true>> {
         api: Api;
-        cooldown: CooldownManager;
     }
 
     interface DefaultLocale extends ParseLocales<typeof import('./locales/en-US/_')['default']> { }
+
+    interface Command {
+        ratelimit: Ratelimit;
+    }
+    interface SubCommand {
+        ratelimit: Ratelimit;
+    }
 }

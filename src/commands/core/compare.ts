@@ -1,5 +1,4 @@
-import { type CommandContext, createStringOption, Middlewares, SubCommand, Declare, Options } from 'seyfert';
-import { CooldownType, Cooldown } from '@slipher/cooldown';
+import { type CommandContext, createStringOption, SubCommand, Declare, Options } from 'seyfert';
 
 // import { comparePlayers } from '../../utils/functions/comparePlayers';
 import { getEmoji } from '../../utils/functions/getEmoji';
@@ -18,14 +17,6 @@ const options = {
     description: 'Compare the statistics of two players'
 })
 @Options(options)
-@Cooldown({
-    type: CooldownType.User,
-    interval: 1_000 * 60,
-    uses: {
-        default: 2
-    }
-})
-@Middlewares(['cooldown'])
 export default class CompareCommand extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
         await ctx.deferReply();

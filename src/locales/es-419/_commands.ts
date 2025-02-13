@@ -7,7 +7,8 @@ const commands = {
     middlewares: {
         cooldown: {
             error: {
-                content: (remaining) => `:clock1: Estás en enfriamiento. Por favor espera ${remaining} antes de usar este comando de nuevo.`
+                user: (remaining) => `:clock1: Estás en enfriamiento para este comando. Por favor, espera ${remaining} antes de usar este comando nuevamente.`,
+                channel: (remaining) => `:clock1: Este canal está en enfriamiento para este comando. Por favor, espera ${remaining} antes de usar este comando nuevamente.`
             }
         }
     }

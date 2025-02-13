@@ -1,7 +1,8 @@
 import type { CommandContext } from 'seyfert';
 
-import { CooldownType, Cooldown } from '@slipher/cooldown';
 import { Middlewares, Command, Declare } from 'seyfert';
+
+import { ApplyCooldown } from '../middlewares/cooldown';
 
 @Declare({
     name: 'ping',
@@ -9,12 +10,9 @@ import { Middlewares, Command, Declare } from 'seyfert';
     contexts: ['BotDM', 'Guild', 'PrivateChannel'],
     integrationTypes: ['GuildInstall', 'UserInstall']
 })
-@Cooldown({
-    type: CooldownType.User,
-    interval: 5_000,
-    uses: {
-        default: 1
-    }
+@ApplyCooldown({
+    time: 5_000,
+    type: 'user'
 })
 @Middlewares(['cooldown'])
 export default class Ping extends Command {

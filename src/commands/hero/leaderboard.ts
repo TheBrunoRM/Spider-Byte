@@ -1,7 +1,6 @@
 import type { CommandContext, OKFunction } from 'seyfert';
 
-import { createStringOption, Middlewares, SubCommand, Declare, Options } from 'seyfert';
-import { CooldownType, Cooldown } from '@slipher/cooldown';
+import { createStringOption, SubCommand, Declare, Options } from 'seyfert';
 import didYouMean, { ReturnTypeEnums } from 'didyoumean2';
 
 import type { LeaderboardPlayerHeroDTO } from '../../types/dtos/LeaderboardPlayerHeroDTO';
@@ -53,14 +52,6 @@ const options = {
     description: 'View a specific heros leaderboard'
 })
 @Options(options)
-@Cooldown({
-  type: CooldownType.User,
-  interval: 1_000 * 15,
-  uses: {
-    default: 1
-  }
-})
-@Middlewares(['cooldown'])
 export default class Ping extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
         await ctx.deferReply();

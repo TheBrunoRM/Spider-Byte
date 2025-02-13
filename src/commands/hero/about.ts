@@ -5,7 +5,6 @@ import {
     createStringOption,
     StringSelectOption,
     StringSelectMenu,
-    Middlewares,
     SubCommand,
     ActionRow,
     Declare,
@@ -13,7 +12,6 @@ import {
     Embed
 } from 'seyfert';
 import { type CommandContext, type OKFunction, Button } from 'seyfert';
-import { CooldownType, Cooldown } from '@slipher/cooldown';
 import didYouMean, { ReturnTypeEnums } from 'didyoumean2';
 import { ButtonStyle } from 'seyfert/lib/types';
 
@@ -94,14 +92,6 @@ const options = {
     description: 'Get information about a hero, like abilities, role, and more'
 })
 @Options(options)
-@Cooldown({
-  type: CooldownType.User,
-  interval: 1_000 * 15,
-  uses: {
-    default: 1
-  }
-})
-@Middlewares(['cooldown'])
 export default class About extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
         const hero = ctx.options.name;

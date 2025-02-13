@@ -2,7 +2,8 @@ export const commands = {
     middlewares: {
         cooldown: {
             error: {
-                content: (remaining: string) => `:clock1: You are on cooldown. Please wait ${remaining} before using this command again.`
+                user: (remaining: string) => `:clock1: You are on cooldown for this command. Please wait ${remaining} before using this command again.`,
+                channel: (remaining: string) => `:clock1: This channel is on cooldown for this command. Please wait ${remaining} before using this command again.`
             }
         }
     },

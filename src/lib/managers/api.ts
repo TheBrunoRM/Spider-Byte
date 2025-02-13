@@ -3,6 +3,7 @@ import { type IValidation, createValidate } from 'typia';
 import { LimitedCollection } from 'seyfert';
 
 import type { LeaderboardPlayerHeroDTO } from '../../types/dtos/LeaderboardPlayerHeroDTO';
+import type { FormattedPatch, PatchNotesDTO } from '../../types/dtos/PatchNotesDTO';
 import type { FindedPlayerDTO } from '../../types/dtos/FindedPlayerDTO';
 import type { MatchHistoryDTO } from '../../types/dtos/MatchHistoryDTO';
 import type { HeroesDTO } from '../../types/dtos/HeroesDTO';
@@ -11,13 +12,14 @@ import type { HeroDTO } from '../../types/dtos/HeroDTO';
 
 import { isProduction } from '../constants';
 
-// Funciones de validación de tipos
 export const isHeroes = createValidate<HeroesDTO[]>();
 export const isHero = createValidate<HeroDTO>();
 export const isPlayer = createValidate<PlayerDTO>();
 export const isFindedPlayer = createValidate<FindedPlayerDTO>();
 export const isMatchHistory = createValidate<MatchHistoryDTO>();
 export const isLeaderboardPlayerHero = createValidate<LeaderboardPlayerHeroDTO>();
+export const isPatchNotes = createValidate<PatchNotesDTO>();
+export const isFormattedPatch = createValidate<FormattedPatch>();
 
 export class Api {
   logger = new Logger({
@@ -37,6 +39,9 @@ export class Api {
     leaderboardPlayerHero: new LimitedCollection<string, LeaderboardPlayerHeroDTO | null>({
       expire: 15 * 60e3
     }),
+    patchNotes: new LimitedCollection<string, PatchNotesDTO | null>({
+      expire: 60 * 60e3
+    }),
     heroes: [] as HeroesDTO[]
   };
 
@@ -54,6 +59,10 @@ export class Api {
 
   constructor(private readonly apiKeys: string[]) { }
 
+  public buildImage(path: string) {
+    return `${this.cdnUrl}${path}`;
+  }
+
   private rotateApiKey() {
     const i = this.apiKeyIndex++;
     if (this.apiKeyIndex >= this.apiKeys.length) {
@@ -62,10 +71,15 @@ export class Api {
     return this.apiKeys[i];
   }
 
-  // Métodos públicos para los endpoints
+  // Patch Notes
+  public getPatchNotesById(id: string) {
+    return this.fetchWithRetry(`patch-note/${id}`, isFormattedPatch);
+  }
 
-  public buildImage(path: string) {
-    return `${this.cdnUrl}${path}`;
+  public getPatchNotes() {
+    return this.fetchWithCacheRetry(
+      'patch-notes', isPatchNotes, this.cache.patchNotes
+    );
   }
 
   // Players

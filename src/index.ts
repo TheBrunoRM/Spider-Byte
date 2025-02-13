@@ -74,7 +74,10 @@ client.langs.onFile = (locale, { path, file }) => file.default
     : false;
 
 client.api = new Api((await client.getRC()).apiKeys);
-client.cooldown = new CooldownManager(client);
+client.cooldown = new CooldownManager(
+    // @ts-expect-error
+    client
+);
 
 await client.api.getHeroes();
 

@@ -10,7 +10,7 @@ export async function getEmoji(
 ): Promise<APIEmoji | null> {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const emojis = (await ctx.client.applications.listEmojis(
-        ctx.client.applicationId
+        ctx.client.botId
     )).emojis ?? [];
 
     if (!emojis.length) {

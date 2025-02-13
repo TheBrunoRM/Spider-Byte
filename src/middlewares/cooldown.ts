@@ -15,7 +15,10 @@ export default createMiddleware<void>(({ context, next, stop }) => {
     );
 
     if (typeof inCooldown === 'number') {
-        stop(`:clock1: You are in cooldown. Please wait ${Formatter.timestamp(new Date(Date.now() + inCooldown), TimestampStyle.RelativeTime)} before using this command again.`);
+        const remaining = Formatter.timestamp(new Date(Date.now() + inCooldown), TimestampStyle.RelativeTime);
+        stop(
+            context.t.commands.middlewares.cooldown.error.content(remaining).get()
+        );
         return;
     }
 

@@ -55,7 +55,7 @@ export default class RankCommand extends SubCommand {
                 baseEmbed
                     .setTitle(patchData.formatted_patches[0].title)
                     .setDescription(patchData.formatted_patches[0].overview)
-                    // .setImage(ctx.client.api.buildImage(patchData.formatted_patches[0].imagePath)) FIXME: This is not working
+                    .setImage(ctx.client.api.buildImage(patchData.formatted_patches[0].imagePath))
                     .setFooter({
                         text: `Page 1/${patchData.formatted_patches.length} | ${patchData.formatted_patches[0].date}`
                     })
@@ -68,7 +68,7 @@ export default class RankCommand extends SubCommand {
                 const embed = baseEmbed
                     .setTitle(selected.title)
                     .setDescription(selected.overview)
-                    // .setImage(ctx.client.api.buildImage(selected.imagePath)) FIXME: This is not working
+                    .setImage(ctx.client.api.buildImage(selected.imagePath))
                     .setFooter({
                         text: `Page ${pageIndex + 1}/${patchData.formatted_patches.length} | ${selected.date}`
                     });

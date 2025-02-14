@@ -1,7 +1,7 @@
 import { type CommandContext, createStringOption, SubCommand, Declare, Options } from 'seyfert';
 
+import { generateCompare } from '../../utils/images/compare';
 // import { comparePlayers } from '../../utils/functions/comparePlayers';
-import { getEmoji } from '../../utils/functions/getEmoji';
 
 const options = {
     'name-or-id': createStringOption({
@@ -29,19 +29,21 @@ export default class CompareCommand extends SubCommand {
             });
         }
 
-        const playerOneData = await ctx.client.api.getPlayer(firsrTameOrId);
-        const playerTwoData = await ctx.client.api.getPlayer(secondNameOrId);
-        if (!playerOneData || !playerTwoData) {
+        const playerOne = await ctx.client.api.getPlayer(firsrTameOrId);
+        const playerTwo = await ctx.client.api.getPlayer(secondNameOrId);
+        if (!playerOne || !playerTwo) {
             return ctx.editOrReply({
                 content: 'Player not found. Please provide a valid player name or id'
             });
         }
 
-        // const comparison = comparePlayers(playerOneData, playerTwoData);
-        console.log(await getEmoji(ctx, 'SilverRank'));
+        const image = await generateCompare([playerOne, playerTwo]);
 
         return ctx.editOrReply({
-            content: 'Command under development. Please check back later. Sorry for the inconvenience'
+            files: [{
+                data: image,
+                filename: 'compare.png'
+            }]
         });
 
     }

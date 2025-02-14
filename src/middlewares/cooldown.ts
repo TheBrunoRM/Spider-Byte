@@ -5,12 +5,11 @@ import { createMiddleware, Formatter } from 'seyfert';
 
 const cooldowns = new LimitedCollection<Snowflake, Ratelimit>({});
 
-// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
-export default createMiddleware<void>(({ context, next, stop }) => {
+export default createMiddleware<undefined>(({ context, next, stop, pass }) => {
     if (!context.isChat()) {
-        return;
+        pass(); return;
     }
-    const commandCooldown = context.resolver.parent?.ratelimit;
+    const commandCooldown = context.resolver.parent?.props.ratelimit;
     if (!commandCooldown) {
         next(); return;
     }
@@ -46,11 +45,6 @@ export default createMiddleware<void>(({ context, next, stop }) => {
     next();
 });
 
-export function ApplyCooldown(data: Ratelimit) {
-    return <T extends new (...args: any[]) => {}>(target: T) => class extends target {
-        ratelimit = data;
-    };
-}
 export interface Ratelimit {
     type: 'channel' | 'user';
     time: number;

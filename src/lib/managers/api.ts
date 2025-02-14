@@ -31,10 +31,10 @@ export class Api {
 
   cache = {
     searchPlayer: new LimitedCollection<string, FindedPlayerDTO | null>({
-      expire: 60e3
+      expire: 15 * 60e3
     }),
     fetchPlayer: new LimitedCollection<string, PlayerDTO | null>({
-      expire: 60e3
+      expire: 15 * 60e3
     }),
     leaderboardPlayerHero: new LimitedCollection<string, LeaderboardPlayerHeroDTO | null>({
       expire: 15 * 60e3

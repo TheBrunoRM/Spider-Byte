@@ -2,17 +2,17 @@ import type { CommandContext } from 'seyfert';
 
 import { Middlewares, Command, Declare } from 'seyfert';
 
-import { ApplyCooldown } from '../middlewares/cooldown';
-
 @Declare({
     name: 'ping',
     description: 'Check the bot\'s latency',
     contexts: ['BotDM', 'Guild', 'PrivateChannel'],
-    integrationTypes: ['GuildInstall', 'UserInstall']
-})
-@ApplyCooldown({
-    time: 5_000,
-    type: 'user'
+    integrationTypes: ['GuildInstall', 'UserInstall'],
+    props: {
+        ratelimit: {
+            time: 5_000,
+            type: 'user'
+        }
+    }
 })
 @Middlewares(['cooldown'])
 export default class Ping extends Command {

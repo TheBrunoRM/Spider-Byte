@@ -25,7 +25,7 @@ export async function generateRankGraph(data: RankHistory[], player: PlayerDTO) 
     const canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
     const ctx = canvas.getContext('2d');
 
-    const background = await loadImage(await Bun.file(join(process.cwd(), 'assets', 'spider_background.png')).bytes());
+    const background = await loadImage(await Bun.file(join(process.cwd(), 'assets', 'rank', 'background.png')).bytes());
     ctx.drawImage(background, 0, 0);
 
     const scores = data.map((d) => d.score_progression.total_score);

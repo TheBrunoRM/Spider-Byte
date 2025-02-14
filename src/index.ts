@@ -98,10 +98,7 @@ declare module 'seyfert' {
 
     interface DefaultLocale extends ParseLocales<typeof import('./locales/en-US/_')['default']> { }
 
-    interface Command {
-        ratelimit: Ratelimit;
-    }
-    interface SubCommand {
-        ratelimit: Ratelimit;
+    interface ExtraProps {
+        ratelimit?: Ratelimit;
     }
 }

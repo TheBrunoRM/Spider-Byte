@@ -52,7 +52,8 @@ const client = new Client({
             since: Date.now(),
             status: PresenceUpdateStatus.Online
         };
-    }
+    },
+    globalMiddlewares: ['cooldown']
 }) as UsingClient & Client;
 
 client.setServices({

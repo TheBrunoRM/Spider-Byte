@@ -65,7 +65,13 @@ export async function generateCompare(players: [PlayerDTO, PlayerDTO]) {
             const statText = `${playerStats.values.at(j)?.toFixed(2).replace('.00', '')}`;// lmao
             const statMetrics = ctx.measureText(statText);
 
-            if (playerStats.values.at(j)! > otherPlayerStats.values.at(j)!) {
+            if (j === 4) {
+                if (otherPlayerStats.values.at(j)! > playerStats.values.at(j)!) {
+                    ctx.fillStyle = '#dfb540';
+                } else {
+                    ctx.fillStyle = 'white';
+                }
+            } else if (playerStats.values.at(j)! > otherPlayerStats.values.at(j)!) {
                 ctx.fillStyle = '#dfb540';
             } else {
                 ctx.fillStyle = 'white';

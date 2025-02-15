@@ -1,4 +1,4 @@
-import { commands } from './_commands.ts';
+import { commands } from './commands.ts';
 
 export default {
     commands

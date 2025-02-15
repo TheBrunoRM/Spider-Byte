@@ -1,6 +1,6 @@
 import type { CommandContext } from 'seyfert';
 
-import { Middlewares, Command, Declare } from 'seyfert';
+import { Command, Declare } from 'seyfert';
 
 @Declare({
     name: 'ping',
@@ -14,7 +14,6 @@ import { Middlewares, Command, Declare } from 'seyfert';
         }
     }
 })
-@Middlewares(['cooldown'])
 export default class Ping extends Command {
     async run(ctx: CommandContext) {
         const avgLatency = ctx.client.gateway.latency;

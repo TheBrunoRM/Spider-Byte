@@ -1,4 +1,4 @@
-import type { commands as English } from '../en-US/_commands.ts';
+import type { commands as English } from '../en-US/commands.ts';
 
 const commands = {
     ping: {

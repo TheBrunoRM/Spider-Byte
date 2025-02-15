@@ -1,24 +1,20 @@
+import type { ApplicationEmojiStructure, CommandContext } from 'seyfert';
 import type { MakeRequired } from 'seyfert/lib/common';
-import type { APIEmoji } from 'seyfert/lib/types';
-import type { CommandContext } from 'seyfert';
 
 import didYouMean, { ReturnTypeEnums } from 'didyoumean2';
 
 export async function getEmoji(
     ctx: CommandContext,
     input: string
-): Promise<APIEmoji | null> {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const emojis = (await ctx.client.applications.listEmojis(
-        ctx.client.botId
-    )).emojis ?? [];
+): Promise<ApplicationEmojiStructure | null> {
+    const emojis = await ctx.client.applications.listEmojis();
 
     if (!emojis.length) {
         return null;
     }
 
     const emojiNames = emojis
-        .filter((emoji): emoji is MakeRequired<APIEmoji, 'name'> => !emoji.name)
+        .filter((emoji): emoji is MakeRequired<ApplicationEmojiStructure, 'name'> => !emoji.name)
         .map((emoji) => emoji.name);
 
     const result = didYouMean(input, emojiNames, {

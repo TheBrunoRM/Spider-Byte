@@ -1,4 +1,4 @@
-import { Middlewares, AutoLoad, Declare, Command } from 'seyfert';
+import { AutoLoad, Declare, Command } from 'seyfert';
 
 @Declare({
     name: 'game',
@@ -12,6 +12,5 @@ import { Middlewares, AutoLoad, Declare, Command } from 'seyfert';
         }
     }
 })
-@Middlewares(['cooldown'])
 @AutoLoad()
 export default class GameCommand extends Command { }

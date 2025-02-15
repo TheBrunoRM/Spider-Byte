@@ -1,7 +1,6 @@
 import { type CommandContext, createStringOption, SubCommand, Declare, Options } from 'seyfert';
 
 import { generateCompare } from '../../utils/images/compare';
-// import { comparePlayers } from '../../utils/functions/comparePlayers';
 
 const options = {
     'name-or-id': createStringOption({
@@ -21,19 +20,25 @@ export default class CompareCommand extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
         await ctx.deferReply();
 
-        const firsrTameOrId = ctx.options['name-or-id'];
+        const firstNameOrId = ctx.options['name-or-id'];
         const secondNameOrId = ctx.options['name-or-id2'];
-        if (!firsrTameOrId || !secondNameOrId || firsrTameOrId === secondNameOrId) {
+        if (!firstNameOrId || !secondNameOrId || firstNameOrId === secondNameOrId) {
             return ctx.editOrReply({
                 content: 'Please provide two different player names or ids to compare'
             });
         }
 
-        const playerOne = await ctx.client.api.getPlayer(firsrTameOrId);
+        const playerOne = await ctx.client.api.getPlayer(firstNameOrId);
         const playerTwo = await ctx.client.api.getPlayer(secondNameOrId);
         if (!playerOne || !playerTwo) {
             return ctx.editOrReply({
                 content: 'Player not found. Please provide a valid player name or id'
+            });
+        }
+
+        if (playerOne.uid === playerTwo.uid) {
+            return ctx.editOrReply({
+                content: 'Please provide two different player names or ids to compare'
             });
         }
 

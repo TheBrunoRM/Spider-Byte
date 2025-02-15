@@ -9,7 +9,6 @@ export async function loadIcon(iconID: string) {
     if (await file.exists()) {
         return loadImage(path);
     }
-
     const response = await fetch(`https://marvelrivalsapi.com/rivals/players/heads/player_head_${iconID}.png`);
     const bytes = await response.bytes();
     await Bun.write(path, bytes);
@@ -22,7 +21,6 @@ export async function loadRankIcon(level: number) {
     if (await file.exists()) {
         return loadImage(path);
     }
-
     const { imageURL } = getRank(level);
     const response = await fetch(imageURL);
     const bytes = await response.bytes();

@@ -10,12 +10,13 @@ export async function callbackPaginator<T>(ctx: CommandContext, data: T[], optio
     callback: (data: T[], pageIndex: number) => Awaitable<ComponentInteractionMessageUpdate>;
     pageSize: number;
 } & ListenerOptions = {
-        idle: 60e3,
         callback() {
             return {};
         },
         pageSize: 10
     }) {
+    options.idle ??= 60e3;
+
     const chunks = DynamicBucket.chunk(data, options.pageSize);
 
     let pageIndex = 0;
@@ -26,6 +27,13 @@ export async function callbackPaginator<T>(ctx: CommandContext, data: T[], optio
     const collector = message.createComponentCollector({
         filter(interaction) {
             return interaction.user.id === ctx.author.id;
+        },
+        async onStop(reason) {
+            if (reason === 'idle' || reason === 'timeout') {
+                await ctx.editResponse({
+                    components: [createButtonRow(chunks, pageIndex, true)]
+                }).catch(() => null);
+            }
         },
         ...options
     });
@@ -46,7 +54,6 @@ export async function callbackPaginator<T>(ctx: CommandContext, data: T[], optio
     });
     collector.run<ButtonInteraction>('stop', async () => {
         collector.stop('user_interaction');
-        // await interaction.deferUpdate();
         const content = await options.callback(chunks[pageIndex], pageIndex);
         content.components = [createButtonRow(chunks, pageIndex, true)];
         await ctx.editResponse(content);
@@ -84,12 +91,12 @@ function createButtonRow<T>(chunks: T[][], pageIndex = 0, disabled?: true) {
         }),
         createButton({
             custom_id: 'back',
-            label: '<-',
+            label: '◀️',
             disabled: pageIndex === 0 || disabled
         }),
         createButton({
             custom_id: 'next',
-            label: '->',
+            label: '▶️',
             disabled: pageIndex + 1 === chunks.length || disabled
         }),
         createButton({
@@ -99,7 +106,7 @@ function createButtonRow<T>(chunks: T[][], pageIndex = 0, disabled?: true) {
         }),
         createButton({
             custom_id: 'stop',
-            label: 'Stop',
+            label: '🛑',
             disabled
         })
     ];

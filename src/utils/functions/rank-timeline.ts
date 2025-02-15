@@ -22,23 +22,6 @@ export const rankedColors: string[] = [
     '#FF4F4D' // One Above All
 ];
 
-export function createRankTimeline(rankHistory: RankHistoryEntry[]): TimelineEntry[] {
-    const timeline: TimelineEntry[] = [];
-
-    rankHistory.forEach((entry) => {
-        const { match_time_stamp, level_progression, score_progression } = entry;
-
-        timeline.push({
-            timestamp: match_time_stamp,
-            lastRank: getRank(level_progression.from).rank,
-            newRank: getRank(level_progression.to).rank,
-            totalScore: score_progression.total_score
-        });
-    });
-
-    return timeline;
-}
-
 export function getRank(level: number): RankInfo {
     const ranks: {
         name: string;

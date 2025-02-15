@@ -1,3 +1,5 @@
+import type { Image } from '@napi-rs/canvas';
+
 import { type SKRSContext2D, createCanvas, loadImage } from '@napi-rs/canvas';
 import { join } from 'node:path';
 
@@ -5,11 +7,16 @@ import type { LeaderboardPlayerHeroDTO } from '../../types/dtos/LeaderboardPlaye
 
 import { loadRankIcon, loadIcon } from './_';
 
+let first: Image | null = null;
+let second: Image | null = null;
+let third: Image | null = null;
+let background: Image | null = null;
+
 export async function generateLeaderboard(data: LeaderboardPlayerHeroDTO['players'], page: number) {
-    const first = await loadImage(join(process.cwd(), 'assets', 'leaderboard', 'crowns', 'first.png'));
-    const second = await loadImage(join(process.cwd(), 'assets', 'leaderboard', 'crowns', 'second.png'));
-    const third = await loadImage(join(process.cwd(), 'assets', 'leaderboard', 'crowns', 'third.png'));
-    const background = await loadImage(join(process.cwd(), 'assets', 'leaderboard', 'blur_background.png'));
+    first ??= await loadImage(join(process.cwd(), 'assets', 'leaderboard', 'crowns', 'first.png'));
+    second ??= await loadImage(join(process.cwd(), 'assets', 'leaderboard', 'crowns', 'second.png'));
+    third ??= await loadImage(join(process.cwd(), 'assets', 'leaderboard', 'crowns', 'third.png'));
+    background ??= await loadImage(join(process.cwd(), 'assets', 'leaderboard', 'blur_background.png'));
 
     const canvas = createCanvas(900, 600);
     const ctx = canvas.getContext('2d');
@@ -91,4 +98,3 @@ function drawLine(ctx: SKRSContext2D, fromX: number, fromY: number, toX: number,
     ctx.lineTo(toX, toY);
     ctx.stroke();
 }
-

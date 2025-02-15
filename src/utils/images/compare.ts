@@ -1,3 +1,5 @@
+import type { Image } from '@napi-rs/canvas';
+
 import { createCanvas, loadImage } from '@napi-rs/canvas';
 import { join } from 'node:path';
 
@@ -7,9 +9,10 @@ import { loadIcon } from './_';
 
 const Y_ICON = 84;
 const Y_NAME = 221;
+let background: Image | null = null;
 
 export async function generateCompare(players: [PlayerDTO, PlayerDTO]) {
-    const background = await loadImage(join(process.cwd(), 'assets', 'compare', 'background.png'));
+    background ??= await loadImage(join(process.cwd(), 'assets', 'compare', 'background.png'));
 
     const canvas = createCanvas(background.width, background.height);
     const ctx = canvas.getContext('2d');

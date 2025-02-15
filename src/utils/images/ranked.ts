@@ -1,4 +1,4 @@
-import type { SKRSContext2D } from '@napi-rs/canvas';
+import type { SKRSContext2D, Image } from '@napi-rs/canvas';
 
 import { createCanvas, loadImage } from '@napi-rs/canvas';
 import { join } from 'node:path';
@@ -18,6 +18,7 @@ const FONT_COLOR_WHITE = 'white';
 const FONT_COLOR_GRAY = '#C9C9C9';
 const LINE_WIDTH = 5;
 const PADDING = 20;
+let background: Image | null = null;
 
 export async function generateRankGraph(data: RankHistory[], player: PlayerDTO) {
     data = data.toReversed().slice(0, 15);
@@ -25,7 +26,7 @@ export async function generateRankGraph(data: RankHistory[], player: PlayerDTO) 
     const canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
     const ctx = canvas.getContext('2d');
 
-    const background = await loadImage(await Bun.file(join(process.cwd(), 'assets', 'rank', 'background.png')).bytes());
+    background ??= await loadImage(await Bun.file(join(process.cwd(), 'assets', 'rank', 'background.png')).bytes());
     ctx.drawImage(background, 0, 0);
 
     const scores = data.map((d) => d.score_progression.total_score);
@@ -33,7 +34,6 @@ export async function generateRankGraph(data: RankHistory[], player: PlayerDTO) 
     const maxScore = Math.max(...scores);
     const normalizeScore = (score: number) => (score - minScore) / (maxScore - minScore) * (CANVAS_HEIGHT / 2 - PADDING);
 
-    // Draw rank information
     const currentRank = player.player.rank;
     const score = player.rank_history.at(-1)?.score_progression.total_score.toFixed(0);
 
@@ -63,7 +63,6 @@ export async function generateRankGraph(data: RankHistory[], player: PlayerDTO) 
         ctx.fillText(pointsText, pointsX, pointsY);
     }
 
-    // Draw rank progression lines and images
     for (let i = 0; i < data.length; i++) {
         const before = data.at(i - 1);
         const actual = data[i];

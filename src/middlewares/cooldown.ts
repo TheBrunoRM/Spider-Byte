@@ -4,7 +4,7 @@ import { LimitedCollection } from 'seyfert/lib/collection';
 import { createMiddleware, Formatter } from 'seyfert';
 
 const cooldowns = new LimitedCollection<Snowflake, Ratelimit>({});
-const whitelist = new Set(['507367752391196682']);
+const whitelist = new Set(['507367752391196682', '221399196480045056']);
 
 export default createMiddleware<undefined>(({ context, next, stop, pass }) => {
     if (whitelist.has(context.author.id)) {

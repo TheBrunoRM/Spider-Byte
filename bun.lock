@@ -6,13 +6,13 @@
       "dependencies": {
         "@napi-rs/canvas": "^0.1.67",
         "didyoumean2": "^7.0.4",
-        "@marcrock22/eslint": "github:marcrock22/eslintcf",
         "seyfert": "^2.2.1-dev-13340711253.0",
         "sharp": "^0.33.5",
       },
       "devDependencies": {
         "@types/bun": "^1.2.2",
         "eslint": "^9.20.1",
+        "@marcrock22/eslint": "github:marcrock22/eslintcf",
         "rimraf": "^6.0.1",
         "ts-patch": "^3.3.0",
         "typescript-eslint": "^8.24.0",

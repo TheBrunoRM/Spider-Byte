@@ -15,10 +15,12 @@ export const commands = {
         }
     },
     ping: {
+        name: 'ping',
         content: (latency: number) => `Ping: ${latency}ms. Current server latency.`
     },
     core: {
         compare: {
+            name: 'compare',
             description: 'Compare stats of two players, including ranks, roles, and top heroes.',
             samePlayer: 'Same player provided twice. Use two different names or IDs.',
             options: {
@@ -27,32 +29,39 @@ export const commands = {
             }
         },
         profile: {
+            name: 'profile',
             description: 'Get detailed stats like roles, rank, and top heroes for a player.'
         },
         rank: {
+            name: 'rank',
             description: 'View a timeline graph of a player\'s rank history.',
-            noRankHistory: (playerName: string, clubTeamId: string, uid: string) => `**${playerName}${clubTeamId === ''
+            noRankHistory: (playerName: string, clubTeamId: string, uid: number) => `**${playerName}${clubTeamId === ''
                 ? '** '
                 : `#${clubTeamId}** `}(${uid}) has no rank history.`
         }
     },
     game: {
         patchNotes: {
-            description: 'Get the latest patch notes or for a specific ID.',
+            name: 'patch-notes',
+            description: 'Get the latest patch notes or patch notes for a specific ID.',
             notFound: (id: string) => `Patch notes with ID ${id} not found. Check the ID and try again.`,
             noPatchNotes: 'No patch notes available at the moment.',
-            options: 'The patch notes ID to retrieve specific updates.'
+            options: {
+                id: 'The patch notes ID to retrieve specific updates.'
+            }
         }
     },
     hero: {
         about: {
+            name: 'about',
             description: 'Get detailed info about a hero, including abilities and stats.',
             notFound: (heroName: string) => `Hero ${heroName} not found. Check the name and try again.`,
             options: {
-                hero: 'The hero name to retrieve information about.'
+                name: 'The hero name to retrieve information about.'
             }
         },
         leaderboard: {
+            name: 'leaderboard',
             description: 'View the leaderboard for a specific hero.',
             notFound: 'No leaderboard found for this hero.',
             options: {

@@ -1,17 +1,21 @@
-import { type CommandContext, createStringOption, SubCommand, Declare, Options } from 'seyfert';
+import { type CommandContext, createStringOption, SubCommand, LocalesT, Declare, Options } from 'seyfert';
 
 import { generateRankGraph } from '../../utils/images/ranked';
 
 const options = {
     'name-or-id': createStringOption({
-        description: 'player name or id'
+        description: 'Enter the player name or ID to identify the player.',
+        locales: {
+            description: 'commands.commonOptions.nameOrId'
+        }
     })
 };
 
 @Declare({
     name: 'rank',
-    description: 'Get player rank timeline graph'
+    description: 'View a timeline graph of a player\'s rank history.'
 })
+@LocalesT('commands.core.rank.name', 'commands.core.rank.description')
 @Options(options)
 export default class RankCommand extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
@@ -20,23 +24,20 @@ export default class RankCommand extends SubCommand {
         const nameOrId = ctx.options['name-or-id'];
         if (!nameOrId) {
             return ctx.editOrReply({
-                content: 'Please provide a player name or id'
+                content: ctx.t.commands.commonErrors.noNameOrId.get()
             });
         }
 
         const player = await ctx.client.api.getPlayer(nameOrId);
         if (!player) {
             return ctx.editOrReply({
-                content: 'Player not found. Please provide a valid player name or id'
+                content: ctx.t.commands.commonErrors.playerNotFound.get()
             });
         }
 
         if (!player.rank_history.length) {
             return ctx.editOrReply({
-                content: `**${player.name}${player.player.team.club_team_id === ''
-                    ? '** '
-                    : `#${player.player.team.club_team_mini_name}** `
-                    }(${player.uid}) has no rank history`
+                content: ctx.t.commands.core.rank.noRankHistory(player.name, player.player.team.club_team_id, player.uid).get()
             });
         }
 

@@ -1,20 +1,27 @@
-import { type CommandContext, createStringOption, SubCommand, Declare, Options } from 'seyfert';
+import { type CommandContext, createStringOption, SubCommand, LocalesT, Declare, Options } from 'seyfert';
 
 import { generateCompare } from '../../utils/images/compare';
 
 const options = {
     'name-or-id': createStringOption({
-        description: 'first player name or id to compare'
+        description: 'first player name or id to compare',
+        locales: {
+            description: 'commands.core.compare.options.first'
+        }
     }),
     'name-or-id2': createStringOption({
-        description: 'second player name or id to compare'
+        description: 'second player name or id to compare',
+        locales: {
+            description: 'commands.core.compare.options.second'
+        }
     })
 };
 
 @Declare({
     name: 'compare',
-    description: 'Compare the statistics of two players'
+    description: 'Compare stats of two players, including ranks, roles, and top heroes.'
 })
+@LocalesT('commands.core.compare.name', 'commands.core.compare.description')
 @Options(options)
 export default class CompareCommand extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
@@ -24,7 +31,7 @@ export default class CompareCommand extends SubCommand {
         const secondNameOrId = ctx.options['name-or-id2'];
         if (!firstNameOrId || !secondNameOrId || firstNameOrId === secondNameOrId) {
             return ctx.editOrReply({
-                content: 'Please provide two different player names or ids to compare'
+                content: ctx.t.commands.core.compare.samePlayer.get()
             });
         }
 
@@ -32,13 +39,13 @@ export default class CompareCommand extends SubCommand {
         const playerTwo = await ctx.client.api.getPlayer(secondNameOrId);
         if (!playerOne || !playerTwo) {
             return ctx.editOrReply({
-                content: 'Player not found. Please provide a valid player name or id'
+                content: ctx.t.commands.commonErrors.playerNotFound.get()
             });
         }
 
         if (playerOne.uid === playerTwo.uid) {
             return ctx.editOrReply({
-                content: 'Please provide two different player names or ids to compare'
+                content: ctx.t.commands.core.compare.samePlayer.get()
             });
         }
 

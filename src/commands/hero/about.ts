@@ -7,6 +7,7 @@ import {
     StringSelectMenu,
     SubCommand,
     ActionRow,
+    LocalesT,
     Declare,
     Options,
     Embed
@@ -83,14 +84,18 @@ const options = {
 
             ok(hero);
         },
-        required: true
+        required: true,
+        locales: {
+            description: 'commands.hero.about.options.name'
+        }
     })
 };
 
 @Declare({
     name: 'about',
-    description: 'Get information about a hero, like abilities, role, and more'
+    description: 'Get detailed info about a hero, including abilities and stats.'
 })
+@LocalesT('commands.hero.about.name', 'commands.hero.about.description')
 @Options(options)
 export default class About extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {

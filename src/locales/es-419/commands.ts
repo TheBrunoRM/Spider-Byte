@@ -17,10 +17,12 @@ const commands = {
         }
     },
     ping: {
+        name: 'ping',
         content: (latency: number) => `Ping: ${latency}ms. Latencia actual con el servidor.`
     },
     core: {
         compare: {
+            name: 'compare',
             description: 'Compara estadísticas de dos jugadores, incluyendo rangos, roles y héroes principales.',
             samePlayer: ':warning: Se proporcionó el mismo jugador dos veces. Usa dos nombres o IDs diferentes.',
             options: {
@@ -29,32 +31,39 @@ const commands = {
             }
         },
         profile: {
+            name: 'profile',
             description: 'Obtén estadísticas detalladas como roles, rango y héroes principales de un jugador.'
         },
         rank: {
+            name: 'rank',
             description: 'Muestra una gráfica de la historia de rangos de un jugador.',
-            noRankHistory: (playerName: string, clubTeamId: string, uid: string) => `:warning: **${playerName}${clubTeamId === ''
+            noRankHistory: (playerName: string, clubTeamId: string, uid: number) => `:warning: **${playerName}${clubTeamId === ''
                 ? '** '
                 : `#${clubTeamId}** `}(${uid}) no tiene historial de rangos.`
         }
     },
     game: {
         patchNotes: {
+            name: 'patch-notes',
             description: 'Obtén las últimas notas de parche o para un ID específico.',
             notFound: (id: string) => `Notas de parche con ID ${id} no encontradas. Revisa el ID e intenta de nuevo.`,
             noPatchNotes: ':warning: No hay notas de parche disponibles en este momento.',
-            options: ':warning: El ID de las notas de parche para obtener actualizaciones específicas.'
+            options: {
+                id: 'El ID de las notas de parche para obtener actualizaciones específicas.'
+            }
         }
     },
     hero: {
         about: {
+            name: 'about',
             description: 'Obtén información detallada de un héroe, incluyendo habilidades y estadísticas.',
             notFound: (heroName: string) => `:warning: Héroe ${heroName} no encontrado. Revisa el nombre e intenta de nuevo.`,
             options: {
-                hero: 'El nombre del héroe para obtener información.'
+                name: 'El nombre del héroe para obtener información.'
             }
         },
         leaderboard: {
+            name: 'leaderboard',
             description: 'Muestra la tabla de clasificación de un héroe específico.',
             notFound: ':warning: No se encontró tabla de clasificación para este héroe.',
             options: {

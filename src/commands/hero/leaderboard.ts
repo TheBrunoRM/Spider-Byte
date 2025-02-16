@@ -1,6 +1,6 @@
 import type { CommandContext, OKFunction } from 'seyfert';
 
-import { createStringOption, SubCommand, Declare, Options } from 'seyfert';
+import { createStringOption, SubCommand, LocalesT, Declare, Options } from 'seyfert';
 import didYouMean, { ReturnTypeEnums } from 'didyoumean2';
 
 import type { LeaderboardPlayerHeroDTO } from '../../types/dtos/LeaderboardPlayerHeroDTO';
@@ -43,14 +43,18 @@ const options = {
 
             ok(leaderboard);
         },
-        required: true
+        required: true,
+        locales: {
+            description: 'commands.hero.leaderboard.options.hero'
+        }
     })
 };
 
 @Declare({
     name: 'leaderboard',
-    description: 'View a specific heros leaderboard'
+    description: 'View the leaderboard for a specific hero.'
 })
+@LocalesT('commands.hero.leaderboard.name', 'commands.hero.leaderboard.description')
 @Options(options)
 export default class Ping extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {

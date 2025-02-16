@@ -1,11 +1,14 @@
-import { type CommandContext, createStringOption, SubCommand, Formatter, Declare, Options, Embed } from 'seyfert';
+import { type CommandContext, createStringOption, SubCommand, Formatter, LocalesT, Declare, Options, Embed } from 'seyfert';
 
 import { callbackPaginator } from '../../utils/paginator';
 
 const options = {
     id: createStringOption({
         description: 'The patch notes id',
-        required: false
+        required: false,
+        locales: {
+            description: 'commands.game.patchNotes.options.id'
+        }
     })
 };
 
@@ -13,6 +16,7 @@ const options = {
     name: 'patch-notes',
     description: 'Get the latest patch notes or patch notes for a specific id'
 })
+@LocalesT('commands.game.patchNotes.name', 'commands.game.patchNotes.description')
 @Options(options)
 export default class RankCommand extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
@@ -30,7 +34,7 @@ export default class RankCommand extends SubCommand {
             const patchData = await ctx.client.api.getPatchNotesById(id);
             if (!patchData) {
                 return ctx.editOrReply({
-                    content: `Patch notes with id ${Formatter.inlineCode(id)} not found`
+                    content: ctx.t.commands.game.patchNotes.notFound(Formatter.inlineCode(id)).get()
                 });
             }
 
@@ -46,7 +50,7 @@ export default class RankCommand extends SubCommand {
 
         if (!patchData) {
             return ctx.editOrReply({
-                content: 'No patch notes found'
+                content: ctx.t.commands.game.patchNotes.noPatchNotes.get()
             });
         }
 

@@ -1,15 +1,19 @@
-import { type CommandContext, createStringOption, SubCommand, Declare, Options } from 'seyfert';
+import { type CommandContext, createStringOption, SubCommand, LocalesT, Declare, Options } from 'seyfert';
 
 const options = {
   'name-or-id': createStringOption({
-    description: 'player name or id'
+    description: 'Enter the player name or ID to identify the player.',
+    locales: {
+      description: 'commands.commonOptions.nameOrId'
+    }
   })
 };
 
 @Declare({
   name: 'profile',
-  description: 'Get player stats like roles, rank, top heroes, and more'
+  description: 'Get detailed stats like roles, rank, and top heroes for a player.'
 })
+@LocalesT('commands.core.profile.name', 'commands.core.profile.description')
 @Options(options)
 export default class ProfileCommand extends SubCommand {
   async run(ctx: CommandContext<typeof options>) {
@@ -18,14 +22,14 @@ export default class ProfileCommand extends SubCommand {
     const nameOrId = ctx.options['name-or-id'];
     if (!nameOrId) {
       return ctx.editOrReply({
-        content: 'Please provide a player name or id'
+        content: ctx.t.commands.commonErrors.noNameOrId.get()
       });
     }
 
     const player = await ctx.client.api.getPlayer(nameOrId);
     if (!player) {
       return ctx.editOrReply({
-        content: 'Player not found. Please provide a valid player name or id'
+        content: ctx.t.commands.commonErrors.playerNotFound.get()
       });
     }
 

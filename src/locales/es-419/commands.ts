@@ -23,7 +23,7 @@ const commands = {
     core: {
         compare: {
             name: 'compare',
-            description: 'Compara estadísticas de dos jugadores, incluyendo rangos, roles y héroes principales.',
+            description: 'Compara estadísticas de dos jugadores, incluyendo asesinatos, victorias y veces como MVP.',
             samePlayer: ':warning: Se proporcionó el mismo jugador dos veces. Usa dos nombres o IDs diferentes.',
             options: {
                 first: 'Nombre o ID del primer jugador a comparar.',

@@ -1,0 +1,203 @@
+{
+    "total_maps": 32,
+    "maps": [
+        {
+            "sub_map": {
+                "id": 1003,
+                "name": null,
+                "thumbnail": null
+            },
+            "id": 1032,
+            "name": "Yggdrasill Path",
+            "full_name": "Yggdrasill Path - Yggsgard",
+            "location": "Yggsgard",
+            "description": "Beneath the sky-shutting canopy of the World Tree, Yggdrasill, lies the golden glory of Asgard, realm of the gods, now overgrown with the roots and flora. However, the throne-seizing scheme of Loki, god of mischief, threatens the ever-lasting prosperity of this kingdom and all of the Ten Realms.",
+            "game_mode": "Convoy",
+            "is_competitve": false,
+            "images": [
+                "/rivals/maps/map_1032.png",
+                "/rivals/maps/medium/map_1032.png",
+                "/rivals/maps/large/map_1032.png"
+            ],
+            "video": "https://youtu.be/8nYwiVjhBWQ"
+        },
+        {
+            "sub_map": {
+                "id": 1021,
+                "name": null,
+                "thumbnail": null
+            },
+            "id": 1034,
+            "name": "Shin-Shibuya",
+            "full_name": "Shin-Shibuya - Tokyo 2099",
+            "location": "Tokyo 2099",
+            "description": "Another world has emerged from the Timestream Entanglement! It's time to have some ramen and sushi after that nature walk! I'm thrilled that these foods still retain their classic flavors even in Tokyo of 2099! But it is a pity that there aren't any Kaiju or giant robots fighting in the city anymore...",
+            "game_mode": "Convergence",
+            "is_competitve": false,
+            "images": [
+                "/rivals/maps/map_1034.png",
+                "/rivals/maps/medium/map_1034.png",
+                "/rivals/maps/large/map_1034.png"
+            ],
+            "video": "https://youtu.be/8NUtV1CkyKs"
+        },
+        {
+            "sub_map": {
+                "id": 1035,
+                "name": null,
+                "thumbnail": null
+            },
+            "id": 1101,
+            "name": "Hall of Djalia",
+            "full_name": "Hall of Djalia - Intergalactic Empire of Wakanda",
+            "location": "Intergalactic Empire of Wakanda",
+            "game_mode": "Convergence",
+            "is_competitve": false,
+            "images": [
+                "/rivals/maps/map_1101.png",
+                "/rivals/maps/medium/map_1101.png",
+                "/rivals/maps/large/map_1101.png"
+            ],
+            "video": "https://youtu.be/dz_778SYulo"
+        },
+        {
+            "sub_map": {
+                "id": 1078,
+                "name": null,
+                "thumbnail": null
+            },
+            "id": 1118,
+            "name": "Sanctum Sanctorum",
+            "full_name": "Sanctum Sanctorum - Empire of Eternal Night",
+            "location": "Empire of Eternal Night",
+            "description": "Doctor Strange's Sanctum Sanctorum stands as the last beacon of hope in a city consumed by darkness. Protected by ancient wards and powerful magic, it serves as a refuge for those battling the chaos unleashed by Dracula and his legion. Explore its eerie corridors and powerful secrets as you prepare to face the chaos unleashed by Dracula's dark forces. Are you ready to step into the shadows and uncover the secrets of the Sanctum?",
+            "game_mode": "Doom match",
+            "is_competitve": false,
+            "images": [
+                "/rivals/maps/map_1118.png",
+                "/rivals/maps/medium/map_1118.png",
+                "/rivals/maps/large/map_1118.png"
+            ],
+            "video": "https://youtu.be/pVlerpIo3Pk"
+        },
+        {
+            "sub_map": {
+                "id": 1003,
+                "name": "Throne Room",
+                "thumbnail": null
+            },
+            "id": 1156,
+            "name": "Throne Room",
+            "full_name": "Throne Room - Royal Palace",
+            "location": "Yggsgard",
+            "description": "Beneath the sky-shutting canopy of the World Tree, Yggdrasill, lies the golden glory of Asgard, realm of the gods, now overgrown with the roots and flora. However, the throne-seizing scheme of Loki, god of mischief, threatens the ever-lasting prosperity of this kingdom and all of the Ten Realms.",
+            "game_mode": "Domination",
+            "is_competitve": false,
+            "images": [
+                "/rivals/maps/map_1156.png",
+                "/rivals/maps/medium/map_1156.png",
+                "/rivals/maps/large/map_1156.png"
+            ],
+            "video": "https://youtu.be/8nYwiVjhBWQ"
+        },
+        {
+            "sub_map": {
+                "id": 1021,
+                "name": null,
+                "thumbnail": null
+            },
+            "id": 1230,
+            "name": "Shin-Shibuya",
+            "full_name": "Shin-Shibuya - Tokyo 2099",
+            "location": "Tokyo 2099",
+            "description": "Another world has emerged from the Timestream Entanglement! It's time to have some ramen and sushi after that nature walk! I'm thrilled that these foods still retain their classic flavors even in Tokyo of 2099! But it is a pity that there aren't any Kaiju or giant robots fighting in the city anymore...",
+            "game_mode": "Convergence",
+            "is_competitve": true,
+            "images": [
+                "/rivals/maps/map_1230.png",
+                "/rivals/maps/medium/map_1230.png",
+                "/rivals/maps/large/map_1230.png"
+            ],
+            "video": "https://youtu.be/8NUtV1CkyKs"
+        },
+        {
+            "sub_map": {
+                "id": 1184,
+                "name": "Frozen Airfield",
+                "thumbnail": null
+            },
+            "id": 1244,
+            "name": "Frozen Airfield",
+            "full_name": "Frozen Airfield - Hydra Charteris Base",
+            "location": "Hydra Charteris Base",
+            "description": "Battered into dormancy for decades, Hydra has hidden its dark ambitions behind the chaos of the times... but as time falls apart, that chaos will usher in a new era for the evil organization... Beneath Charteris Base in Antarctica, Hydra has reawakened a gateway to its otherworldly deity, and the key is the crystal formed from chronal energy. As the ancient Hive approaches from beyond, Hydra seeks to channel its power into a new army of super-soldiers. As the ancient cult prepares to welcome all timelines to its alien chorus, are the heroes truly prepared to confront the many heads of Hydra?",
+            "game_mode": "Domination",
+            "is_competitve": false,
+            "images": [
+                "/rivals/maps/map_1244.png",
+                "/rivals/maps/medium/map_1244.png",
+                "/rivals/maps/large/map_1244.png"
+            ],
+            "video": "https://youtu.be/vSQ3D9-dWbA"
+        },
+        {
+            "sub_map": {
+                "id": 1060,
+                "name": null,
+                "thumbnail": null
+            },
+            "id": 1245,
+            "name": "Spider-Islands",
+            "full_name": "Spider-Islands - Tokyo 2099",
+            "location": "Tokyo 2099",
+            "description": "Take a journey above Tokyo 2099 into the Web of Life and Destiny! To patch up the temporal rift, the Master Weaver is working around the clock to spin his magic while also suspending an entire network of islands aloft, far above from the urban hustle. As a lover of time, he's preserved many more classic Japanese elements, from zen gardens to his own sacred tenshu, where he protects a personal sliver of the Web of Life and Destiny itself. It seems that weaving the Multiverse back together is difficult for one spider, so let's get Spider-Zero back in action!",
+            "game_mode": "Convoy",
+            "is_competitve": true,
+            "images": [
+                "/rivals/maps/map_1245.png",
+                "/rivals/maps/medium/map_1245.png",
+                "/rivals/maps/large/map_1245.png"
+            ],
+            "video": "https://youtu.be/jqnZzywDfTs"
+        },
+        {
+            "sub_map": {
+                "id": 1035,
+                "name": null,
+                "thumbnail": null
+            },
+            "id": 1267,
+            "name": "Hall of Djalia",
+            "full_name": "Hall of Djalia - Intergalactic Empire of Wakanda",
+            "location": "Intergalactic Empire of Wakanda",
+            "game_mode": "Convergence",
+            "is_competitve": true,
+            "images": [
+                "/rivals/maps/map_1267.png",
+                "/rivals/maps/medium/map_1267.png",
+                "/rivals/maps/large/map_1267.png"
+            ],
+            "video": "https://youtu.be/Sc_cXElDvU0"
+        },
+        {
+            "sub_map": {
+                "id": 1067,
+                "name": "Stellar Spaceport",
+                "thumbnail": null
+            },
+            "id": 1161,
+            "name": "Stellar Spaceport",
+            "full_name": "Stellar Spaceport - Birnin T'Challa",
+            "location": "Intergalactic Empire of Wakanda",
+            "description": "From a single Vibranium meteorite, Wakanda rose to greatness. Now, at the heart of the galaxy, they’ve uncovered the homeland of that very mound. But no matter how far it's technology advances, Wakanda's strength will always be its people. Wakanda Forever!",
+            "game_mode": "Domination",
+            "is_competitve": false,
+            "images": [
+                "/rivals/maps/map_1161.png",
+                "/rivals/maps/medium/map_1161.png",
+                "/rivals/maps/large/map_1161.png"
+            ],
+            "video": "https://youtu.be/Sc_cXElDvU0"
+        }
+    ]
+}

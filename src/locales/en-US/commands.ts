@@ -1,5 +1,5 @@
 export const commands = {
-    basicalErrors: {
+    commonErrors: {
         playerNotFound: 'Player not found. Provide a valid name or ID and try again.',
         noNameOrId: 'No player name or ID provided. This is required to proceed.'
     },

@@ -1,7 +1,7 @@
 import type { commands as English } from '../en-US/commands.ts';
 
 const commands = {
-    basicalErrors: {
+    commonErrors: {
         playerNotFound: ':warning: Jugador no encontrado. Proporciona un nombre o ID válido e intenta de nuevo.',
         noNameOrId: ':warning: No se proporcionó nombre o ID. Este dato es necesario para continuar.'
     },

@@ -21,7 +21,7 @@ export const commands = {
     core: {
         compare: {
             name: 'compare',
-            description: 'Compare stats of two players, including kills, wins, and mvp times.',
+            description: 'Compare stats of two players, including kills, wins, and MVP times.',
             samePlayer: ':warning: Same player provided twice. Use two different names or IDs.',
             options: {
                 first: 'First player name or ID to compare.',
@@ -48,6 +48,14 @@ export const commands = {
             noPatchNotes: ':warning: No patch notes available at the moment.',
             options: {
                 id: 'The patch notes ID to retrieve specific updates.'
+            }
+        },
+        map: {
+            name: 'map',
+            description: 'Get detailed information about a specific map.',
+            notFound: ':warning: Map not found. Check the name and try again.',
+            options: {
+                name: 'The name of the map to retrieve information about.'
             }
         }
     },

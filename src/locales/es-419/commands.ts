@@ -51,6 +51,14 @@ const commands = {
             options: {
                 id: 'El ID de las notas de parche para obtener actualizaciones específicas.'
             }
+        },
+        map: {
+            name: 'map',
+            description: 'Obtén información detallada de un mapa específico.',
+            notFound: 'Mapa no encontrado. Revisa el nombre e intenta de nuevo.',
+            options: {
+                name: 'El nombre del mapa para obtener información.'
+            }
         }
     },
     hero: {

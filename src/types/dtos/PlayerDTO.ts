@@ -140,13 +140,10 @@ export interface Icon {
 export interface Info {
   completed_achievements: string;
   login_os: string;
-  rank_game_season: RankGameSeason | {};
+  rank_game_season: RankGameSeason;
 }
 
-export interface RankGameSeason {
-  "1001001": The100100;
-  "1001002": The100100;
-}
+export type RankGameSeason = Partial<Record<string, The100100>>
 
 export interface The100100 {
   rank_game_id: number;

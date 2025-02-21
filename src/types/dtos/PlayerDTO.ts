@@ -135,6 +135,7 @@ export interface Player {
 export interface Icon {
   player_icon_id: string;
   player_icon: string;
+  banner?: string;
 }
 
 export interface Info {

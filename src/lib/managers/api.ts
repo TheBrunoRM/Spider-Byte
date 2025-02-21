@@ -124,7 +124,7 @@ export class Api {
   }
 
   public getHero(nameOrId: string) {
-    return this.fetchWithRetry(`heroes/${nameOrId}`, isHero);
+    return this.fetchWithRetry(`heroes/hero/${nameOrId}`, isHero);
   }
 
   // api

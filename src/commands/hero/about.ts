@@ -17,7 +17,6 @@ import didYouMean, { ReturnTypeEnums } from 'didyoumean2';
 import { ButtonStyle } from 'seyfert/lib/types';
 
 import type {
-    AdditionalFields,
     HeroesDTO,
     Ability
 } from '../../types/dtos/HeroesDTO';
@@ -100,6 +99,7 @@ const options = {
 export default class About extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
         const hero = ctx.options.name;
+        const heroMoreInfo = (await ctx.client.api.getHero(String(hero.id)))!;
 
         const baseEmbed = new Embed().setColor(
             colorPerRole[capitalize(hero.role) as Role] as ColorResolvable
@@ -181,7 +181,7 @@ export default class About extends SubCommand {
                 return;
             }
 
-            const abilityData = hero.abilities.find((a) => a.id === Number(abilityId));
+            const abilityData = heroMoreInfo.abilities.find((a) => a.id === Number(abilityId));
             if (!abilityData) {
                 return;
             }
@@ -200,7 +200,7 @@ export default class About extends SubCommand {
             if (abilityData.additional_fields) {
                 for (const field in abilityData.additional_fields) {
                     const fieldContent = abilityData
-                        .additional_fields[field as keyof AdditionalFields];
+                        .additional_fields[field as keyof typeof abilityData.additional_fields];
                     if (!fieldContent) {
                         continue;
                     }
@@ -209,7 +209,7 @@ export default class About extends SubCommand {
             }
 
             abilityEmbed
-                .setTitle(abilityData.name);
+                .setTitle(`${abilityData.name} (${abilityData.type})`);
             if (abilityData.icon) {
                 abilityEmbed.setThumbnail(
                     ctx.client.api.buildImage(abilityData.icon)

@@ -38,6 +38,18 @@ const client = new Client({
                     content: error,
                     flags: MessageFlags.Ephemeral
                 });
+            },
+            onOptionsError(ctx, metadata) {
+                client.logger.error(
+                    ctx.author.id,
+                    ctx.author.username,
+                    ctx.fullCommandName,
+                    metadata
+                );
+                return ctx.editOrReply({
+                    content: Object.values(metadata)[0].value as string || 'Unknown error. Try again.',
+                    flags: MessageFlags.Ephemeral
+                });
             }
         }
     },

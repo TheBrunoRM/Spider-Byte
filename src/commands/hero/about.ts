@@ -170,7 +170,7 @@ export default class About extends SubCommand {
 
         collector.run<ButtonInteraction>('abilities', async (interaction) => {
             await interaction.update({
-                embeds: [loreEmbed],
+                embeds: [interaction.message.embeds[0]],
                 components: this.generateActionRowSelectMenu(hero.abilities)
             });
         });
@@ -182,7 +182,8 @@ export default class About extends SubCommand {
             }
 
             const abilityData = heroMoreInfo.abilities.find((a) => a.id === Number(abilityId));
-            if (!abilityData) {
+            const abilityData2 = hero.abilities.find((a) => a.id === Number(abilityId));
+            if (!abilityData || !abilityData2) {
                 return;
             }
 
@@ -197,6 +198,7 @@ export default class About extends SubCommand {
                 );
             }
 
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (abilityData.additional_fields) {
                 for (const field in abilityData.additional_fields) {
                     const fieldContent = abilityData
@@ -209,10 +211,10 @@ export default class About extends SubCommand {
             }
 
             abilityEmbed
-                .setTitle(`${abilityData.name} (${abilityData.type})`);
+                .setTitle(`${abilityData.name || abilityData2.name} (${abilityData.type || abilityData2.type})`);
             if (abilityData.icon) {
                 abilityEmbed.setThumbnail(
-                    ctx.client.api.buildImage(abilityData.icon)
+                    ctx.client.api.buildImage(abilityData.icon || abilityData2.icon)
                 );
             }
             abilityEmbed.setDescription(description.join('\n'));

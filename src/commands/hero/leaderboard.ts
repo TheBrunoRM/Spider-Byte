@@ -36,7 +36,7 @@ const options = {
                 fail(`Invalid hero ${value}`); return;
             }
 
-            const leaderboard = await ctx.client.api.getLeaderboardHero(hero.id);
+            const leaderboard = await ctx.client.api.getLeaderboardHero(String(hero.id));
             if (!leaderboard) {
                 fail('404 xdxd'); return;
             }

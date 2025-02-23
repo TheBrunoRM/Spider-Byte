@@ -14,6 +14,32 @@ export const commands = {
             }
         }
     },
+    help: {
+        name: 'help',
+        description: 'Display information about available commands.',
+        options: {
+            command: 'Specific command to get help for.'
+        },
+        noCommandFound: ':warning: Command not found. Check the command name and try again.',
+        embed: {
+            title: '📚 Available Commands',
+            description: 'Here are all available commands.\nUse `/help command:commandname` for detailed information.',
+            color: 0x2B2D31,
+            timestamp: new Date().toISOString()
+        },
+        commandDetailsEmbed: (commandName: string) => ({
+            title: `Command \`/${commandName}\``,
+            description: 'Detailed information about the command.',
+            color: 0x2B2D31,
+            timestamp: new Date().toISOString()
+        }),
+        fields: {
+            allCommands: '📑 Commands',
+            subcommands: '📑 SubCommands',
+            options: '⚙️ Options',
+            cooldown: '⏱️ Cooldown'
+        }
+    },
     ping: {
         name: 'ping',
         content: (latency: number) => `Ping: ${latency}ms. Current server latency.`

@@ -2,7 +2,7 @@ import { AutoLoad, Declare, Command } from 'seyfert';
 
 @Declare({
     name: 'player',
-    description: 'player commands',
+    description: 'View player profiles, compare stats, and track rank progression',
     contexts: ['BotDM', 'Guild', 'PrivateChannel'],
     integrationTypes: ['GuildInstall', 'UserInstall'],
     props: {

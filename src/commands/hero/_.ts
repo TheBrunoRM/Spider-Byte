@@ -2,7 +2,7 @@ import { AutoLoad, Declare, Command } from 'seyfert';
 
 @Declare({
     name: 'hero',
-    description: 'hero commands',
+    description: 'Access hero profiles, abilities, stats, and competitive rankings',
     contexts: ['BotDM', 'Guild', 'PrivateChannel'],
     integrationTypes: ['GuildInstall', 'UserInstall'],
     props: {

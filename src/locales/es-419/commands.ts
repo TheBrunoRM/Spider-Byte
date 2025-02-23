@@ -16,6 +16,32 @@ const commands = {
             }
         }
     },
+    help: {
+        name: 'help',
+        description: 'Muestra información sobre los comandos disponibles.',
+        options: {
+            command: 'Comando específico del cual obtener ayuda.'
+        },
+        noCommandFound: ':warning: Comando no encontrado. Verifica el nombre del comando e intenta de nuevo.',
+        embed: {
+            title: '📚 Comandos Disponibles',
+            description: 'Aquí están todos los comandos disponibles.\nUsa `/help command:nombredelcomando` para información detallada.',
+            color: 0x2B2D31,
+            timestamp: new Date().toISOString()
+        },
+        commandDetailsEmbed: (commandName: string) => ({
+            title: `Comando \`/${commandName}\``,
+            description: 'Información detallada sobre el comando.',
+            color: 0x2B2D31,
+            timestamp: new Date().toISOString()
+        }),
+        fields: {
+            allCommands: '📑 Comandos',
+            subcommands: '📑 SubComandos',
+            options: '⚙️ Opciones',
+            cooldown: '⏱️ Tiempo de Espera'
+        }
+    },
     ping: {
         name: 'ping',
         content: (latency: number) => `Ping: ${latency}ms. Latencia actual con el servidor.`

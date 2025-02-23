@@ -2,7 +2,7 @@ import { AutoLoad, Declare, Command } from 'seyfert';
 
 @Declare({
     name: 'game',
-    description: 'game commands',
+    description: 'Access game maps information and latest patch notes',
     contexts: ['BotDM', 'Guild', 'PrivateChannel'],
     integrationTypes: ['GuildInstall', 'UserInstall'],
     props: {

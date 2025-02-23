@@ -90,19 +90,9 @@ export default class HelpCommand extends Command {
         const subcommands = command.options?.filter((opt) => opt.type === 1 || opt.type === 2) as SubCommand[] | undefined;
         if (subcommands?.length) {
             const subcommandsField = subcommands
-                .map((sub) => {
-                    let text = `**${sub.name}**: ${sub.description_localizations?.[
-                        ctx.interaction.locale
-                    ] || sub.description}`;
-                    if (sub.options?.length) {
-                        text += `\n${sub.options
-                            .map((opt) => `- \`${opt.name}\`: ${opt.description_localizations?.[
-                                ctx.interaction.locale
-                            ] || opt.description}`)
-                            .join('\n')}`;
-                    }
-                    return text;
-                })
+                .map((sub) => `**${sub.name}**: ${sub.description_localizations?.[
+                    ctx.interaction.locale
+                ] || sub.description}`)
                 .join('\n');
 
             commandDetailsEmbed.addFields({

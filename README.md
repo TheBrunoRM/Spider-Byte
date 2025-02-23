@@ -1,6 +1,4 @@
-<p align="center">
-  <a href="https://discord.com/oauth2/authorize?client_id=1337677960546881587&permissions=563224831642688&integration_type=0&scope=bot"><img src="assets/banner.png" alt="Spider-Byte Logo"></a>
-</p>
+[![Banner](/assets/banner.png)](https://discord.com/oauth2/authorize?client_id=1337677960546881587&permissions=563224831642688&integration_type=0&scope=bot)
 
 **Spider-Byte** is a powerful Discord bot designed to provide detailed stats, hero insights, and the latest updates for _Marvel Rivals_. Whether you're tracking your progress or learning more about your favorite heroes, Spider-Byte has you covered!
 

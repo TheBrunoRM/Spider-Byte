@@ -7,6 +7,7 @@ import {
     StringSelectMenu,
     SubCommand,
     ActionRow,
+    Formatter,
     LocalesT,
     Declare,
     Options,
@@ -77,7 +78,7 @@ const options = {
                 (h) => h.name === value
             );
             if (!hero) {
-                fail(`Invalid hero ${value}`);
+                fail(ctx.t.commands.hero.about.notFound(Formatter.inlineCode(value)).get());
                 return;
             }
 

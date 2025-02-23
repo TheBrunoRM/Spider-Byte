@@ -139,6 +139,9 @@ export class Api {
       this.logger.debug(endpoint);
 
       const response = await this.fetchApi(endpoint);
+      if (!response) {
+        return null;
+      }
 
       // Si la respuesta es 404 (Not Found), retorna null
       if (response.status === 404) {
@@ -189,10 +192,10 @@ export class Api {
 
     const response = await fetch(url, { headers });
 
-    if (!response.ok && response.status !== 404) {
+    if (!response.ok || response.status !== 200) {
       const errorMessage = `API request failed with status ${response.status}: ${response.statusText}`;
       this.logger.error(errorMessage);
-      throw new Error(errorMessage);
+      return null;
     }
 
     return response;

@@ -17,7 +17,7 @@
 
 ---
 
-### **Invite the Bot**
+## 🗿 Invite the Bot
 
 Click [here](https://discord.com/oauth2/authorize?client_id=1337677960546881587&permissions=563224831642688&integration_type=0&scope=bot) to invite Spider-Byte to your server.
 

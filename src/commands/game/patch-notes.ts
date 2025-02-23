@@ -1,84 +1,70 @@
-import { type CommandContext, createStringOption, SubCommand, Formatter, LocalesT, Declare, Options, Embed } from 'seyfert';
+import { type CommandContext, AttachmentBuilder, SubCommand, LocalesT, Declare } from 'seyfert';
+import { MessageFlags } from 'seyfert/lib/types';
 
+import { scrapePatchNotes } from '../../utils/functions/scrapePatchNotes';
 import { callbackPaginator } from '../../utils/paginator';
-
-const options = {
-    id: createStringOption({
-        description: 'The patch notes id',
-        required: false,
-        locales: {
-            description: 'commands.game.patchNotes.options.id'
-        }
-    })
-};
 
 @Declare({
     name: 'patch-notes',
     description: 'Get the latest patch notes or patch notes for a specific id'
 })
 @LocalesT('commands.game.patchNotes.name', 'commands.game.patchNotes.description')
-@Options(options)
 export default class RankCommand extends SubCommand {
-    async run(ctx: CommandContext<typeof options>) {
+    async run(ctx: CommandContext) {
         await ctx.deferReply();
-
-        const baseEmbed = new Embed()
-            .setAuthor({
-                name: 'Marvel Rivals',
-                iconUrl: 'https://cdn2.steamgriddb.com/icon/916030603cc86a9b3d29f4d64f1bc415/32/256x256.png'
-            })
-            .setColor('Blurple');
-
-        const id = ctx.options.id;
-        if (id) {
-            const patchData = await ctx.client.api.getPatchNotesById(id);
-            if (!patchData) {
-                return ctx.editOrReply({
-                    content: ctx.t.commands.game.patchNotes.notFound(Formatter.inlineCode(id)).get()
-                });
-            }
-
-            const embed = baseEmbed
-                .setTitle(patchData.title)
-                .setDescription(patchData.overview)
-                .setImage(ctx.client.api.buildImage(patchData.imagePath));
-
-            return ctx.editOrReply({ embeds: [embed] });
-        }
-
-        const patchData = await ctx.client.api.getPatchNotes();
-
-        if (!patchData) {
+        const patchNotesData = await scrapePatchNotes();
+        if (!patchNotesData) {
             return ctx.editOrReply({
                 content: ctx.t.commands.game.patchNotes.noPatchNotes.get()
             });
         }
 
+        const { title, date, content, metadata } = patchNotesData;
+        const header = `# [${title}](<${metadata.url}>)\nRelease Date: ${date}\n\n`;
+        const img = new AttachmentBuilder()
+            .setFile('url', patchNotesData.metadata.imageUrl)
+            .setName('patch-notes.png');
+
+        const fullContent = content.join('\n');
+        if (fullContent.length + header.length <= 2_000) {
+            return ctx.editOrReply({
+                content: header + fullContent,
+                flags: MessageFlags.SuppressEmbeds,
+                files: [img]
+            });
+        }
+
+        // Split content into chunks for pagination
+        const chunks: string[] = [];
+        let currentChunk = '';
+
+        for (const line of content) {
+            if (currentChunk.length + line.length + 1 > 1_750) {
+                chunks.push(currentChunk);
+                currentChunk = line;
+            } else {
+                currentChunk += (currentChunk
+                    ? '\n'
+                    : '') + line;
+            }
+        }
+        if (currentChunk) {
+            chunks.push(currentChunk);
+        }
+
         await ctx.editOrReply({
-            embeds: [
-                baseEmbed
-                    .setTitle(patchData.formatted_patches[0].title)
-                    .setDescription(patchData.formatted_patches[0].overview)
-                    .setImage(ctx.client.api.buildImage(patchData.formatted_patches[0].imagePath))
-                    .setFooter({
-                        text: `Page 1/${patchData.formatted_patches.length} | ${patchData.formatted_patches[0].date}`
-                    })
-            ]
+            content: `${header}${chunks[0]}`,
+            flags: MessageFlags.SuppressEmbeds,
+            files: [img]
         });
 
-        await callbackPaginator(ctx, patchData.formatted_patches, {
-            callback(chunk, pageIndex) {
-                const selected = chunk[0];
-                const embed = baseEmbed
-                    .setTitle(selected.title)
-                    .setDescription(selected.overview)
-                    .setImage(ctx.client.api.buildImage(selected.imagePath))
-                    .setFooter({
-                        text: `Page ${pageIndex + 1}/${patchData.formatted_patches.length} | ${selected.date}`
-                    });
 
-                return { embeds: [embed] };
-            },
+        await callbackPaginator(ctx, chunks, {
+            callback: (chunk) => ({
+                content: `${header}${chunk[0]}`,
+                flags: MessageFlags.SuppressEmbeds,
+                files: [img]
+            }),
             pageSize: 1
         });
     }

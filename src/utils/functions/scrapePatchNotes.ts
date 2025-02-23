@@ -4,7 +4,6 @@ import type { Element } from 'domhandler';
 import { LimitedCollection } from 'seyfert';
 import { Formatter } from 'seyfert';
 import * as cheerio from 'cheerio';
-import axios from 'axios';
 
 interface PatchNotes {
     title: string;
@@ -114,8 +113,15 @@ const getLatestPatchInfo = async (): Promise<{
     description: string;
 } | null> => {
     try {
-        const { data } = await axios.get('https://www.marvelrivals.com/gameupdate/', { timeout: 10_000 });
-        const $ = cheerio.load(data as string);
+        const controller = new AbortController();
+        const request = new Request('https://www.marvelrivals.com/gameupdate/', {
+            signal: controller.signal
+        });
+        setTimeout(() => {
+            controller.abort();
+        }, 10e3);
+        const data = await (await fetch(request)).text();
+        const $ = cheerio.load(data);
 
         const firstItem = $('.list-item').first();
         if (!firstItem.length) {
@@ -158,9 +164,16 @@ export async function scrapePatchNotes(): Promise<PatchNotes | null> {
         }
 
         const { url } = latestPatch;
-        const { data } = await axios.get(url, { timeout: 10_000 });
+        const controller = new AbortController();
+        const request = new Request(url, {
+            signal: controller.signal
+        });
+        setTimeout(() => {
+            controller.abort();
+        }, 10e3);
+        const data = await (await fetch(request)).text();
 
-        const $ = cheerio.load(data as string);
+        const $ = cheerio.load(data);
 
         const title = $('.artTitle').text().trim();
         const date = $('.date').text().trim();
@@ -188,9 +201,6 @@ export async function scrapePatchNotes(): Promise<PatchNotes | null> {
         patchNotesCache.set(CACHE_KEY, result);
         return result;
     } catch (error) {
-        if (axios.isAxiosError(error)) {
-            throw new Error('Request timed out while fetching patch notes.');
-        }
         console.error('Error scraping last patch-notes:', error);
         throw error;
     }

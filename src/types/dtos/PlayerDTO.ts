@@ -6,7 +6,7 @@ export interface PlayerDTO {
   readonly isPrivate: boolean;
   readonly overall_stats: OverallStats;
   readonly match_history: MatchHistory[];
-  readonly rank_history: any[];
+  readonly rank_history: RankHistory[];
   readonly hero_matchups: HeroMatchup[];
   readonly team_mates: TeamMate[];
   readonly heroes_ranked: HeroesRanked[];
@@ -78,6 +78,22 @@ export interface MatchHistory {
   readonly game_mode_id: number;
   readonly score_info: { [key: string]: number } | null;
   readonly player_performance: PlayerPerformance;
+}
+
+export interface RankHistory {
+  match_time_stamp: number;
+  level_progression: LevelProgression;
+  score_progression: ScoreProgression;
+}
+
+export interface LevelProgression {
+  from: number;
+  to: number;
+}
+
+export interface ScoreProgression {
+  add_score: number;
+  total_score: number;
 }
 
 export interface PlayerPerformance {

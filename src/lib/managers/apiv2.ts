@@ -2,7 +2,11 @@ import * as puppeteer from 'puppeteer';
 import * as typia from 'typia';
 
 import type { PlayerDTO } from '../../types/v2/PlayerDTO';
-const BASE_URL = process.env.BASE_URL;
+const BASE_URL = Bun.env.BASE_URL;
+
+if (!BASE_URL) {
+    throw new Error('BASE_URL is not defined');
+}
 
 export class ApiWrapper {
     page?: puppeteer.Page;

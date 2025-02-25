@@ -94,9 +94,8 @@ const formatSocialLinks = (content: string[]): string[] => {
     const socialTextIndex = content.findIndex((line) => line.includes(socialText));
 
     if (socialTextIndex !== -1) {
-        const nextLine = content[socialTextIndex + 1];
-        // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
-        if (nextLine && nextLine.includes('|')) {
+        const nextLine = content.at(socialTextIndex + 1);
+        if (nextLine?.includes('|')) {
             content.splice(socialTextIndex + 1, 1);
         }
 

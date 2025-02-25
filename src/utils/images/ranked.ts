@@ -34,7 +34,7 @@ export async function generateRankGraph(data: RankHistory[], player: PlayerDTO) 
     const canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
     const ctx = canvas.getContext('2d');
 
-    // eslint-disable-next-line require-atomic-updates
+
     background ??= await loadImage(await Bun.file(join(process.cwd(), 'assets', 'rank', 'background.png')).bytes());
     ctx.drawImage(background, 0, 0);
 
@@ -140,7 +140,7 @@ async function drawPointWithGlow(ctx: SKRSContext2D, x: number, y: number, url: 
     ctx.shadowColor = GLOW_COLOR;
     ctx.shadowBlur = 15;
     await drawImage(ctx, x, y, url);
-    // eslint-disable-next-line require-atomic-updates
+
     ctx.shadowBlur = 0;
 }
 

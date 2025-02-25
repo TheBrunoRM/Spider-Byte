@@ -199,16 +199,13 @@ export default class About extends SubCommand {
                 );
             }
 
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            if (abilityData.additional_fields) {
-                for (const field in abilityData.additional_fields) {
-                    const fieldContent = abilityData
-                        .additional_fields[field as keyof typeof abilityData.additional_fields];
-                    if (!fieldContent) {
-                        continue;
-                    }
-                    description.push(`**${field}**: ${fieldContent}`);
+            for (const field in abilityData.additional_fields) {
+                const fieldContent = abilityData
+                    .additional_fields[field as keyof typeof abilityData.additional_fields];
+                if (!fieldContent) {
+                    continue;
                 }
+                description.push(`**${field}**: ${fieldContent}`);
             }
 
             abilityEmbed

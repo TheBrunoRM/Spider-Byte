@@ -1,4 +1,4 @@
-import { type ParseMiddlewares, type ParseLocales, type ParseClient, type UsingClient, Client } from 'seyfert';
+import { type ParseMiddlewares, type ParseLocales, type ParseClient, type UsingClient, Formatter, Client } from 'seyfert';
 import { PresenceUpdateStatus, ActivityType, MessageFlags } from 'seyfert/lib/types';
 import { basename, join, sep } from 'node:path';
 import { GlobalFonts } from '@napi-rs/canvas';
@@ -17,20 +17,24 @@ const client = new Client({
     commands: {
         defaults: {
             onRunError(ctx, error) {
+                const errorId = Math.floor(Math.random() * 1_000_000);
                 client.logger.error(
+                    errorId,
                     ctx.author.id,
                     ctx.author.username,
                     ctx.fullCommandName,
                     error
                 );
 
-                const content = `\`\`\`${error instanceof Error
-                    ? error.stack ?? error.message
-                    : String(error) || 'Unknown error'
-                    }\`\`\``;
+                const content = [
+                    `Report this error on the [support server](<https://discord.gg/AcruVkyYHm>) with the ID \`${errorId}\`.`,
+                    Formatter.codeBlock(error instanceof Error
+                        ? error.stack ?? error.message
+                        : String(error) || 'Unknown error', 'ts')
+                ];
 
                 return ctx.editOrReply({
-                    content
+                    content: content.join('\n')
                 });
             },
             onMiddlewaresError(ctx, error) {

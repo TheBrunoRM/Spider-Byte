@@ -64,6 +64,16 @@ export const commands = {
             noRankHistory: (playerName: string, clubTeamId: string, uid: number) => `:warning: **${playerName}${clubTeamId === ''
                 ? '** '
                 : `#${clubTeamId}** `}(${uid}) has no rank history.`
+        },
+        update: {
+            name: 'update',
+            description: 'Update a player\'s stats.',
+            alrreadyQueued: (playerName: string, clubTeamId: string, uid: number) => `:warning: **${playerName}${clubTeamId === ''
+                ? '** '
+                : `#${clubTeamId}** `}(${uid}) is already updated (in the last 30 minutes).`,
+            success: (playerName: string, clubTeamId: string, uid: number) => `:white_check_mark: **${playerName}${clubTeamId === ''
+                ? '** '
+                : `#${clubTeamId}** `}(${uid}) stats has been updated. Wait 30 minutes before using this command again.`
         }
     },
     game: {

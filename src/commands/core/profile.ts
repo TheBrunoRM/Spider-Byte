@@ -68,7 +68,7 @@ export default class ProfileCommand extends SubCommand {
         ? `#${player.player.team.club_team_mini_name}`
         : ''}`)
       .setThumbnail(ctx.client.api.buildImage(player.player.icon.player_icon))
-      .setImage(ctx.client.api.buildImage(player.player.icon.banner ?? '').replace('/rivals', ''))
+      .setImage(ctx.client.api.buildImage(player.player.icon.banner || '').replace('/rivals', ''))
       .setColor('Blurple')
       .addFields(
         {

@@ -66,6 +66,16 @@ const commands = {
             noRankHistory: (playerName: string, clubTeamId: string, uid: number) => `:warning: **${playerName}${clubTeamId === ''
                 ? '** '
                 : `#${clubTeamId}** `}(${uid}) no tiene historial de rangos.`
+        },
+        update: {
+            name: 'update',
+            description: 'Actualiza las estadísticas de un jugador.',
+            alrreadyQueued: (playerName: string, clubTeamId: string, uid: number) => `:warning: **${playerName}${clubTeamId === ''
+                ? '** '
+                : `#${clubTeamId}** `}(${uid}) ya está actualizado (en los últimos 30 minutos).`,
+            success: (playerName: string, clubTeamId: string, uid: number) => `:white_check_mark: **${playerName}${clubTeamId === ''
+                ? '** '
+                : `#${clubTeamId}** `}(${uid}) estadísticas actualizadas. Espera 30 minutos antes de usar este comando nuevamente.`
         }
     },
     game: {

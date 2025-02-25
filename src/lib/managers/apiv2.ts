@@ -42,7 +42,7 @@ export class ApiWrapper {
             await page.setJavaScriptEnabled(true);
 
             const response = await page.goto(url, {
-                waitUntil: 'networkidle0',
+                waitUntil: 'domcontentloaded',
                 timeout: 30_000
             });
 
@@ -76,6 +76,16 @@ export class ApiWrapper {
         });
 
         this.page = await browser.newPage();
+
+        await this.page.setRequestInterception(true);
+        this.page.on('request', (request) => {
+            if (['stylesheet', 'image', 'font'].includes(request.resourceType())) {
+                void request.abort();
+            } else {
+                void request.continue();
+            }
+        });
+
         return this.page;
     }
 }

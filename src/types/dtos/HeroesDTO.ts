@@ -20,7 +20,7 @@ export interface Ability {
   readonly icon: string;
   readonly type: Type;
   readonly isCollab: boolean;
-  readonly additional_fields: { [key: string]: string };
+  readonly additional_fields?: { [key: string]: string };
 }
 
 export enum Type {

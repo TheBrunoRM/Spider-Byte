@@ -26,7 +26,7 @@ export interface Ability {
   readonly type: string;
   readonly isCollab: boolean;
   readonly description?: string;
-  readonly additional_fields: { [key: string]: string };
+  readonly additional_fields?: { [key: string]: string };
   readonly transformation_id: string;
 }
 

@@ -93,8 +93,6 @@ client.langs.onFile = (locale, { path, file }) => file.default
 
 client.api = new Api((await client.getRC()).apiKeys);
 
-await client.api.init();
-
 await client.api.getHeroes();
 
 await client.start();

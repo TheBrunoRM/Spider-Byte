@@ -1,7 +1,6 @@
 import { type IValidation, createValidate, validate } from 'typia';
 import { LogLevels, Logger, delay } from 'seyfert/lib/common';
 import { LimitedCollection } from 'seyfert';
-import * as puppeteer from 'puppeteer';
 
 import type { LeaderboardPlayerHeroDTO } from '../../types/dtos/LeaderboardPlayerHeroDTO';
 import type { FormattedPatch, PatchNotesDTO } from '../../types/dtos/PatchNotesDTO';
@@ -33,8 +32,6 @@ if (!BASE_URL_2) {
 }
 
 export class Api {
-  page?: puppeteer.Page;
-
   logger = new Logger({
     name: '[Rivals API]',
     logLevel: isProduction
@@ -96,30 +93,43 @@ export class Api {
         return cache.get(endpoint)!;
       }
 
-      const page = await this.createPage();
-
-      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36');
-      await page.setExtraHTTPHeaders({
-        'Accept-Language': 'en-US,en;q=0.9',
-        Accept: 'application/json,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-        'Sec-Fetch-Site': 'same-origin',
-        'Sec-Fetch-Mode': 'cors',
-        'Sec-Fetch-Dest': 'empty'
+      const response = await fetch(url, {
+        headers: {
+          'User-Agent': 'Chrome/121',
+          Accept: 'application/json',
+          'Accept-Language': 'es-AR,en;q=0.9',
+          'Accept-Encoding': 'gzip, deflate, br',
+          Connection: 'keep-alive',
+          'Cache-Control': 'no-cache',
+          Pragma: 'no-cache',
+          DNT: '1',
+          'Upgrade-Insecure-Requests': '1'
+        },
+        credentials: 'omit',
+        referrerPolicy: 'strict-origin-when-cross-origin',
+        mode: 'cors'
       });
 
-      // Enable JavaScript and cookies
-      await page.setJavaScriptEnabled(true);
+      // const page = await this.createPage();
 
-      const response = await page.goto(url, {
-        waitUntil: 'domcontentloaded',
-        timeout: 30_000
-      });
+      // await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36');
+      // await page.setExtraHTTPHeaders({
+      //   'Accept-Language': 'en-US,en;q=0.9',
+      //   Accept: 'application/json,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+      //   'Sec-Fetch-Site': 'same-origin',
+      //   'Sec-Fetch-Mode': 'cors',
+      //   'Sec-Fetch-Dest': 'empty'
+      // });
 
-      if (!response) {
-        throw new Error('Failed to get response from the page');
-      }
+      // // Enable JavaScript and cookies
+      // await page.setJavaScriptEnabled(true);
 
-      if (!response.ok()) {
+      // const response = await page.goto(url, {
+      //   waitUntil: 'domcontentloaded',
+      //   timeout: 30_000
+      // });
+
+      if (!response.ok) {
         return undefined;
       }
 
@@ -222,11 +232,6 @@ export class Api {
     return this.fetchWithRetry(`heroes/hero/${nameOrId}`, isHero);
   }
 
-  // api
-  async init() {
-    await this.createPage();
-  }
-
   private async fetchWithRetry<T>(
     endpoint: string,
     validator: (data: unknown) => IValidation<T>, // Validador de types
@@ -298,36 +303,5 @@ export class Api {
     }
 
     return response;
-  }
-
-  private async createPage() {
-    if (this.page) {
-      return this.page;
-    }
-    const browser = await puppeteer.launch({
-      executablePath: process.platform === 'linux'
-        ? '/usr/bin/chromium'
-        : undefined,
-      headless: 'shell',
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-web-security',
-        '--disable-features=IsolateOrigins,site-per-process'
-      ]
-    });
-
-    this.page = await browser.newPage();
-
-    await this.page.setRequestInterception(true);
-    this.page.on('request', (request) => {
-      if (['stylesheet', 'image', 'font'].includes(request.resourceType())) {
-        void request.abort();
-      } else {
-        void request.continue();
-      }
-    });
-
-    return this.page;
   }
 }

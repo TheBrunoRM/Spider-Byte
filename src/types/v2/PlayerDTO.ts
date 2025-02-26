@@ -325,8 +325,8 @@ export interface FeatureCriticalRate2CritHits {
     readonly displayCategory: FeatureCriticalRate1CritHitsDisplayCategory;
     readonly category: FeatureCriticalRate1CritHitsCategory;
     readonly metadata: AssistsMetadata;
-    readonly value: null;
-    readonly displayValue: null;
+    readonly value: number | null;
+    readonly displayValue: string | null;
     readonly displayType: AssistsDisplayType;
 }
 
@@ -339,8 +339,8 @@ export interface FeatureCriticalRate2Hits {
     readonly displayCategory: FeatureCriticalRate1CritHitsDisplayCategory;
     readonly category: FeatureCriticalRate1CritHitsCategory;
     readonly metadata: AssistsMetadata;
-    readonly value: null;
-    readonly displayValue: null;
+    readonly value: number | null;
+    readonly displayValue: string | null;
     readonly displayType: AssistsDisplayType;
 }
 
@@ -741,7 +741,7 @@ export interface PeakTiers {
     readonly displayName: string;
     readonly metadata: AssistsMetadata;
     readonly value: Value[];
-    readonly displayValue: null;
+    readonly displayValue: string | null;
     readonly displayType: string;
 }
 
@@ -749,7 +749,7 @@ export interface Value {
     readonly displayName: string;
     readonly metadata: LifetimePeakRankedMetadata;
     readonly value: number;
-    readonly displayValue: null;
+    readonly displayValue: string | null;
     readonly displayType: string;
 }
 

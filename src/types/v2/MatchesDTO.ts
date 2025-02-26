@@ -302,8 +302,8 @@ export interface FeatureCriticalRate1CritHits {
     readonly displayCategory: FeatureCriticalRate1CritHitsDisplayCategory;
     readonly category: FeatureCriticalRate1CritHitsCategory;
     readonly metadata: AssistsMetadata;
-    readonly value: null;
-    readonly displayValue: null;
+    readonly value: number | null;
+    readonly displayValue: string | null;
     readonly displayType: AssistsDisplayType;
 }
 
@@ -325,8 +325,8 @@ export interface FeatureCriticalRate1Hits {
     readonly displayCategory: FeatureCriticalRate1CritHitsDisplayCategory;
     readonly category: FeatureCriticalRate1CritHitsCategory;
     readonly metadata: AssistsMetadata;
-    readonly value: null;
-    readonly displayValue: null;
+    readonly value: number | null;
+    readonly displayValue: string | null;
     readonly displayType: AssistsDisplayType;
 }
 
@@ -339,8 +339,8 @@ export interface FeatureCriticalRate2CritHits {
     readonly displayCategory: FeatureCriticalRate1CritHitsDisplayCategory;
     readonly category: FeatureCriticalRate1CritHitsCategory;
     readonly metadata: AssistsMetadata;
-    readonly value: null;
-    readonly displayValue: null;
+    readonly value: number | null;
+    readonly displayValue: string | null;
     readonly displayType: AssistsDisplayType;
 }
 
@@ -353,8 +353,8 @@ export interface FeatureCriticalRate2Hits {
     readonly displayCategory: FeatureCriticalRate1CritHitsDisplayCategory;
     readonly category: FeatureCriticalRate1CritHitsCategory;
     readonly metadata: AssistsMetadata;
-    readonly value: null;
-    readonly displayValue: null;
+    readonly value: number | null;
+    readonly displayValue: string | null;
     readonly displayType: AssistsDisplayType;
 }
 
@@ -548,8 +548,8 @@ export interface FeatureSpecialData1Total {
     readonly displayCategory: FeatureCriticalRate1CritHitsDisplayCategory;
     readonly category: FeatureCriticalRate1CritHitsCategory;
     readonly metadata: AssistsMetadata;
-    readonly value: null;
-    readonly displayValue: null;
+    readonly value: number | null;
+    readonly displayvalue: number | null;
     readonly displayType: AssistsDisplayType;
 }
 
@@ -562,8 +562,8 @@ export interface FeatureSpecialData1Value {
     readonly displayCategory: FeatureCriticalRate1CritHitsDisplayCategory;
     readonly category: FeatureCriticalRate1CritHitsCategory;
     readonly metadata: AssistsMetadata;
-    readonly value: null;
-    readonly displayValue: null;
+    readonly value: number | null;
+    readonly displayValue: string | null;
     readonly displayType: AssistsDisplayType;
 }
 

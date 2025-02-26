@@ -66,7 +66,7 @@ export async function generateCompare(players: [PlayerDTO['data'], PlayerDTO['da
         for (let j = 0; j < playerStats.values.length; j++) {
             const offSetY = j * 98;
             const Y_STAT = 291 + offSetY + 30;
-            const statText = `${playerStats.values.at(j)}`;// lmao
+            const statText = `${playerStats.values.at(j)!}`;// lmao
             const statMetrics = ctx.measureText(statText);
 
             if (j === 4) {

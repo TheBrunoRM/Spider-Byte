@@ -14,7 +14,7 @@ export interface Data {
 export interface DataMetadata {
     readonly lastUpdated: LastUpdated;
     readonly isPC: boolean;
-    readonly clubMiniName: string;
+    readonly clubMiniName: string | null;
     readonly isPrivateCareerOverview: boolean;
     readonly isPrivateCareerStatistics: boolean;
     readonly isPrivateBattleHistory: boolean;
@@ -50,13 +50,20 @@ export interface PlatformInfo {
     readonly additionalParameters: null;
 }
 
-export interface Segment {
-    readonly type: Type;
+export interface BaseSegment<T extends Type, M extends Record<string, unknown>> {
+    readonly type: T;
     readonly attributes: Attributes;
-    readonly metadata: SegmentMetadata;
+    readonly metadata: M;
     readonly expiryDate: string;
     readonly stats: Stats;
 }
+
+export interface RankedPeaksSegment extends BaseSegment<'ranked-peaks', {}> { }
+export interface OverviewSegment extends BaseSegment<'overview', Pick<SegmentMetadata, 'name'>> { }
+export interface HeroSegment extends BaseSegment<'hero', Pick<SegmentMetadata, 'imageUrl' | 'roleName' | 'color' | 'name'>> { }
+export interface HeroRoleSegment extends BaseSegment<'hero-role', Pick<SegmentMetadata, 'imageUrl' | 'name'>> { }
+
+export type Segment = RankedPeaksSegment | OverviewSegment | HeroRoleSegment | HeroSegment;
 
 export interface Attributes {
     readonly season?: number;
@@ -77,10 +84,10 @@ export enum Role {
 }
 
 export interface SegmentMetadata {
-    readonly name?: string;
-    readonly imageUrl?: string;
-    readonly roleName?: RoleName;
-    readonly color?: string;
+    readonly name: string;
+    readonly imageUrl: string;
+    readonly roleName: RoleName;
+    readonly color: string;
 }
 
 export enum RoleName {
@@ -500,8 +507,8 @@ export interface FeatureSpecialData1Total {
     readonly displayCategory: FeatureCriticalRate1CritHitsDisplayCategory;
     readonly category: FeatureCriticalRate1CritHitsCategory;
     readonly metadata: AssistsMetadata;
-    readonly value: null;
-    readonly displayValue: null;
+    readonly value: number | null;
+    readonly displayValue: string | null;
     readonly displayType: AssistsDisplayType;
 }
 
@@ -514,8 +521,8 @@ export interface FeatureSpecialData1Value {
     readonly displayCategory: FeatureCriticalRate1CritHitsDisplayCategory;
     readonly category: FeatureCriticalRate1CritHitsCategory;
     readonly metadata: AssistsMetadata;
-    readonly value: null;
-    readonly displayValue: null;
+    readonly value: number | null;
+    readonly displayValue: string | null;
     readonly displayType: AssistsDisplayType;
 }
 
@@ -950,12 +957,11 @@ export enum TotalSvpDisplayName {
     SVPs = 'SVPs'
 }
 
-export enum Type {
-    Hero = 'hero',
-    HeroRole = 'hero-role',
-    Overview = 'overview',
-    RankedPeaks = 'ranked-peaks'
-}
+export type Type =
+    'ranked-peaks' |
+    'hero-role' |
+    'overview' |
+    'hero';
 
 export interface UserInfo {
     readonly userId: null;

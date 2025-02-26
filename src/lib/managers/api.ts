@@ -22,8 +22,8 @@ const isLeaderboardPlayerHero = createValidate<LeaderboardPlayerHeroDTO>();
 const isPatchNotes = createValidate<PatchNotesDTO>();
 const isFormattedPatch = createValidate<FormattedPatch>();
 
-const BASE_URL = String(Bun.env.BASE_URL);
-const BASE_URL_2 = String(Bun.env.BASE_URL_2);
+const BASE_URL = Bun.env.BASE_URL!;
+const BASE_URL_2 = Bun.env.BASE_URL_2!;
 
 if (!BASE_URL) {
   throw new Error('BASE_URL is not defined');
@@ -44,19 +44,19 @@ export class Api {
 
   // First, add the new cache collection to the cache object
   cache = {
-    searchPlayer: new LimitedCollection<string, FindedPlayerDTO | null>({
+    searchPlayer: new LimitedCollection<string, FindedPlayerDTO | undefined>({
       expire: 15 * 60e3
     }),
-    fetchPlayer: new LimitedCollection<string, PlayerDTO | null>({
+    fetchPlayer: new LimitedCollection<string, PlayerDTO | undefined>({
       expire: 15 * 60e3
     }),
-    leaderboardPlayerHero: new LimitedCollection<string, LeaderboardPlayerHeroDTO | null>({
+    leaderboardPlayerHero: new LimitedCollection<string, LeaderboardPlayerHeroDTO | undefined>({
       expire: 15 * 60e3
     }),
-    patchNotes: new LimitedCollection<string, PatchNotesDTO | null>({
+    patchNotes: new LimitedCollection<string, PatchNotesDTO | undefined>({
       expire: 60 * 60e3
     }),
-    rankedStats: new LimitedCollection<string, RankedDTO | null>({
+    rankedStats: new LimitedCollection<string, RankedDTO | undefined>({
       expire: 15 * 60e3
     }),
     heroes: [] as HeroesDTO[]
@@ -89,7 +89,7 @@ export class Api {
     return this.apiKeys[i];
   }
 
-  private async fetchJson<T>(endpoint: string, url: string, cache: LimitedCollection<string, null | T>): Promise<undefined | T> {
+  private async fetchJson<T>(endpoint: string, url: string, cache: LimitedCollection<string, undefined | T>): Promise<undefined | T> {
     try {
       // Check cache first
       if (cache.has(endpoint)) {
@@ -167,7 +167,7 @@ export class Api {
 
   async fetchPlayer(name: string): Promise<PlayerDTO['data'] | undefined> {
     const url = `${BASE_URL}/standard/profile/ign/${encodeURIComponent(name)}`;
-    const response = await this.fetchJson<PlayerDTO>('fetch-player', url, this.cache.fetchPlayer);
+    const response = await this.fetchJson<PlayerDTO>(`fetch-player/${name}`, url, this.cache.fetchPlayer);
 
     if (!response) {
       return undefined;
@@ -186,7 +186,7 @@ export class Api {
   // Ranked
   public async getRankedStats(name: string) {
     const url = `${BASE_URL}/standard/profile/ign/${encodeURIComponent(name)}/stats/overview/ranked`;
-    const response = await this.fetchJson<RankedDTO>('ranked-stats', url, this.cache.rankedStats);
+    const response = await this.fetchJson<RankedDTO>(`ranked-stats/${name}`, url, this.cache.rankedStats);
 
     if (!response) {
       return undefined;
@@ -227,19 +227,19 @@ export class Api {
     endpoint: string,
     validator: (data: unknown) => IValidation<T>, // Validador de types
     retries: number = this.maxRetries
-  ): Promise<null | T> {
+  ): Promise<undefined | T> {
     let data: unknown;
     try {
       this.logger.debug(endpoint);
 
       const response = await this.fetchApi(endpoint);
       if (!response) {
-        return null;
+        return undefined;
       }
 
-      // Si la respuesta es 404 (Not Found), retorna null
+      // Si la respuesta es 404 (Not Found), retorna undefined
       if (response.status === 404) {
-        return null;
+        return undefined;
       }
 
       data = await response.json();
@@ -263,9 +263,9 @@ export class Api {
   private async fetchWithCacheRetry<T>(
     endpoint: string,
     validator: (data: unknown) => IValidation<T>, // Validador de types
-    cache: LimitedCollection<string, null | T>,
+    cache: LimitedCollection<string, undefined | T>,
     retries: number = this.maxRetries
-  ): Promise<null | T> {
+  ): Promise<undefined | T> {
     if (cache.has(endpoint)) {
       return cache.get(endpoint)!;
     }
@@ -289,7 +289,7 @@ export class Api {
     if (!response.ok || response.status !== 200) {
       const errorMessage = `API request failed with status ${response.status}: ${response.statusText}`;
       this.logger.error(errorMessage);
-      return null;
+      return undefined;
     }
 
     return response;

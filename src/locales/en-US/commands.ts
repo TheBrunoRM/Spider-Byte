@@ -62,9 +62,9 @@ export const commands = {
         rank: {
             name: 'rank',
             description: 'View a timeline graph of a player\'s rank history.',
-            noRankHistory: (playerName: string, clubTeamId: string) => `:warning: **${playerName}${clubTeamId
-                ? '** '
-                : `#${clubTeamId}** `} has no rank history.`
+            noRankHistory: (playerName: string, clubTeamId: string | null) => `:warning: **${playerName}${clubTeamId
+                ? `#${clubTeamId}** `
+                : '** '} has no rank history.`
         },
         update: {
             name: 'update',

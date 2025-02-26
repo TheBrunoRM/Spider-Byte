@@ -46,7 +46,7 @@ const processContent = ($: CheerioAPI, $element: cheerio.Cheerio<Element>, isSoc
         } else if (el.type === 'tag' && el.name === 'a' && !isSocialBlock) {
             const text = cleanText($el.text());
             if (text) {
-                content.push(`[${text}](${$el.attr('href')})`);
+                content.push(`[${text}](${$el.attr('href') ?? '#'})`);
             }
         }
     });

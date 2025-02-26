@@ -12,8 +12,8 @@ const commands = {
     middlewares: {
         cooldown: {
             error: {
-                user: (remaining: string) => `⏰ Estás en cooldown. Espera ${remaining} para usar este comando de nuevo.`,
-                channel: (remaining: string) => `⏰ El canal está en cooldown. Espera ${remaining} para usar este comando de nuevo.`
+                user: (remaining) => `⏰ Estás en cooldown. Espera ${remaining} para usar este comando de nuevo.`,
+                channel: (remaining) => `⏰ El canal está en cooldown. Espera ${remaining} para usar este comando de nuevo.`
             }
         }
     },
@@ -30,7 +30,7 @@ const commands = {
             color: 0x2B2D31,
             timestamp: new Date().toISOString()
         },
-        commandDetailsEmbed: (commandName: string) => ({
+        commandDetailsEmbed: (commandName) => ({
             title: `Comando \`/${commandName}\``,
             description: 'Información detallada sobre el comando.',
             color: 0x2B2D31,
@@ -45,7 +45,7 @@ const commands = {
     },
     ping: {
         name: 'ping',
-        content: (latency: number) => `Ping: ${latency}ms. Latencia actual con el servidor.`
+        content: (latency) => `Ping: ${latency}ms. Latencia actual con el servidor.`
     },
     core: {
         compare: {
@@ -64,17 +64,17 @@ const commands = {
         rank: {
             name: 'rank',
             description: 'Muestra una gráfica de la historia de rangos de un jugador.',
-            noRankHistory: (playerName: string, clubTeamId: string) => `:warning: **${playerName}${clubTeamId === ''
-                ? '** '
-                : `#${clubTeamId}** `} no tiene historial de rangos.`
+            noRankHistory: (playerName, clubTeamId) => `:warning: **${playerName}${clubTeamId
+                ? `#${clubTeamId}** `
+                : '** '} no tiene historial de rangos.`
         },
         update: {
             name: 'update',
             description: 'Actualiza las estadísticas de un jugador.',
-            alrreadyQueued: (playerName: string, clubTeamId: string, uid: number) => `:warning: **${playerName}${clubTeamId === ''
+            alrreadyQueued: (playerName, clubTeamId, uid) => `:warning: **${playerName}${clubTeamId === ''
                 ? '** '
                 : `#${clubTeamId}** `}(${uid}) ya está actualizado (en los últimos 30 minutos).`,
-            success: (playerName: string, clubTeamId: string, uid: number) => `:white_check_mark: **${playerName}${clubTeamId === ''
+            success: (playerName, clubTeamId, uid) => `:white_check_mark: **${playerName}${clubTeamId === ''
                 ? '** '
                 : `#${clubTeamId}** `}(${uid}) estadísticas actualizadas. Espera 30 minutos antes de usar este comando nuevamente.`
         }
@@ -83,7 +83,7 @@ const commands = {
         patchNotes: {
             name: 'patch-notes',
             description: 'Obtén las últimas notas de parche o para un ID específico.',
-            notFound: (id: string) => `Notas de parche con ID ${id} no encontradas. Revisa el ID e intenta de nuevo.`,
+            notFound: (id) => `Notas de parche con ID ${id} no encontradas. Revisa el ID e intenta de nuevo.`,
             noPatchNotes: ':warning: No hay notas de parche disponibles en este momento.',
             options: {
                 id: 'El ID de las notas de parche para obtener actualizaciones específicas.'
@@ -102,7 +102,7 @@ const commands = {
         about: {
             name: 'about',
             description: 'Obtén información detallada de un héroe, incluyendo habilidades y estadísticas.',
-            notFound: (heroName: string) => `:warning: Héroe ${heroName} no encontrado. Revisa el nombre e intenta de nuevo.`,
+            notFound: (heroName) => `:warning: Héroe ${heroName} no encontrado. Revisa el nombre e intenta de nuevo.`,
             options: {
                 name: 'El nombre del héroe para obtener información.'
             }

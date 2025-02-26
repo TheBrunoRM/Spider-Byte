@@ -33,79 +33,60 @@ export default class ProfileCommand extends SubCommand {
       });
     }
 
-    const winRate = player.overall_stats.total_matches > 0
-      ? (player.overall_stats.total_wins / player.overall_stats.total_matches * 100).toFixed(2)
-      : '0.00';
+    const stats = player.segments[0].stats;
+    const winRate = stats.matchesWinPct?.value.toFixed(1) || '0.0';
 
-    const topHeroes = [...player.heroes_ranked, ...player.heroes_unranked]
-      .filter((hero) => hero.matches > 0)
-      .sort((a, b) => b.matches - a.matches)
+    const heroSegments = player.segments.filter((segment) => segment.type === 'hero');
+    const topHeroes = heroSegments
+      .sort((a, b) => (b.stats.matchesPlayed?.value || 0) - (a.stats.matchesPlayed?.value || 0))
       .slice(0, 4)
-      .map((hero) => `\`${hero.hero_name}\` (${hero.matches} matches, ${(hero.wins / hero.matches * 100).toFixed(1)}% WR)`);
+      .map((hero) => {
+        const matches = Math.round(hero.stats.matchesPlayed?.value || 0);
+        const winPct = hero.stats.matchesWinPct?.value.toFixed(1) || '0.0';
+        return `\`${hero.metadata.name}\`, ${matches} matches (${winPct}% WR)`;
+      });
 
-    const topTeamMates = player.team_mates
-      .filter((mate) => mate.matches > 0)
-      .sort((a, b) => b.matches - a.matches)
-      .slice(0, 4)
-      .map((mate) => `\`${mate.player_info.nick_name}\` (${mate.matches} matches, ${(mate.wins / mate.matches * 100).toFixed(1)}% WR)`);
-
-    const calculateKDA = (kills: number, deaths: number, assists: number) => {
-      if (deaths === 0) {
-        return '0.00';
-      }
-      return ((kills + assists) / deaths).toFixed(2);
-    };
-
-    const calculateWinRate = (wins: number, matches: number) => {
-      if (matches === 0) {
-        return '0.00';
-      }
-      return (wins / matches * 100).toFixed(2);
-    };
+    const roleStats = player.segments.filter((segment) => segment.type === 'hero-role');
+    const roleStatsString = roleStats
+      .map((role) => {
+        const matches = Math.round(role.stats.matchesPlayed?.value || 0);
+        const winPct = role.stats.matchesWinPct?.value.toFixed(1) || '0.0';
+        return `\`${role.metadata.name}\`, ${matches} matches (${winPct}% WR)`;
+      });
 
     const embed = new Embed()
-      .setTitle(`${player.name}${player.player.team.club_team_id
-        ? `#${player.player.team.club_team_mini_name}`
+      .setTitle(`${player.platformInfo.platformUserHandle}${player.metadata.clubMiniName
+        ? ` #${player.metadata.clubMiniName}`
         : ''}`)
-      .setThumbnail(ctx.client.api.buildImage(player.player.icon.player_icon))
-      .setImage(ctx.client.api.buildImage(player.player.icon.banner || '').replace('/rivals', ''))
+      .setThumbnail(player.platformInfo.avatarUrl)
       .setColor('Blurple')
       .addFields(
         {
           name: 'General Stats',
           value: [
-            `\`Level:\` ${player.player.level}`,
-            `\`Rank:\` ${player.player.rank.rank}`,
-            `\`Win Rate:\` ${winRate}% (${player.overall_stats.total_wins}/${player.overall_stats.total_matches})`,
-            `\`Total Time Played:\` ${formatTime(player.overall_stats.unranked.total_time_played_raw + (player.overall_stats.ranked.total_time_played_raw || 0))}`
+            `\`Level:\` ${player.metadata.level}`,
+            `\`Rank:\` ${stats.ranked?.metadata.tierName || 'Unranked'} (${stats.ranked?.displayValue || '0'} RS)`,
+            `\`Win Rate:\` ${winRate}%`,
+            `\`Time Played:\` ${stats.timePlayed?.displayValue || 'N/A'}`
           ].join('\n'),
           inline: false
         },
         {
-          name: 'Unranked Stats',
+          name: 'Combat Stats',
           value: [
-            `\`Matches:\` ${player.overall_stats.unranked.total_matches}`,
-            `\`Wins:\` ${player.overall_stats.unranked.total_wins}`,
-            `\`KDA:\` ${player.overall_stats.unranked.total_kills}/${player.overall_stats.unranked.total_deaths}/${player.overall_stats.unranked.total_assists} (${calculateKDA(
-              player.overall_stats.unranked.total_kills,
-              player.overall_stats.unranked.total_deaths,
-              player.overall_stats.unranked.total_assists
-            )})`,
-            `\`Win Rate:\` ${calculateWinRate(player.overall_stats.unranked.total_wins, player.overall_stats.unranked.total_matches)}%`
+            `\`Matches:\` ${stats.matchesPlayed?.value || 0}`,
+            `\`Wins:\` ${stats.matchesWon?.value || 0}`,
+            `\`KDA:\` ${stats.kills?.value || 0}/${stats.deaths?.value || 0}/${stats.assists?.value || 0} (${stats.kdaRatio?.displayValue || 'N/A'})`,
+            `\`Damage/Min:\` ${stats.totalHeroDamagePerMinute?.value || 0}`
           ].join('\n'),
           inline: true
         },
         {
-          name: 'Ranked Stats',
+          name: 'Additional Stats',
           value: [
-            `\`Matches:\` ${player.overall_stats.ranked.total_matches}`,
-            `\`Wins:\` ${player.overall_stats.ranked.total_wins}`,
-            `\`KDA:\` ${player.overall_stats.ranked.total_kills}/${player.overall_stats.ranked.total_deaths}/${player.overall_stats.ranked.total_assists} (${calculateKDA(
-              player.overall_stats.ranked.total_kills,
-              player.overall_stats.ranked.total_deaths,
-              player.overall_stats.ranked.total_assists
-            )})`,
-            `\`Win Rate:\` ${calculateWinRate(player.overall_stats.ranked.total_wins, player.overall_stats.ranked.total_matches)}%`
+            `\`Solo Kills:\` ${stats.soloKills?.value || 0}`,
+            `\`MVPs:\` ${stats.totalMvp?.value || 0}`,
+            `\`SVPs:\` ${stats.totalSvp?.value || 0}`
           ].join('\n'),
           inline: true
         },
@@ -115,33 +96,13 @@ export default class ProfileCommand extends SubCommand {
           inline: false
         },
         {
-          name: 'Top Team Mates',
-          value: topTeamMates.join('\n') || 'No team mates found',
-          inline: false
+          name: 'Role Stats',
+          value: roleStatsString.join('\n') || 'No role stats',
+          inline: true
         }
       )
-      .setTimestamp()
-      .setFooter({ text: `Player ID: ${player.uid}` });
+      .setTimestamp();
 
     return ctx.editOrReply({ embeds: [embed] });
   }
-}
-
-function formatTime(seconds: number): string {
-  const hours = Math.floor(seconds / 3_600);
-  const minutes = Math.floor(seconds % 3_600 / 60);
-  const secs = Math.floor(seconds % 60);
-
-  const parts = [];
-  if (hours > 0) {
-    parts.push(`${hours}h`);
-  }
-  if (minutes > 0) {
-    parts.push(`${minutes}m`);
-  }
-  if (secs > 0) {
-    parts.push(`${secs}s`);
-  }
-
-  return parts.join(' ');
 }

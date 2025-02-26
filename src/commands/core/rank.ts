@@ -35,19 +35,28 @@ export default class RankCommand extends SubCommand {
             });
         }
 
-        if (!player.rank_history.length) {
+        if (!player.segments.filter((segment) => segment.type === 'ranked-peaks').length) {
             return ctx.editOrReply({
-                content: ctx.t.commands.core.rank.noRankHistory(player.name, player.player.team.club_team_id, player.uid).get()
+                content: ctx.t.commands.core.rank.noRankHistory(player.platformInfo.platformUserIdentifier, player.metadata.clubMiniName).get()
             });
         }
 
-        const bufferGraph = await generateRankGraph(player.rank_history, player);
+        const playerRank = await ctx.client.api.getRankedStats(player.platformInfo.platformUserIdentifier);
+        if (!playerRank) {
+            return ctx.editOrReply({
+                content: ctx.t.commands.core.rank.noRankHistory(player.platformInfo.platformUserIdentifier, player.metadata.clubMiniName).get()
+            });
+        }
+
+        const bufferGraph = await generateRankGraph(playerRank, player);
+
+        if (!bufferGraph) {
+            return ctx.editOrReply({
+                content: ctx.t.commands.core.rank.noRankHistory(player.platformInfo.platformUserIdentifier, player.metadata.clubMiniName).get()
+            });
+        }
 
         return ctx.editOrReply({
-            content: `**${player.name}${player.player.team.club_team_id === ''
-                ? '** '
-                : `#${player.player.team.club_team_mini_name}** `
-                }(${player.uid}) is a \`${player.player.rank.rank}\``,
             files: [{
                 filename: 'rank.png',
                 data: bufferGraph

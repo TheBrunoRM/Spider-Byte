@@ -3,7 +3,8 @@ import type { commands as English } from '../en-US/commands.ts';
 const commands = {
     commonErrors: {
         playerNotFound: ':warning: Jugador no encontrado. Proporciona un nombre o ID válido e intenta de nuevo.',
-        noNameOrId: ':warning: No se proporcionó nombre o ID. Este dato es necesario para continuar.'
+        noNameOrId: ':warning: No se proporcionó nombre o ID. Este dato es necesario para continuar.',
+        underDevelopment: ':warning: Este comando está en desarrollo. Pronto estará disponible. Disculpa las molestias.'
     },
     commonOptions: {
         nameOrId: 'Ingresa el nombre o ID del jugador para identificarlo.'
@@ -63,9 +64,9 @@ const commands = {
         rank: {
             name: 'rank',
             description: 'Muestra una gráfica de la historia de rangos de un jugador.',
-            noRankHistory: (playerName: string, clubTeamId: string, uid: number) => `:warning: **${playerName}${clubTeamId === ''
+            noRankHistory: (playerName: string, clubTeamId: string) => `:warning: **${playerName}${clubTeamId === ''
                 ? '** '
-                : `#${clubTeamId}** `}(${uid}) no tiene historial de rangos.`
+                : `#${clubTeamId}** `} no tiene historial de rangos.`
         },
         update: {
             name: 'update',

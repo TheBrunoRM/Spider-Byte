@@ -1,7 +1,8 @@
 export const commands = {
     commonErrors: {
         playerNotFound: ':warning: Player not found. Provide a valid name or ID and try again.',
-        noNameOrId: ':warning: No player name or ID provided. This is required to proceed.'
+        noNameOrId: ':warning: No player name or ID provided. This is required to proceed.',
+        underDevelopment: ':warning: This command is under development. It will be available soon. Sorry for the inconvenience.'
     },
     commonOptions: {
         nameOrId: 'Enter the player name or ID to identify the player.'
@@ -61,9 +62,9 @@ export const commands = {
         rank: {
             name: 'rank',
             description: 'View a timeline graph of a player\'s rank history.',
-            noRankHistory: (playerName: string, clubTeamId: string, uid: number) => `:warning: **${playerName}${clubTeamId === ''
+            noRankHistory: (playerName: string, clubTeamId: string) => `:warning: **${playerName}${clubTeamId
                 ? '** '
-                : `#${clubTeamId}** `}(${uid}) has no rank history.`
+                : `#${clubTeamId}** `} has no rank history.`
         },
         update: {
             name: 'update',

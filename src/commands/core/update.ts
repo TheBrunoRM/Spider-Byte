@@ -17,39 +17,44 @@ const options = {
 @Options(options)
 export default class UpdateCommand extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
-        await ctx.deferReply();
+        await ctx.deferReply(true);
 
-        const nameOrId = ctx.options['name-or-id'];
-        if (!nameOrId) {
-            return ctx.editOrReply({
-                content: ctx.t.commands.commonErrors.noNameOrId.get()
-            });
-        }
-
-        const player = await ctx.client.api.getPlayer(nameOrId);
-        if (!player) {
-            return ctx.editOrReply({
-                content: ctx.t.commands.commonErrors.playerNotFound.get()
-            });
-        }
-
-        const sucess = await ctx.client.api.updatePlayer(player.uid);
-        if (!sucess) {
-            return ctx.editOrReply({
-                content: ctx.t.commands.core.update.alrreadyQueued(
-                    player.name,
-                    player.player.team.club_team_id,
-                    player.uid
-                ).get()
-            });
-        }
-
+        // Under development
         return ctx.editOrReply({
-            content: ctx.t.commands.core.update.success(
-                player.name,
-                player.player.team.club_team_id,
-                player.uid
-            ).get()
+            content: ctx.t.commands.commonErrors.underDevelopment.get()
         });
+
+        // const nameOrId = ctx.options['name-or-id'];
+        // if (!nameOrId) {
+        //     return ctx.editOrReply({
+        //         content: ctx.t.commands.commonErrors.noNameOrId.get()
+        //     });
+        // }
+
+        // const player = await ctx.client.api.getPlayer(nameOrId);
+        // if (!player) {
+        //     return ctx.editOrReply({
+        //         content: ctx.t.commands.commonErrors.playerNotFound.get()
+        //     });
+        // }
+
+        // const sucess = await ctx.client.api.updatePlayer(player.uid);
+        // if (!sucess) {
+        //     return ctx.editOrReply({
+        //         content: ctx.t.commands.core.update.alrreadyQueued(
+        //             player.name,
+        //             player.player.team.club_team_id,
+        //             player.uid
+        //         ).get()
+        //     });
+        // }
+
+        // return ctx.editOrReply({
+        //     content: ctx.t.commands.core.update.success(
+        //         player.name,
+        //         player.player.team.club_team_id,
+        //         player.uid
+        //     ).get()
+        // });
     }
 }

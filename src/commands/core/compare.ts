@@ -1,6 +1,6 @@
 import { type CommandContext, createStringOption, SubCommand, LocalesT, Declare, Options } from 'seyfert';
 
-import { generateCompare } from '../../utils/images/compare';
+// import { generateCompare } from '../../utils/images/compare';
 
 const options = {
     'name-or-id': createStringOption({
@@ -25,38 +25,44 @@ const options = {
 @Options(options)
 export default class CompareCommand extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
-        await ctx.deferReply();
+        await ctx.deferReply(true);
 
-        const firstNameOrId = ctx.options['name-or-id'];
-        const secondNameOrId = ctx.options['name-or-id2'];
-        if (!firstNameOrId || !secondNameOrId || firstNameOrId === secondNameOrId) {
-            return ctx.editOrReply({
-                content: ctx.t.commands.core.compare.samePlayer.get()
-            });
-        }
-
-        const playerOne = await ctx.client.api.getPlayer(firstNameOrId);
-        const playerTwo = await ctx.client.api.getPlayer(secondNameOrId);
-        if (!playerOne || !playerTwo) {
-            return ctx.editOrReply({
-                content: ctx.t.commands.commonErrors.playerNotFound.get()
-            });
-        }
-
-        if (playerOne.uid === playerTwo.uid) {
-            return ctx.editOrReply({
-                content: ctx.t.commands.core.compare.samePlayer.get()
-            });
-        }
-
-        const image = await generateCompare([playerOne, playerTwo]);
-
+        // Under development
         return ctx.editOrReply({
-            files: [{
-                data: image,
-                filename: 'compare.png'
-            }]
+            content: ctx.t.commands.commonErrors.underDevelopment.get()
         });
+
+        // const firstNameOrId = ctx.options['name-or-id'];
+        // const secondNameOrId = ctx.options['name-or-id2'];
+        // if (!firstNameOrId || !secondNameOrId || firstNameOrId === secondNameOrId) {
+        //     return ctx.editOrReply({
+        //         content: ctx.t.commands.core.compare.samePlayer.get()
+        //     });
+        // }
+
+        // const playerOne = await ctx.client.api.getPlayer(firstNameOrId);
+        // const playerTwo = await ctx.client.api.getPlayer(secondNameOrId);
+        // if (!playerOne || !playerTwo) {
+        //     return ctx.editOrReply({
+        //         content: ctx.t.commands.commonErrors.playerNotFound.get()
+        //     });
+        // }
+        // console.log(playerOne.platformInfo, playerTwo.platformInfo);
+
+        // if (playerOne.platformInfo.platformUserIdentifier === playerTwo.platformInfo.platformUserIdentifier) {
+        //     return ctx.editOrReply({
+        //         content: ctx.t.commands.core.compare.samePlayer.get()
+        //     });
+        // }
+
+        // const image = await generateCompare([playerOne, playerTwo]);
+
+        // return ctx.editOrReply({
+        //     files: [{
+        //         data: image,
+        //         filename: 'compare.png'
+        //     }]
+        // });
 
     }
 }

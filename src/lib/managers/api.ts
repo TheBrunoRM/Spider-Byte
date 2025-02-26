@@ -1,34 +1,48 @@
+import { type IValidation, createValidate, validate } from 'typia';
 import { LogLevels, Logger, delay } from 'seyfert/lib/common';
-import { type IValidation, createValidate } from 'typia';
 import { LimitedCollection } from 'seyfert';
+import * as puppeteer from 'puppeteer';
 
 import type { LeaderboardPlayerHeroDTO } from '../../types/dtos/LeaderboardPlayerHeroDTO';
 import type { FormattedPatch, PatchNotesDTO } from '../../types/dtos/PatchNotesDTO';
 import type { FindedPlayerDTO } from '../../types/dtos/FindedPlayerDTO';
 import type { MatchHistoryDTO } from '../../types/dtos/MatchHistoryDTO';
 import type { HeroesDTO } from '../../types/dtos/HeroesDTO';
-import type { PlayerDTO } from '../../types/dtos/PlayerDTO';
+import type { PlayerDTO } from '../../types/v2/PlayerDTO';
+import type { RankedDTO } from '../../types/v2/RankedDTO';
 import type { HeroDTO } from '../../types/dtos/HeroDTO';
 
 import { isProduction } from '../constants';
 
-export const isHeroes = createValidate<HeroesDTO[]>();
-export const isHero = createValidate<HeroDTO>();
-export const isPlayer = createValidate<PlayerDTO>();
-export const isFindedPlayer = createValidate<FindedPlayerDTO>();
-export const isMatchHistory = createValidate<MatchHistoryDTO>();
-export const isLeaderboardPlayerHero = createValidate<LeaderboardPlayerHeroDTO>();
-export const isPatchNotes = createValidate<PatchNotesDTO>();
-export const isFormattedPatch = createValidate<FormattedPatch>();
+const isHeroes = createValidate<HeroesDTO[]>();
+const isHero = createValidate<HeroDTO>();
+const isFindedPlayer = createValidate<FindedPlayerDTO>();
+const isMatchHistory = createValidate<MatchHistoryDTO>();
+const isLeaderboardPlayerHero = createValidate<LeaderboardPlayerHeroDTO>();
+const isPatchNotes = createValidate<PatchNotesDTO>();
+const isFormattedPatch = createValidate<FormattedPatch>();
+
+const BASE_URL = String(Bun.env.BASE_URL);
+const BASE_URL_2 = String(Bun.env.BASE_URL_2);
+
+if (!BASE_URL) {
+  throw new Error('BASE_URL is not defined');
+}
+if (!BASE_URL_2) {
+  throw new Error('BASE_URL_2 is not defined');
+}
 
 export class Api {
+  page?: puppeteer.Page;
+
   logger = new Logger({
-    name: '[Rivals]',
+    name: '[Rivals API]',
     logLevel: isProduction
       ? LogLevels.Info
       : LogLevels.Debug
   });
 
+  // First, add the new cache collection to the cache object
   cache = {
     searchPlayer: new LimitedCollection<string, FindedPlayerDTO | null>({
       expire: 15 * 60e3
@@ -42,14 +56,18 @@ export class Api {
     patchNotes: new LimitedCollection<string, PatchNotesDTO | null>({
       expire: 60 * 60e3
     }),
+    rankedStats: new LimitedCollection<string, RankedDTO | null>({
+      expire: 15 * 60e3
+    }),
     heroes: [] as HeroesDTO[]
   };
 
-  private readonly retryDelay: number = 1_000; // Retardo entre reintentos en milisegundos
+  // Then modify the fetchJson method to use caching
+  private readonly retryDelay: number = 1_000;
 
-  private readonly maxRetries: number = 3; // Número máximo de reintentos
+  private readonly maxRetries: number = 3;
 
-  private readonly baseUrl: string = 'https://marvelrivalsapi.com';
+  private readonly baseUrl: string = BASE_URL_2;
 
   private readonly cdnUrl: string = `${this.baseUrl}/rivals`;
 
@@ -69,6 +87,50 @@ export class Api {
       this.apiKeyIndex = 0;
     }
     return this.apiKeys[i];
+  }
+
+  private async fetchJson<T>(endpoint: string, url: string, cache: LimitedCollection<string, null | T>): Promise<undefined | T> {
+    try {
+      // Check cache first
+      if (cache.has(endpoint)) {
+        return cache.get(endpoint)!;
+      }
+
+      const page = await this.createPage();
+
+      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36');
+      await page.setExtraHTTPHeaders({
+        'Accept-Language': 'en-US,en;q=0.9',
+        Accept: 'application/json,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+        'Sec-Fetch-Site': 'same-origin',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Dest': 'empty'
+      });
+
+      // Enable JavaScript and cookies
+      await page.setJavaScriptEnabled(true);
+
+      const response = await page.goto(url, {
+        waitUntil: 'domcontentloaded',
+        timeout: 30_000
+      });
+
+      if (!response) {
+        throw new Error('Failed to get response from the page');
+      }
+
+      if (!response.ok()) {
+        return undefined;
+      }
+
+      const jsonData = await response.json();
+      // Store in cache before returning
+      cache.set(endpoint, jsonData as T);
+
+      return jsonData as T;
+    } catch (error) {
+      throw new Error(`Failed to fetch JSON: ${String(error)}`);
+    }
   }
 
   // Patch Notes
@@ -103,8 +165,41 @@ export class Api {
     return this.fetchWithRetry(`player/${usernameOrId}/match-history`, isMatchHistory);
   }
 
-  public fetchPlayer(uid: string) {
-    return this.fetchWithCacheRetry(`player/${uid}`, isPlayer, this.cache.fetchPlayer);
+  async fetchPlayer(name: string): Promise<PlayerDTO['data'] | undefined> {
+    const url = `${BASE_URL}/standard/profile/ign/${encodeURIComponent(name)}`;
+    const response = await this.fetchJson<PlayerDTO>('fetch-player', url, this.cache.fetchPlayer);
+
+    if (!response) {
+      return undefined;
+    }
+
+    // Validate response with typia
+    const validation = validate<PlayerDTO>(response);
+    if (!validation.success) {
+      console.error('Invalid API response:', validation.errors);
+      return undefined;
+    }
+
+    return response.data;
+  }
+
+  // Ranked
+  public async getRankedStats(name: string) {
+    const url = `${BASE_URL}/standard/profile/ign/${encodeURIComponent(name)}/stats/overview/ranked`;
+    const response = await this.fetchJson<RankedDTO>('ranked-stats', url, this.cache.rankedStats);
+
+    if (!response) {
+      return undefined;
+    }
+
+    // Validate response with typia
+    const validation = validate<RankedDTO>(response);
+    if (!validation.success) {
+      console.error('Invalid API response:', validation.errors);
+      return undefined;
+    }
+
+    return response.data;
   }
 
   // Heroes
@@ -128,7 +223,6 @@ export class Api {
   }
 
   // api
-
   private async fetchWithRetry<T>(
     endpoint: string,
     validator: (data: unknown) => IValidation<T>, // Validador de types
@@ -199,5 +293,33 @@ export class Api {
     }
 
     return response;
+  }
+
+  private async createPage() {
+    if (this.page) {
+      return this.page;
+    }
+    const browser = await puppeteer.launch({
+      headless: 'shell',
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-web-security',
+        '--disable-features=IsolateOrigins,site-per-process'
+      ]
+    });
+
+    this.page = await browser.newPage();
+
+    await this.page.setRequestInterception(true);
+    this.page.on('request', (request) => {
+      if (['stylesheet', 'image', 'font'].includes(request.resourceType())) {
+        void request.abort();
+      } else {
+        void request.continue();
+      }
+    });
+
+    return this.page;
   }
 }

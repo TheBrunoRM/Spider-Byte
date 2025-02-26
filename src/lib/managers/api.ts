@@ -223,6 +223,10 @@ export class Api {
   }
 
   // api
+  async init() {
+    await this.createPage();
+  }
+
   private async fetchWithRetry<T>(
     endpoint: string,
     validator: (data: unknown) => IValidation<T>, // Validador de types
@@ -254,6 +258,7 @@ export class Api {
     const check = validator(data);
 
     if (!check.success) {
+      console.log(check.errors);
       throw new Error(check.errors.map((err) => `Expected: ${err.expected} on ${err.path}`).join('\n'));
     }
 
@@ -300,6 +305,9 @@ export class Api {
       return this.page;
     }
     const browser = await puppeteer.launch({
+      executablePath: process.platform === 'linux'
+        ? '/usr/bin/chromium'
+        : undefined,
       headless: 'shell',
       args: [
         '--no-sandbox',

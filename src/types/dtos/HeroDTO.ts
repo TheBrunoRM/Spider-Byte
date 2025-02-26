@@ -22,30 +22,12 @@ export interface HeroDTO {
 export interface Ability {
   readonly id: number;
   readonly icon: string;
-  readonly name: string;
+  readonly name?: string;
   readonly type: string;
   readonly isCollab: boolean;
   readonly description?: string;
-  readonly additional_fields: AdditionalFields;
+  readonly additional_fields: { [key: string]: string };
   readonly transformation_id: string;
-}
-
-export interface AdditionalFields {
-  readonly Key: string;
-  readonly "Special Effect"?: string;
-  readonly Damage?: string;
-  readonly Casting?: string;
-  readonly "Attack Range"?: string;
-  readonly "Attack Interval"?: string;
-  readonly Cooldown?: string;
-  readonly Duration?: string;
-  readonly "Movement Boost"?: string;
-  readonly "Spell Field Range"?: string;
-  readonly "Maximum Distance"?: string;
-  readonly Range?: string;
-  readonly "Energy Cost"?: string;
-  readonly "Bonus Max Health"?: string;
-  readonly "Bonus Health Growth"?: string;
 }
 
 export interface Badges {

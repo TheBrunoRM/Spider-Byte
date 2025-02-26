@@ -29,13 +29,7 @@ export interface DatumMetadata {
     readonly name: string;
     readonly shortName: string;
     readonly imageUrl: string;
-    readonly color: Color;
-}
-
-export enum Color {
-    A7693F = '#A7693F',
-    Ffda57 = '#FFDA57',
-    The7B9196 = '#7B9196'
+    readonly color: `#${string}`;
 }
 
 export interface HistoryMetadata {

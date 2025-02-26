@@ -209,7 +209,7 @@ export default class About extends SubCommand {
             }
 
             abilityEmbed
-                .setTitle(`${abilityData.name || abilityData2.name} (${abilityData.type || abilityData2.type})`);
+                .setTitle(`${abilityData.name || abilityData2.name} (${abilityData.type})`);
             if (abilityData.icon) {
                 abilityEmbed.setThumbnail(
                     ctx.client.api.buildImage(abilityData.icon || abilityData2.icon)

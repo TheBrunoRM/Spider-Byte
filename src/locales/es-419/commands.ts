@@ -4,7 +4,8 @@ const commands = {
     commonErrors: {
         playerNotFound: ':warning: Jugador no encontrado. Proporciona un nombre o ID válido e intenta de nuevo.',
         noNameOrId: ':warning: No se proporcionó nombre o ID. Este dato es necesario para continuar.',
-        underDevelopment: ':warning: Este comando está en desarrollo. Pronto estará disponible. Disculpa las molestias.'
+        underDevelopment: ':warning: Este comando está en desarrollo. Pronto estará disponible. Disculpa las molestias.',
+        privateProfile: ':warning: Este perfil está configurado como privado en el juego. Para cambiarlo, sigue las instrucciones que se muestran e intenta de nuevo.'
     },
     commonOptions: {
         nameOrId: 'Ingresa el nombre o ID del jugador para identificarlo.'

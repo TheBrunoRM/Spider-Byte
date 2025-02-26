@@ -10,6 +10,7 @@ import type { HeroesDTO } from '../../types/dtos/HeroesDTO';
 import type { PlayerDTO } from '../../types/v2/PlayerDTO';
 import type { RankedDTO } from '../../types/v2/RankedDTO';
 import type { HeroDTO } from '../../types/dtos/HeroDTO';
+import type { APIError } from '../../types/v2/APIError';
 
 import { isProduction } from '../constants';
 
@@ -86,7 +87,7 @@ export class Api {
     return this.apiKeys[i];
   }
 
-  private async fetchJson<T>(endpoint: string, url: string, cache: LimitedCollection<string, undefined | T>): Promise<undefined | T> {
+  private async fetchJson<T>(endpoint: string, url: string, cache: LimitedCollection<string, undefined | T>): Promise<undefined | APIError | T> {
     try {
       // Check cache first
       if (cache.has(endpoint)) {
@@ -128,6 +129,10 @@ export class Api {
       //   waitUntil: 'domcontentloaded',
       //   timeout: 30_000
       // });
+
+      if (response.status === 400) {
+        return await response.json() as APIError;
+      }
 
       if (!response.ok) {
         return undefined;
@@ -175,12 +180,17 @@ export class Api {
     return this.fetchWithRetry(`player/${usernameOrId}/match-history`, isMatchHistory);
   }
 
-  async fetchPlayer(name: string): Promise<PlayerDTO['data'] | undefined> {
+  async fetchPlayer(name: string): Promise<PlayerDTO['data'] | undefined | APIError> {
     const url = `${BASE_URL}/standard/profile/ign/${encodeURIComponent(name)}`;
     const response = await this.fetchJson<PlayerDTO>(`fetch-player/${name}`, url, this.cache.fetchPlayer);
 
     if (!response) {
       return undefined;
+    }
+
+    // validamos que response no sea un APIError
+    if ('errors' in response) {
+      return response;
     }
 
     // Validate response with typia
@@ -209,7 +219,7 @@ export class Api {
       return undefined;
     }
 
-    return response.data;
+    return (response as RankedDTO).data;
   }
 
   // Heroes

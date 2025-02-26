@@ -2,7 +2,8 @@ export const commands = {
     commonErrors: {
         playerNotFound: ':warning: Player not found. Provide a valid name or ID and try again.',
         noNameOrId: ':warning: No player name or ID provided. This is required to proceed.',
-        underDevelopment: ':warning: This command is under development. It will be available soon. Sorry for the inconvenience.'
+        underDevelopment: ':warning: This command is under development. It will be available soon. Sorry for the inconvenience.',
+        privateProfile: ':warning: This profile is set to private in game. To change this, follow the directions shown and try again.'
     },
     commonOptions: {
         nameOrId: 'Enter the player name or ID to identify the player.'

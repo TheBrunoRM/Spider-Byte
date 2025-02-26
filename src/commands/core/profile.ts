@@ -1,4 +1,5 @@
 import { type CommandContext, createStringOption, SubCommand, LocalesT, Declare, Options, Embed } from 'seyfert';
+import { join } from 'node:path';
 
 const options = {
   'name-or-id': createStringOption({
@@ -27,9 +28,25 @@ export default class ProfileCommand extends SubCommand {
     }
 
     const player = await ctx.client.api.getPlayer(nameOrId);
+
+
     if (!player) {
       return ctx.editOrReply({
         content: ctx.t.commands.commonErrors.playerNotFound.get()
+      });
+    }
+
+    if ('errors' in player) {
+      return ctx.editOrReply({
+        content: ctx.t.commands.commonErrors.privateProfile.get(),
+        files: [
+          {
+            data: await Bun.file(
+              join(process.cwd(), 'assets', 'private-profile.png')
+            ).bytes(),
+            filename: 'private-profile.png'
+          }
+        ]
       });
     }
 

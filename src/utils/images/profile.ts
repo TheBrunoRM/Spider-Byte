@@ -1,3 +1,5 @@
+import type { Image } from '@napi-rs/canvas';
+
 import { createCanvas, loadImage } from '@napi-rs/canvas';
 import { join } from 'node:path';
 
@@ -40,8 +42,17 @@ export async function generateProfile(data: PlayerDTO['data'], playerID: string)
     ctx.drawImage(background, 0, 0);
     ctx.drawImage(userIcon, 99, 43, 100, 100);
     if (mostplayed) {
-        const historyIcon = await loadImage(`https://rivalskins.com/wp-content/uploads/marvel-assets/assets/hero-story-images/${parseNameForRivalSkins(mostplayed.metadata.name).replaceAll(' ', '%20')
-            }%20Story.png`);
+        let historyIcon: Image;
+        try {
+            historyIcon = await loadImage(`https://rivalskins.com/wp-content/uploads/marvel-assets/assets/hero-story-images/${parseNameForRivalSkins(mostplayed.metadata.name).replaceAll(' ', '%20')
+                }%20Story.png`);
+
+        } catch (e) {
+            console.log({ e }, 'historyIcon');
+            historyIcon = await Promise.any(data.segments.filter((x) => x.type === 'hero')
+                .map((x) => loadImage(`https://rivalskins.com/wp-content/uploads/marvel-assets/assets/hero-story-images/${parseNameForRivalSkins(x.metadata.name).replaceAll(' ', '%20')
+                    }%20Story.png`)));
+        }
         ctx.drawImage(historyIcon, 768, 33, 344, 120);
     }
 
@@ -166,7 +177,7 @@ export async function generateProfile(data: PlayerDTO['data'], playerID: string)
         ctx.fillText(overview.stats.totalDamageTakenPerMinute.displayValue, 195 - damageTakenMetrics.width / 2, 632);
     }
 
-    const topHeroes = data.segments.filter((x) => x.type === 'hero').slice(0, 3);
+    const topHeroes = data.segments.filter((x) => x.type === 'hero').sort((a, b) => (b.stats.matchesPlayed?.value ?? 0) - (a.stats.matchesPlayed?.value ?? 0)).slice(0, 3);
 
     for (let i = 0; i < topHeroes.length; i++) {
         const hero = topHeroes.at(i)!;

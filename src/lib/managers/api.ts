@@ -44,19 +44,19 @@ export class Api {
 
   // First, add the new cache collection to the cache object
   cache = {
-    searchPlayer: new LimitedCollection<string, FindedPlayerDTO | undefined>({
+    searchPlayer: new LimitedCollection<string, FindedPlayerDTO | null>({
       expire: 15 * 60e3
     }),
-    fetchPlayer: new LimitedCollection<string, PlayerDTO | undefined>({
+    fetchPlayer: new LimitedCollection<string, PlayerDTO | null>({
       expire: 15 * 60e3
     }),
-    leaderboardPlayerHero: new LimitedCollection<string, LeaderboardPlayerHeroDTO | undefined>({
+    leaderboardPlayerHero: new LimitedCollection<string, LeaderboardPlayerHeroDTO | null>({
       expire: 15 * 60e3
     }),
-    patchNotes: new LimitedCollection<string, PatchNotesDTO | undefined>({
+    patchNotes: new LimitedCollection<string, PatchNotesDTO | null>({
       expire: 60 * 60e3
     }),
-    rankedStats: new LimitedCollection<string, RankedDTO | undefined>({
+    rankedStats: new LimitedCollection<string, RankedDTO | null>({
       expire: 15 * 60e3
     }),
     heroes: [] as HeroesDTO[]
@@ -89,7 +89,7 @@ export class Api {
     return this.apiKeys[i];
   }
 
-  private async fetchJson<T>(endpoint: string, url: string, cache: LimitedCollection<string, undefined | T>): Promise<undefined | APIError | T> {
+  private async fetchJson<T>(endpoint: string, url: string, cache: LimitedCollection<string, null | T>): Promise<APIError | null | T> {
     try {
       // Check cache first
       if (cache.has(endpoint)) {
@@ -113,31 +113,12 @@ export class Api {
         mode: 'cors'
       });
 
-      // const page = await this.createPage();
-
-      // await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36');
-      // await page.setExtraHTTPHeaders({
-      //   'Accept-Language': 'en-US,en;q=0.9',
-      //   Accept: 'application/json,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-      //   'Sec-Fetch-Site': 'same-origin',
-      //   'Sec-Fetch-Mode': 'cors',
-      //   'Sec-Fetch-Dest': 'empty'
-      // });
-
-      // // Enable JavaScript and cookies
-      // await page.setJavaScriptEnabled(true);
-
-      // const response = await page.goto(url, {
-      //   waitUntil: 'domcontentloaded',
-      //   timeout: 30_000
-      // });
-
       if (response.status === 400) {
         return await response.json() as APIError;
       }
 
       if (!response.ok) {
-        return undefined;
+        throw new Error(await response.text());
       }
 
       const jsonData = await response.json();
@@ -248,19 +229,16 @@ export class Api {
     endpoint: string,
     validator: (data: unknown) => IValidation<T>, // Validador de types
     retries: number = this.maxRetries
-  ): Promise<undefined | T> {
+  ): Promise<null | T> {
     let data: unknown;
     try {
       this.logger.debug(endpoint);
 
       const response = await this.fetchApi(endpoint);
-      if (!response) {
-        return undefined;
-      }
 
-      // Si la respuesta es 404 (Not Found), retorna undefined
+      // Si la respuesta es 404 (Not Found), retorna null
       if (response.status === 404) {
-        return undefined;
+        return null;
       }
 
       data = await response.json();
@@ -285,9 +263,9 @@ export class Api {
   private async fetchWithCacheRetry<T>(
     endpoint: string,
     validator: (data: unknown) => IValidation<T>, // Validador de types
-    cache: LimitedCollection<string, undefined | T>,
+    cache: LimitedCollection<string, null | T>,
     retries: number = this.maxRetries
-  ): Promise<undefined | T> {
+  ): Promise<null | T> {
     if (cache.has(endpoint)) {
       return cache.get(endpoint)!;
     }
@@ -311,7 +289,6 @@ export class Api {
     if (!response.ok || response.status !== 200) {
       const errorMessage = `API request failed with status ${response.status}: ${response.statusText}`;
       this.logger.error(errorMessage);
-      return undefined;
     }
 
     return response;

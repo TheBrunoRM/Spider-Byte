@@ -22,6 +22,7 @@ import type {
     Ability
 } from '../../types/dtos/HeroesDTO';
 
+import { parseNameForRivalSkins } from '../../utils/functions/skins';
 import { capitalize } from '../../utils/functions/capitalize';
 import { Role } from '../../types/dtos/HeroesDTO';
 
@@ -286,13 +287,4 @@ function parseNameForCharacterIcon(name: string) {
             return 'bruce-banner';
     }
     return name;
-}
-
-function parseNameForRivalSkins(name: string) {
-    switch (name) {
-        case 'jeff the land shark':
-            return 'Jeff the Land Shark';
-    }
-    return name.split('-').map((str) => capitalize(str)).join('-').split(' ')
-        .map((str) => capitalize(str)).join(' ');
 }

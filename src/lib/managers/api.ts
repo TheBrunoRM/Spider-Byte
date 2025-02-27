@@ -1,5 +1,5 @@
-import { type IValidation, createValidate, validate } from 'typia';
 import { LogLevels, Logger, delay } from 'seyfert/lib/common';
+import { type IValidation, createValidate } from 'typia';
 import { LimitedCollection } from 'seyfert';
 
 import type { LeaderboardPlayerHeroDTO } from '../../types/dtos/LeaderboardPlayerHeroDTO';
@@ -21,6 +21,8 @@ const isMatchHistory = createValidate<MatchHistoryDTO>();
 const isLeaderboardPlayerHero = createValidate<LeaderboardPlayerHeroDTO>();
 const isPatchNotes = createValidate<PatchNotesDTO>();
 const isFormattedPatch = createValidate<FormattedPatch>();
+const isPlayer = createValidate<PlayerDTO>();
+const isRanked = createValidate<RankedDTO>();
 
 const BASE_URL = Bun.env.BASE_URL!;
 const BASE_URL_2 = Bun.env.BASE_URL_2!;
@@ -166,14 +168,14 @@ export class Api {
 
   public async getPlayer(nameOrId: string) {
     if (/^\d+$/.exec(nameOrId)) {
-      return this.fetchPlayer(nameOrId);
+      return [await this.fetchPlayer(nameOrId), nameOrId] as const;
     }
 
     const playerFound = await this.searchPlayer(nameOrId);
     if (!playerFound) {
-      return playerFound;
+      return [playerFound, ''] as const;
     }
-    return this.fetchPlayer(playerFound.uid);
+    return [await this.fetchPlayer(playerFound.uid), playerFound.uid] as const;
   }
 
   public getMatchHistory(usernameOrId: string) {
@@ -194,7 +196,7 @@ export class Api {
     }
 
     // Validate response with typia
-    const validation = validate<PlayerDTO>(response);
+    const validation = isPlayer(response);
     if (!validation.success) {
       console.error('Invalid API response:', validation.errors);
       return undefined;
@@ -213,7 +215,7 @@ export class Api {
     }
 
     // Validate response with typia
-    const validation = validate<RankedDTO>(response);
+    const validation = isRanked(response);
     if (!validation.success) {
       console.error('Invalid API response:', validation.errors);
       return undefined;
@@ -235,7 +237,7 @@ export class Api {
     if (heroes) {
       this.cache.heroes = heroes;
     }
-    return [];
+    return this.cache.heroes;
   }
 
   public getHero(nameOrId: string) {

@@ -964,12 +964,12 @@ export type Type =
     'hero';
 
 export interface UserInfo {
-    readonly userId: null;
+    readonly userId: number | null;
     readonly isPremium: boolean;
     readonly isVerified: boolean;
     readonly isInfluencer: boolean;
     readonly isPartner: boolean;
-    readonly countryCode: null;
+    readonly countryCode: string | null;
     readonly customAvatarUrl: null;
     readonly customHeroUrl: null;
     readonly customAvatarFrame: null;

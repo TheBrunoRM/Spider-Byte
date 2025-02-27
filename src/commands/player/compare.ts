@@ -36,8 +36,8 @@ export default class CompareCommand extends SubCommand {
             });
         }
 
-        const playerOne = await ctx.client.api.getPlayer(firstNameOrId);
-        const playerTwo = await ctx.client.api.getPlayer(secondNameOrId);
+        const [playerOne] = await ctx.client.api.getPlayer(firstNameOrId);
+        const [playerTwo] = await ctx.client.api.getPlayer(secondNameOrId);
         if (!playerOne || !playerTwo) {
             return ctx.editOrReply({
                 content: ctx.t.commands.commonErrors.playerNotFound.get()

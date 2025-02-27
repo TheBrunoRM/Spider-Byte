@@ -29,7 +29,7 @@ export default class RankCommand extends SubCommand {
             });
         }
 
-        const player = await ctx.client.api.getPlayer(nameOrId);
+        const [player] = await ctx.client.api.getPlayer(nameOrId);
         if (!player) {
             return ctx.editOrReply({
                 content: ctx.t.commands.commonErrors.playerNotFound.get()

@@ -4,6 +4,7 @@ import type { ColorResolvable, MakeRequired } from 'seyfert/lib/common';
 import {
     createStringOption,
     StringSelectOption,
+    AttachmentBuilder,
     StringSelectMenu,
     SubCommand,
     ActionRow,
@@ -14,8 +15,8 @@ import {
     Embed
 } from 'seyfert';
 import { type CommandContext, type OKFunction, Button } from 'seyfert';
+import { MessageFlags, ButtonStyle } from 'seyfert/lib/types';
 import didYouMean, { ReturnTypeEnums } from 'didyoumean2';
-import { ButtonStyle } from 'seyfert/lib/types';
 
 import type {
     HeroesDTO,
@@ -177,6 +178,19 @@ export default class About extends SubCommand {
             });
         });
 
+        collector.run<ButtonInteraction>(/video_[0-9]{1,}/, async (interaction) => {
+            const abilityID = interaction.customId.slice(6);
+            await interaction.deferReply(MessageFlags.Ephemeral);
+            await interaction.editOrReply({
+                files: [
+                    new AttachmentBuilder()
+                        .setName('video.mp4')
+                        .setFile('url', `https://marvel-rivals.atlasforge.gg/videos/abilities/${hero.id}/${hero.id}0010/${abilityID}_High.webm`)
+                ],
+                flags: MessageFlags.Ephemeral
+            });
+        });
+
         collector.run<SelectMenuInteraction>(/./, async (interaction) => {
             const abilityId = interaction.values.at(0);
             if (!abilityId) {
@@ -220,7 +234,8 @@ export default class About extends SubCommand {
             await interaction.update({
                 embeds: [abilityEmbed],
                 components: this.generateActionRowSelectMenu(
-                    hero.abilities
+                    hero.abilities,
+                    abilityData
                 )
             });
         });
@@ -250,7 +265,8 @@ export default class About extends SubCommand {
     }
 
     generateActionRowSelectMenu(
-        abilities: Ability[]
+        abilities: Ability[],
+        selectedAbility?: Omit<Ability, 'name' | 'type'>
     ): ActionRow<StringSelectMenu | Button>[] {
         const selectMenuRow = new ActionRow<StringSelectMenu>();
         const buttonRow = new ActionRow<Button>();
@@ -269,14 +285,25 @@ export default class About extends SubCommand {
                 })
             );
 
-        const backButton = new Button()
-            .setLabel('Back')
-            .setStyle(ButtonStyle.Primary)
-            .setCustomId('back');
+        const buttons = [
+            new Button()
+                .setLabel('Back')
+                .setStyle(ButtonStyle.Primary)
+                .setCustomId('back')
+        ];
+
+        if (selectedAbility && !selectedAbility.isCollab) {
+            buttons.push(
+                new Button()
+                    .setLabel('Show video')
+                    .setStyle(ButtonStyle.Primary)
+                    .setCustomId(`video_${selectedAbility.id}`)
+            );
+        }
 
         return [
             selectMenuRow.addComponents(selectMenu),
-            buttonRow.addComponents(backButton)
+            buttonRow.addComponents(buttons)
         ];
     }
 }

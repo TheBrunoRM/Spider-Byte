@@ -1,4 +1,6 @@
-import { type CommandContext, createStringOption, SubCommand, LocalesT, Declare, Options } from 'seyfert';
+import type { CommandContext } from 'seyfert';
+
+import { createStringOption, SubCommand, LocalesT, Declare, Options } from 'seyfert';
 import { join } from 'node:path';
 
 import { generateRankGraph } from '../../utils/images/ranked';

@@ -46,7 +46,6 @@ export async function generateProfile(data: PlayerDTO['data'], playerID: string)
         try {
             historyIcon = await loadImage(`https://rivalskins.com/wp-content/uploads/marvel-assets/assets/hero-story-images/${parseNameForRivalSkins(mostplayed.metadata.name).replaceAll(' ', '%20')
                 }%20Story.png`);
-
         } catch (e) {
             console.log({ e }, 'historyIcon');
             historyIcon = await Promise.any(data.segments.filter((x) => x.type === 'hero')

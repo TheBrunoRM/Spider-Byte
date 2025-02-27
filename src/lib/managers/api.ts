@@ -178,13 +178,13 @@ export class Api {
     return [await this.fetchPlayer(playerFound.uid), playerFound.uid] as const;
   }
 
-  public getMatchHistory(usernameOrId: string) {
-    return this.fetchWithRetry(`player/${usernameOrId}/match-history`, isMatchHistory);
+  public getMatchHistory(id: string) {
+    return this.fetchWithRetry(`player/${id}/match-history`, isMatchHistory);
   }
 
-  async fetchPlayer(name: string): Promise<PlayerDTO['data'] | undefined | APIError> {
-    const url = `${BASE_URL}/standard/profile/ign/${encodeURIComponent(name)}`;
-    const response = await this.fetchJson<PlayerDTO>(`fetch-player/${name}`, url, this.cache.fetchPlayer);
+  async fetchPlayer(id: string): Promise<PlayerDTO['data'] | undefined | APIError> {
+    const url = `${BASE_URL}/standard/profile/ign/${encodeURIComponent(id)}`;
+    const response = await this.fetchJson<PlayerDTO>(`fetch-player/${id}`, url, this.cache.fetchPlayer);
 
     if (!response) {
       return undefined;

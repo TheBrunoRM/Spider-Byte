@@ -11,12 +11,12 @@ export interface Data {
 
 export interface History {
     readonly metadata: HistoryMetadata;
-    readonly data: (DatumClass | string)[][];
+    readonly data: [string, DatumClass][];
 }
 
 export interface DatumClass {
     readonly metadata: DatumMetadata;
-    readonly value: (number | string)[];
+    readonly value: [string, number];
     readonly displayValue: string;
     readonly displayType: DisplayType;
 }

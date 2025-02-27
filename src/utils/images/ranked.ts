@@ -29,7 +29,7 @@ let background: Image | null = null;
 
 export async function generateRankGraph(ranked: RankedDTO['data'], player: PlayerDTO['data']) {
     const rankHistory = ranked.history.data;
-    if (!rankHistory.length || !rankHistory[0][1]) {
+    if (!rankHistory.length) {
         return null;
     }
 
@@ -40,11 +40,10 @@ export async function generateRankGraph(ranked: RankedDTO['data'], player: Playe
     ctx.drawImage(background, 0, 0);
 
     // Get last 15 matches for the graph
-    const data = rankHistory.slice(0, 15).reverse();
+    const data = rankHistory.slice(0, 15).toReversed();
     const rankLevels = data.map((d) => {
-        const datum = d[1] as DatumClass;
-        // eslint-disable-next-line radix
-        return parseInt(datum.value[1] as unknown as string, 10);
+        const datum = d[1];
+        return datum.value[1];
     });
     const minLevel = Math.min(...rankLevels);
     const maxLevel = Math.max(...rankLevels);
@@ -59,7 +58,7 @@ export async function generateRankGraph(ranked: RankedDTO['data'], player: Playe
     // Draw current rank
     const currentRank = rankHistory[0][1] as DatumClass | null;
     if (currentRank) {
-        const rankText = currentRank.value[0] as string;
+        const rankText = currentRank.value[0];
         const rankPath = getRankPath(rankText);
         const rankImage = await loadImage(await Bun.file(join(process.cwd(), 'assets', 'ranks', rankPath)).bytes());
         const textWidth = ctx.measureText(rankText).width;
@@ -89,7 +88,7 @@ export async function generateRankGraph(ranked: RankedDTO['data'], player: Playe
 
     // Draw rank progression
     for (let i = 0; i < data.length; i++) {
-        const current = data[i][1] as DatumClass;
+        const current = data[i][1];
         const next = data[i + 1]?.[1] as DatumClass | null;
         const fromX = GRAPH_WIDTH / (data.length - 1) * i + HORIZONTAL_PADDING;
         const fromY = normalizeScore(parseFloat(current.value[1].toString()));
@@ -110,7 +109,7 @@ export async function generateRankGraph(ranked: RankedDTO['data'], player: Playe
     }
 
     // Draw last point
-    const lastRank = data[data.length - 1][1] as DatumClass;
+    const lastRank = data[data.length - 1][1];
     await drawPointWithGlow(
         ctx,
         CANVAS_WIDTH - HORIZONTAL_PADDING,
@@ -181,17 +180,3 @@ function getRankPath(rank: string) {
     const rankName = rank.split(' ')[0].toLowerCase();
     return `${rankName}.png`;
 }
-
-// interface RankData {
-//     metadata: {
-//         unit: string;
-//         iconUrl: string;
-//         tierName: string;
-//         tierShortName: string;
-//         color: string;
-//         season: number;
-//         seasonName: string;
-//         seasonShortName: string;
-//     };
-//     value: number;
-// }

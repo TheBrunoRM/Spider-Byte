@@ -111,7 +111,8 @@ export const commands = {
             description: 'View the leaderboard for a specific hero.',
             notFound: ':warning: No leaderboard found for this hero.',
             options: {
-                hero: 'The hero to get leaderboard info for.'
+                hero: 'The hero to get leaderboard info for.',
+                platform: 'The platform to get leaderboard info for.'
             }
         }
     }

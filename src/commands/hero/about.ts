@@ -75,7 +75,7 @@ const options = {
         },
         async value({ value, context: ctx }, ok: OKFunction<HeroesDTO>, fail) {
             const hero = (await ctx.client.api.getHeroes()).find(
-                (h) => h.name === value
+                (h) => h.name === value || h.id.toString() === value
             );
             if (!hero) {
                 fail(ctx.t.commands.hero.about.notFound(Formatter.inlineCode(value)).get());
@@ -105,9 +105,9 @@ export default class About extends SubCommand {
         const baseEmbed = new Embed().setColor(
             colorPerRole[capitalize(hero.role) as Role] as ColorResolvable
         );
-        const heroNameParsed = parseName(hero.name);
+        const heroNameParsed = parseNameForRivalSkins(hero.name);
         baseEmbed.setThumbnail(
-            `https://mrapi.org/assets/characters/${xdxdx(
+            `https://mrapi.org/assets/characters/${parseNameForCharacterIcon(
                 hero.name.replaceAll(' ', '-')
             )
             }-square.png`
@@ -280,7 +280,7 @@ export default class About extends SubCommand {
     }
 }
 
-function xdxdx(name: string) {
+function parseNameForCharacterIcon(name: string) {
     switch (name) {
         case 'hulk':
             return 'bruce-banner';
@@ -288,7 +288,7 @@ function xdxdx(name: string) {
     return name;
 }
 
-function parseName(name: string) {
+function parseNameForRivalSkins(name: string) {
     switch (name) {
         case 'jeff the land shark':
             return 'Jeff the Land Shark';

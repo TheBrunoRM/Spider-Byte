@@ -3,8 +3,6 @@ import type { CommandContext, OKFunction } from 'seyfert';
 import { createStringOption, SubCommand, LocalesT, Declare, Options } from 'seyfert';
 import didYouMean, { ReturnTypeEnums } from 'didyoumean2';
 
-import type { LeaderboardPlayerHeroDTO } from '../../types/dtos/LeaderboardPlayerHeroDTO';
-
 import { generateLeaderboard } from '../../utils/images/leaderboard';
 import { callbackPaginator } from '../../utils/paginator';
 
@@ -30,22 +28,37 @@ const options = {
                 value: hero.name
             })));
         },
-        async value({ value, context: ctx }, ok: OKFunction<LeaderboardPlayerHeroDTO>, fail) {
-            const hero = (await ctx.client.api.getHeroes()).find((h) => h.name === value);
+        async value({ value, context: ctx }, ok: OKFunction<string>, fail) {
+            const hero = (await ctx.client.api.getHeroes()).find((h) => h.name === value || h.id.toString() === value);
             if (!hero) {
                 fail(`Invalid hero ${value}`); return;
             }
 
-            const leaderboard = await ctx.client.api.getLeaderboardHero(String(hero.id));
-            if (!leaderboard) {
-                fail('404 xdxd'); return;
-            }
-
-            ok(leaderboard);
+            ok(hero.id.toString());
         },
         required: true,
         locales: {
             description: 'commands.hero.leaderboard.options.hero'
+        }
+    }),
+    platform: createStringOption({
+        description: 'The platform you want to get information about',
+        choices: [
+            {
+                name: 'PC',
+                value: 'pc'
+            },
+            {
+                name: 'PlayStation',
+                value: 'ps'
+            },
+            {
+                name: 'Xbox',
+                value: 'xbox'
+            }
+        ] as const,
+        locales: {
+            description: 'commands.hero.leaderboard.options.platform'
         }
     })
 };
@@ -60,14 +73,21 @@ export default class Ping extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
         await ctx.deferReply();
 
+        const leaderboard = await ctx.client.api.getLeaderboardHero(ctx.options.hero, ctx.options.platform);
+        if (!leaderboard) {
+            return ctx.editOrReply({
+                content: ctx.t.commands.hero.leaderboard.notFound.get()
+            });
+        }
+
         await ctx.editOrReply({
             files: [{
                 filename: 'leaderboard.png',
-                data: await generateLeaderboard(ctx.options.hero.players, 0)
+                data: await generateLeaderboard(leaderboard.players, 0)
             }]
         });
 
-        await callbackPaginator(ctx, ctx.options.hero.players, {
+        await callbackPaginator(ctx, leaderboard.players, {
             async callback(chunk, pageIndex) {
                 return {
                     files: [{

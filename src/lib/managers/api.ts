@@ -223,8 +223,8 @@ export class Api {
   }
 
   // Heroes
-  public getLeaderboardHero(nameOrId: string) {
-    return this.fetchWithCacheRetry(`heroes/leaderboard/${nameOrId}`, isLeaderboardPlayerHero, this.cache.leaderboardPlayerHero);
+  public getLeaderboardHero(nameOrId: string, platform: 'xbox' | 'pc' | 'ps' = 'pc') {
+    return this.fetchWithCacheRetry(`heroes/leaderboard/${nameOrId}?platform=${platform}`, isLeaderboardPlayerHero, this.cache.leaderboardPlayerHero);
   }
 
   public async getHeroes() {

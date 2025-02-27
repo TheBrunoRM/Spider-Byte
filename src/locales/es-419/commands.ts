@@ -113,7 +113,8 @@ const commands = {
             description: 'Muestra la tabla de clasificación de un héroe específico.',
             notFound: ':warning: No se encontró tabla de clasificación para este héroe.',
             options: {
-                hero: 'El héroe para obtener información de clasificación.'
+                hero: 'El héroe para obtener información de clasificación.',
+                platform: 'La plataforma para obtener información de clasificación.'
             }
         }
     }

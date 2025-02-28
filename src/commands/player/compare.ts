@@ -60,13 +60,13 @@ export default class CompareCommand extends SubCommand {
             });
         }
 
-        if (playerOne.platformInfo.platformUserIdentifier === playerTwo.platformInfo.platformUserIdentifier) {
+        if (playerOne.data.platformInfo.platformUserIdentifier === playerTwo.data.platformInfo.platformUserIdentifier) {
             return ctx.editOrReply({
                 content: ctx.t.commands.core.compare.samePlayer.get()
             });
         }
 
-        const image = await generateCompare([playerOne, playerTwo]);
+        const image = await generateCompare([playerOne.data, playerTwo.data]);
 
         return ctx.editOrReply({
             files: [{

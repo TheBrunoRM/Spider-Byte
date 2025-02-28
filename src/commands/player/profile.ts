@@ -51,7 +51,7 @@ export default class ProfileCommand extends SubCommand {
       });
     }
 
-    const buffer = await generateProfile(player, playerID);
+    const buffer = await generateProfile(player.data, playerID);
     await ctx.editOrReply({
       files: [
         new AttachmentBuilder().setName('profile.png').setFile('buffer', buffer)

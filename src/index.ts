@@ -2,6 +2,7 @@ import { type ParseMiddlewares, type ParseLocales, type ParseClient, type UsingC
 import { PresenceUpdateStatus, ActivityType, MessageFlags } from 'seyfert/lib/types';
 import { basename, join, sep } from 'node:path';
 import { GlobalFonts } from '@napi-rs/canvas';
+import { createClient } from '@redis/client';
 
 import type { Ratelimit } from './middlewares/cooldown';
 
@@ -91,7 +92,13 @@ client.langs.onFile = (locale, { path, file }) => file.default
     }
     : false;
 
-client.api = new Api((await client.getRC()).apiKeys);
+
+client.redis = await createClient()
+    .on('error', (err) => {
+        client.logger.error('Redis Client Error', err);
+    }).connect();
+
+client.api = new Api((await client.getRC()).apiKeys, client.redis);
 
 await client.api.getHeroes();
 
@@ -111,6 +118,7 @@ declare module 'seyfert' {
 
     interface UsingClient extends ParseClient<Client<true>> {
         api: Api;
+        redis: ReturnType<typeof createClient>;
     }
 
     interface DefaultLocale extends ParseLocales<typeof import('./locales/en-US/_')['default']> { }

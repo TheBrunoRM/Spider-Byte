@@ -52,24 +52,24 @@ export default class RankCommand extends SubCommand {
             });
         }
 
-        if (!player.segments.filter((segment) => segment.type === 'ranked-peaks').length) {
+        if (!player.data.segments.filter((segment) => segment.type === 'ranked-peaks').length) {
             return ctx.editOrReply({
-                content: ctx.t.commands.core.rank.noRankHistory(player.platformInfo.platformUserIdentifier, player.metadata.clubMiniName).get()
+                content: ctx.t.commands.core.rank.noRankHistory(player.data.platformInfo.platformUserIdentifier, player.data.metadata.clubMiniName).get()
             });
         }
 
-        const playerRank = await ctx.client.api.getRankedStats(player.platformInfo.platformUserIdentifier);
+        const playerRank = await ctx.client.api.getRankedStats(player.data.platformInfo.platformUserIdentifier);
         if (!playerRank) {
             return ctx.editOrReply({
-                content: ctx.t.commands.core.rank.noRankHistory(player.platformInfo.platformUserIdentifier, player.metadata.clubMiniName).get()
+                content: ctx.t.commands.core.rank.noRankHistory(player.data.platformInfo.platformUserIdentifier, player.data.metadata.clubMiniName).get()
             });
         }
 
-        const bufferGraph = await generateRankGraph(playerRank, player);
+        const bufferGraph = await generateRankGraph(playerRank.data, player.data);
 
         if (!bufferGraph) {
             return ctx.editOrReply({
-                content: ctx.t.commands.core.rank.noRankHistory(player.platformInfo.platformUserIdentifier, player.metadata.clubMiniName).get()
+                content: ctx.t.commands.core.rank.noRankHistory(player.data.platformInfo.platformUserIdentifier, player.data.metadata.clubMiniName).get()
             });
         }
 
@@ -79,6 +79,5 @@ export default class RankCommand extends SubCommand {
                 data: bufferGraph
             }]
         });
-
     }
 }

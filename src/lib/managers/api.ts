@@ -1,6 +1,5 @@
 import { LogLevels, Logger, delay } from 'seyfert/lib/common';
 import { type IValidation, createValidate } from 'typia';
-import { LimitedCollection } from 'seyfert';
 
 import type { LeaderboardPlayerHeroDTO } from '../../types/dtos/LeaderboardPlayerHeroDTO';
 import type { FormattedPatch, PatchNotesDTO } from '../../types/dtos/PatchNotesDTO';
@@ -44,26 +43,6 @@ export class Api {
       : LogLevels.Debug
   });
 
-  // First, add the new cache collection to the cache object
-  cache = {
-    searchPlayer: new LimitedCollection<string, FindedPlayerDTO | null>({
-      expire: 15 * 60e3
-    }),
-    fetchPlayer: new LimitedCollection<string, PlayerDTO | null>({
-      expire: 15 * 60e3
-    }),
-    leaderboardPlayerHero: new LimitedCollection<string, LeaderboardPlayerHeroDTO | null>({
-      expire: 15 * 60e3
-    }),
-    patchNotes: new LimitedCollection<string, PatchNotesDTO | null>({
-      expire: 60 * 60e3
-    }),
-    rankedStats: new LimitedCollection<string, RankedDTO | null>({
-      expire: 15 * 60e3
-    }),
-    heroes: [] as HeroesDTO[]
-  };
-
   // Then modify the fetchJson method to use caching
   private readonly baseTrackerUrl = TRACKER_DOMAIN;
 
@@ -81,7 +60,7 @@ export class Api {
 
   private apiKeyIndex = 0;
 
-  constructor(private readonly apiKeys: string[]) { }
+  constructor(private readonly apiKeys: string[], private readonly redisClient: ReturnType<typeof import('@redis/client')['createClient']>) { }
 
   public buildImage(path: string) {
     return `${this.cdnUrl}${path}`;
@@ -100,7 +79,8 @@ export class Api {
     return this.fetchWithRetry({
       domain: this.marvelRivalsApiUrl,
       endpoint: `patch-note/${id}`,
-      validator: isFormattedPatch
+      validator: isFormattedPatch,
+      cacheKey: `patch-notes/${id}`
     });
   }
 
@@ -109,7 +89,7 @@ export class Api {
       domain: this.marvelRivalsApiUrl,
       endpoint: 'patch-notes',
       validator: isPatchNotes,
-      cache: this.cache.patchNotes
+      cacheKey: 'patch-notes'
     });
   }
 
@@ -125,7 +105,8 @@ export class Api {
       query: {
         mode,
         season: season.toString()
-      }
+      },
+      cacheKey: `career/${id}/${mode}/${season}`
     });
   }
 
@@ -134,17 +115,18 @@ export class Api {
     return this.fetchWithRetry({
       domain: this.marvelRivalsApiUrl,
       endpoint: `player/${id}/match-history`,
-      validator: isMatchHistory
+      validator: isMatchHistory,
+      cacheKey: `match-history/${id}`
     });
   }
 
   // Players
-  public searchPlayer(username: string) {
+  public async searchPlayer(username: string) {
     return this.fetchWithRetry({
       domain: this.marvelRivalsApiUrl,
       endpoint: `find-player/${username}`,
       validator: isFindedPlayer,
-      cache: this.cache.searchPlayer
+      cacheKey: `find-player/${username}`
     });
   }
 
@@ -160,9 +142,21 @@ export class Api {
     return [await this.fetchPlayer(playerFound.uid), playerFound.uid] as const;
   }
 
-  async fetchPlayer(id: string): Promise<PlayerDTO['data'] | undefined | APIError> {
+  async fetchPlayer(id: string): Promise<PlayerDTO | undefined | APIError> {
+    if (await this.redisClient.EXISTS(`player/${id}`)) {
+      const user = await this.redisClient.GET(`player/${id}`);
+      if (!user || user === 'null') {
+        return undefined;
+      }
+      return JSON.parse(user) as PlayerDTO | APIError;
+    }
+
     const url = `${this.trackerApiUrl}/profile/ign/${encodeURIComponent(id)}`;
-    const response = await this.fetchJson<PlayerDTO>(`fetch-player/${id}`, url, this.cache.fetchPlayer);
+    const response = await this.fetchJson<PlayerDTO>(url);
+
+    await this.redisClient.SET(`player/${id}`, JSON.stringify(response), {
+      EX: 15 * 60
+    });
 
     if (!response) {
       return undefined;
@@ -180,26 +174,17 @@ export class Api {
       return undefined;
     }
 
-    return response.data;
+    return response;
   }
 
   // Ranked
-  public async getRankedStats(name: string) {
-    const url = `${TRACKER_DOMAIN}/standard/profile/ign/${encodeURIComponent(name)}/stats/overview/ranked`;
-    const response = await this.fetchJson<RankedDTO>(`ranked-stats/${name}`, url, this.cache.rankedStats);
-
-    if (!response) {
-      return undefined;
-    }
-
-    // Validate response with typia
-    const validation = isRanked(response);
-    if (!validation.success) {
-      console.error('Invalid API response:', validation.errors);
-      return undefined;
-    }
-
-    return (response as RankedDTO).data;
+  public getRankedStats(name: string) {
+    return this.fetchWithRetry({
+      domain: this.trackerApiUrl,
+      endpoint: `profile/ign/${encodeURIComponent(name)}/stats/overview/ranked`,
+      validator: isRanked,
+      cacheKey: `ranked-stats/${name}`
+    });
   }
 
   // Heroes
@@ -208,7 +193,7 @@ export class Api {
       domain: this.marvelRivalsApiUrl,
       endpoint: `heroes/leaderboard/${nameOrId}`,
       validator: isLeaderboardPlayerHero,
-      cache: this.cache.leaderboardPlayerHero,
+      cacheKey: `leaderboard-hero/${nameOrId}/${platform}`,
       query: {
         platform
       }
@@ -216,32 +201,28 @@ export class Api {
   }
 
   public async getHeroes() {
-    if (this.cache.heroes.length) {
-      return this.cache.heroes;
-    }
     const heroes = await this.fetchWithRetry({
       domain: this.marvelRivalsApiUrl,
       endpoint: 'heroes',
-      validator: isHeroes
+      validator: isHeroes,
+      cacheKey: 'heroes'
     });
-    if (heroes) {
-      this.cache.heroes = heroes;
-    }
-    return this.cache.heroes;
+    return heroes ?? [];
   }
 
   public getHero(nameOrId: string) {
     return this.fetchWithRetry({
       domain: this.marvelRivalsApiUrl,
       endpoint: `heroes/hero/${nameOrId}`,
-      validator: isHero
+      validator: isHero,
+      cacheKey: `hero/${nameOrId}`
     });
   }
 
   // internal
   private async fetchWithRetry<T>({
     domain,
-    cache,
+    cacheKey,
     endpoint,
     validator,
     retries = this.maxRetries,
@@ -249,11 +230,21 @@ export class Api {
   }: {
     endpoint: string;
     domain: Api['marvelRivalsApiUrl' | 'trackerApiUrl'];
-    validator: (data: unknown) => IValidation<T>; // Validador de types
-    cache?: LimitedCollection<string, null | T>;
+    validator: (data: unknown) => IValidation<T>;
+    cacheKey?: string;
     query?: Record<string, string>;
     retries?: number;
   }): Promise<null | T> {
+    if (cacheKey) {
+      const cachedData = await this.redisClient.GET(cacheKey);
+      if (cachedData) {
+        if (cachedData === 'null') {
+          return null;
+        }
+        return JSON.parse(cachedData) as T;
+      }
+    }
+
     let data: unknown;
     try {
       this.logger.debug(endpoint);
@@ -266,7 +257,11 @@ export class Api {
 
       // Si la respuesta es 404 (Not Found), retorna null
       if (response.status === 404) {
-        cache?.set(endpoint, null);
+        if (cacheKey) {
+          await this.redisClient.SET(cacheKey, 'null', {
+            EX: 15 * 60
+          });
+        }
         return null;
       }
 
@@ -277,7 +272,7 @@ export class Api {
         return this.fetchWithRetry({
           endpoint,
           validator,
-          cache,
+          cacheKey,
           retries: retries - 1,
           domain,
           query
@@ -292,17 +287,16 @@ export class Api {
       console.log(check.errors);
       throw new Error(check.errors.map((err) => `Expected: ${err.expected} on ${err.path}`).join('\n'));
     }
-    cache?.set(endpoint, check.data);
+    if (cacheKey) {
+      await this.redisClient.SET(cacheKey, JSON.stringify(check.data), {
+        EX: 15 * 60
+      });
+    }
     return check.data;
   }
 
-  private async fetchJson<T>(cacheKey: string, url: string, cache: LimitedCollection<string, NoInfer<T> | null>): Promise<APIError | null | T> {
+  private async fetchJson<T>(url: string): Promise<APIError | null | T> {
     try {
-      // Check cache first
-      if (cache.has(cacheKey)) {
-        return cache.get(cacheKey)!;
-      }
-
       const response = await fetch(url, {
         headers: {
           'User-Agent': 'Chrome/121',
@@ -329,8 +323,6 @@ export class Api {
       }
 
       const jsonData = await response.json();
-      // Store in cache before returning
-      cache.set(cacheKey, jsonData as T);
 
       return jsonData as T;
     } catch (error) {
@@ -347,10 +339,24 @@ export class Api {
 
     const headers = {
       'x-api-key': this.rotateApiKey(),
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'User-Agent': 'Chrome/121',
+      Accept: 'application/json',
+      'Accept-Language': 'es-AR,en;q=0.9',
+      'Accept-Encoding': 'gzip, deflate, br',
+      Connection: 'keep-alive',
+      'Cache-Control': 'no-cache',
+      Pragma: 'no-cache',
+      DNT: '1',
+      'Upgrade-Insecure-Requests': '1'
     };
 
-    const response = await fetch(url, { headers });
+    const response = await fetch(url, {
+      headers,
+      credentials: 'omit',
+      referrerPolicy: 'strict-origin-when-cross-origin',
+      mode: 'cors'
+    });
 
     if (!response.ok || response.status !== 200) {
       const errorMessage = `API request failed with status ${response.status}: ${response.statusText}`;
@@ -359,5 +365,4 @@ export class Api {
 
     return response;
   }
-
 }

@@ -15,19 +15,20 @@ export interface PlayerDTO {
 }
 
 export interface HeroMatchup {
-  readonly hero_id: number;
+  readonly hero_id: number | null;
   readonly hero_name: string;
   readonly hero_class: HeroClass;
-  readonly hero_thumbnail: string;
+  readonly hero_thumbnail: string | null;
   readonly matches: number;
   readonly wins: number;
   readonly win_rate: string;
 }
 
 export enum HeroClass {
-  Duelist = "Duelist",
-  Strategist = "Strategist",
-  Vanguard = "Vanguard",
+  Duelist = 'Duelist',
+  Strategist = 'Strategist',
+  Unknown = 'Unknown',
+  Vanguard = 'Vanguard'
 }
 
 export interface HeroesRanked {
@@ -76,24 +77,8 @@ export interface MatchHistory {
   readonly match_time_stamp: number;
   readonly play_mode_id: number;
   readonly game_mode_id: number;
-  readonly score_info: { [key: string]: number } | null;
+  readonly score_info: Record<string, number> | null;
   readonly player_performance: PlayerPerformance;
-}
-
-export interface RankHistory {
-  match_time_stamp: number;
-  level_progression: LevelProgression;
-  score_progression: ScoreProgression;
-}
-
-export interface LevelProgression {
-  from: number;
-  to: number;
-}
-
-export interface ScoreProgression {
-  add_score: number;
-  total_score: number;
 }
 
 export interface PlayerPerformance {
@@ -146,13 +131,13 @@ export interface Player {
 export interface Icon {
   readonly player_icon_id: string;
   readonly player_icon: string;
-  readonly banner?: string;
+  readonly banner: string;
 }
 
 export interface Info {
   readonly completed_achievements: string;
   readonly login_os: string;
-  readonly rank_game_season: { [key: string]: RankGameSeason };
+  readonly rank_game_season: Record<string, RankGameSeason>;
 }
 
 export interface RankGameSeason {
@@ -179,6 +164,22 @@ export interface Team {
   readonly club_team_type: string;
 }
 
+export interface RankHistory {
+  readonly match_time_stamp: number;
+  readonly level_progression: LevelProgression;
+  readonly score_progression: ScoreProgression;
+}
+
+export interface LevelProgression {
+  readonly from: number;
+  readonly to: number;
+}
+
+export interface ScoreProgression {
+  readonly add_score: number;
+  readonly total_score: number;
+}
+
 export interface TeamMate {
   readonly player_info: PlayerInfo;
   readonly matches: number;
@@ -194,7 +195,7 @@ export interface PlayerInfo {
 
 export interface Updates {
   readonly info_update_time: string;
-  readonly last_history_update: string;
-  readonly last_inserted_match: string;
-  readonly last_update_request: string;
+  readonly last_history_update: string | null;
+  readonly last_inserted_match: string | null;
+  readonly last_update_request: string | null;
 }

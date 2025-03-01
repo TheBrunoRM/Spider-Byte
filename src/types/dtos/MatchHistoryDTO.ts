@@ -11,7 +11,7 @@ export interface MatchHistory {
   readonly match_winner_side: number;
   readonly mvp_uid: number;
   readonly svp_uid: number;
-  readonly score_info: { [key: string]: number } | null;
+  readonly score_info: Record<string, number> | null;
   readonly match_time_stamp: number;
   readonly play_mode_id: number;
   readonly game_mode_id: number;

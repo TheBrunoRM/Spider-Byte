@@ -38,8 +38,8 @@ export default class CompareCommand extends SubCommand {
             });
         }
 
-        const [playerOne] = await ctx.client.api.getPlayer(firstNameOrId);
-        const [playerTwo] = await ctx.client.api.getPlayer(secondNameOrId);
+        const playerOne = await ctx.client.api.getPlayer(firstNameOrId);
+        const playerTwo = await ctx.client.api.getPlayer(secondNameOrId);
         if (!playerOne || !playerTwo) {
             return ctx.editOrReply({
                 content: ctx.t.commands.commonErrors.playerNotFound.get()
@@ -60,13 +60,13 @@ export default class CompareCommand extends SubCommand {
             });
         }
 
-        if (playerOne.data.platformInfo.platformUserIdentifier === playerTwo.data.platformInfo.platformUserIdentifier) {
+        if (playerOne.player.name === playerTwo.player.name) {
             return ctx.editOrReply({
                 content: ctx.t.commands.core.compare.samePlayer.get()
             });
         }
 
-        const image = await generateCompare([playerOne.data, playerTwo.data]);
+        const image = await generateCompare([playerOne, playerTwo]);
 
         return ctx.editOrReply({
             files: [{

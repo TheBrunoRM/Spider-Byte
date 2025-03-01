@@ -29,7 +29,7 @@ export default class ProfileCommand extends SubCommand {
       });
     }
 
-    const [player, playerID] = await ctx.client.api.getPlayer(nameOrId);
+    const player = await ctx.client.api.getPlayer(nameOrId);
 
     if (!player) {
       return ctx.editOrReply({
@@ -51,7 +51,7 @@ export default class ProfileCommand extends SubCommand {
       });
     }
 
-    const buffer = await generateProfile(player.data, playerID);
+    const buffer = await generateProfile(player, await ctx.client.api.getHeroes());
     await ctx.editOrReply({
       files: [
         new AttachmentBuilder().setName('profile.png').setFile('buffer', buffer)

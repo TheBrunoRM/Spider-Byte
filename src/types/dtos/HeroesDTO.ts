@@ -20,20 +20,20 @@ export interface Ability {
   readonly icon: string;
   readonly type: Type;
   readonly isCollab: boolean;
-  readonly additional_fields?: { [key: string]: string };
+  readonly additional_fields?: Record<string, string>;
 }
 
 export enum Type {
-  Normal = "Normal",
-  Passive = "Passive",
-  Ultimate = "Ultimate",
-  Weapon = "Weapon",
+  Normal = 'Normal',
+  Passive = 'Passive',
+  Ultimate = 'Ultimate',
+  Weapon = 'Weapon'
 }
 
 export enum AttackType {
-  HitscanHeroes = "Hitscan Heroes",
-  MeleeHeroes = "Melee Heroes",
-  ProjectileHeroes = "Projectile Heroes",
+  HitscanHeroes = 'Hitscan Heroes',
+  MeleeHeroes = 'Melee Heroes',
+  ProjectileHeroes = 'Projectile Heroes'
 }
 
 export interface Costume {
@@ -53,21 +53,21 @@ export interface Quality {
 }
 
 export enum Color {
-  Gray = "gray",
+  Gray = 'gray'
 }
 
 export enum Icon {
-  CostumesRarityQuality1png = "/costumes/rarity/quality_1.png",
+  CostumesRarityQuality1png = '/costumes/rarity/quality_1.png'
 }
 
 export enum Name {
-  Default = "Default",
+  Default = 'Default'
 }
 
 export enum Role {
-  Duelist = "Duelist",
-  Strategist = "Strategist",
-  Vanguard = "Vanguard",
+  Duelist = 'Duelist',
+  Strategist = 'Strategist',
+  Vanguard = 'Vanguard'
 }
 
 export interface Transformation {
@@ -79,8 +79,8 @@ export interface Transformation {
 }
 
 export enum MovementSpeed {
-  MovementSpeed6MS = "6 m/s",
-  The0MS = "0 m/s",
-  The6MS = "6m/s",
-  The7MS = "7m/s",
+  MovementSpeed6MS = '6 m/s',
+  The0MS = '0 m/s',
+  The6MS = '6m/s',
+  The7MS = '7m/s'
 }

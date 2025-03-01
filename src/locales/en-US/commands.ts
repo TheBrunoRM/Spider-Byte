@@ -6,7 +6,7 @@ export const commands = {
         privateProfile: ':warning: This profile is set to private in game. To change this, follow the directions shown and try again.'
     },
     commonOptions: {
-        nameOrId: 'Enter the player name or ID to identify the player.'
+        nameOrId: 'Enter the player name to identify the player.'
     },
     middlewares: {
         cooldown: {
@@ -70,12 +70,13 @@ export const commands = {
         update: {
             name: 'update',
             description: 'Update a player\'s stats.',
-            alrreadyQueued: (playerName: string, clubTeamId: string, uid: number) => `:warning: **${playerName}${clubTeamId === ''
+            updatedRecently: (playerName: string) => `:warning: **${playerName}** has been updated recently. Try again later.`,
+            cantUpdate: (playerName: string, clubTeamId: string, uid: number) => `Can't update **${playerName}${clubTeamId === ''
                 ? '** '
-                : `#${clubTeamId}** `}(${uid}) is already updated (in the last 30 minutes).`,
+                : `#${clubTeamId}** `}(${uid}) stats. Try again later.`,
             success: (playerName: string, clubTeamId: string, uid: number) => `:white_check_mark: **${playerName}${clubTeamId === ''
                 ? '** '
-                : `#${clubTeamId}** `}(${uid}) stats has been updated. Wait 30 minutes before using this command again.`
+                : `#${clubTeamId}** `}(${uid}) stats has been updated. Data may take up to a while to reflect.`
         }
     },
     game: {

@@ -1,3 +1,3 @@
 export interface UpdateDTO {
-    "success": true
+    success: true;
 }

@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import sharp from 'sharp';
 
 import type { DatumClass, RankedDTO } from '../../types/v2/RankedDTO';
-import type { PlayerDTO } from '../../types/v2/PlayerDTO';
+import type { PlayerDTO } from '../../types/dtos/PlayerDTO';
 
 const CANVAS_WIDTH = 1_000;
 const CANVAS_HEIGHT = 400;
@@ -27,7 +27,7 @@ const FONT_SIZE_SMALL = 20;
 
 let background: Image | null = null;
 
-export async function generateRankGraph(ranked: RankedDTO['data'], player: PlayerDTO['data']) {
+export async function generateRankGraph(ranked: RankedDTO['data'], player: PlayerDTO) {
     const rankHistory = ranked.history.data;
     if (!rankHistory.length) {
         return null;
@@ -78,12 +78,15 @@ export async function generateRankGraph(ranked: RankedDTO['data'], player: Playe
         ctx.font = `lighter ${FONT_SIZE_SMALL}px RefrigeratorDeluxeBold`;
         ctx.fillStyle = FONT_COLOR_GRAY;
 
-        const pointsText = `${player.segments[0].stats.ranked?.displayValue ?? 0} RS`;
-        const pointsTextWidth = ctx.measureText(pointsText).width;
-        const pointsX = rankX + RANK_IMAGE_SIZE + spacing + (textWidth - pointsTextWidth) / 2;
-        const pointsY = rankY + RANK_IMAGE_SIZE / 2 + 25;
+        const season = Object.values(player.player.info.rank_game_season).at(-1);
 
-        ctx.fillText(pointsText, pointsX, pointsY);
+        if (season) {
+            const pointsText = `${season.rank_score} RS`;
+            const pointsTextWidth = ctx.measureText(pointsText).width;
+            const pointsX = rankX + RANK_IMAGE_SIZE + spacing + (textWidth - pointsTextWidth) / 2;
+            const pointsY = rankY + RANK_IMAGE_SIZE / 2 + 25;
+            ctx.fillText(pointsText, pointsX, pointsY);
+        }
     }
 
     // Draw rank progression

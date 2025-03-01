@@ -6,10 +6,10 @@ import type { FormattedPatch, PatchNotesDTO } from '../../types/dtos/PatchNotesD
 import type { FindedPlayerDTO } from '../../types/dtos/FindedPlayerDTO';
 import type { MatchHistoryDTO } from '../../types/dtos/MatchHistoryDTO';
 import type { HeroesDTO } from '../../types/dtos/HeroesDTO';
-import type { PlayerDTO } from '../../types/v2/PlayerDTO';
+import type { PlayerDTO } from '../../types/dtos/PlayerDTO';
+import type { UpdateDTO } from '../../types/dtos/UpdateDTO';
 import type { RankedDTO } from '../../types/v2/RankedDTO';
 import type { HeroDTO } from '../../types/dtos/HeroDTO';
-import type { APIError } from '../../types/v2/APIError';
 import type { CareerDTO } from '../../types/v2/Career';
 
 import { isProduction } from '../constants';
@@ -24,6 +24,7 @@ const isFormattedPatch = createValidate<FormattedPatch>();
 const isPlayer = createValidate<PlayerDTO>();
 const isRanked = createValidate<RankedDTO>();
 const isCareer = createValidate<CareerDTO>();
+const isUpdatedPlayer = createValidate<UpdateDTO>();
 
 const TRACKER_DOMAIN = Bun.env.TRACKER!;
 const MARVELRIVALS_DOMAIN = Bun.env.MARVELRIVALS!;
@@ -121,10 +122,18 @@ export class Api {
   }
 
   // Players
+  updatePlayer(id: number) {
+    return this.fetchWithRetry({
+      domain: this.marvelRivalsApiUrl,
+      endpoint: `player/${id}/update`,
+      validator: isUpdatedPlayer
+    });
+  }
+
   public async searchPlayer(username: string) {
     return this.fetchWithRetry({
       domain: this.marvelRivalsApiUrl,
-      endpoint: `find-player/${username}`,
+      endpoint: `find-player/${encodeURIComponent(username)}`,
       validator: isFindedPlayer,
       cacheKey: `find-player/${username}`
     });
@@ -132,50 +141,59 @@ export class Api {
 
   public async getPlayer(nameOrId: string) {
     if (/^\d+$/.exec(nameOrId)) {
-      return [await this.fetchPlayer(nameOrId), nameOrId] as const;
+      return this.fetchPlayer(nameOrId);
     }
 
     const playerFound = await this.searchPlayer(nameOrId);
     if (!playerFound) {
-      return [playerFound, ''] as const;
+      return playerFound;
     }
-    return [await this.fetchPlayer(playerFound.uid), playerFound.uid] as const;
+    return this.fetchPlayer(playerFound.uid);
   }
 
-  async fetchPlayer(id: string): Promise<PlayerDTO | undefined | APIError> {
-    if (await this.redisClient.EXISTS(`player/${id}`)) {
-      const user = await this.redisClient.GET(`player/${id}`);
-      if (!user || user === 'null') {
-        return undefined;
-      }
-      return JSON.parse(user) as PlayerDTO | APIError;
-    }
-
-    const url = `${this.trackerApiUrl}/profile/ign/${encodeURIComponent(id)}`;
-    const response = await this.fetchJson<PlayerDTO>(url);
-
-    await this.redisClient.SET(`player/${id}`, JSON.stringify(response), {
-      EX: 15 * 60
+  fetchPlayer(id: string) {
+    return this.fetchWithRetry({
+      domain: this.marvelRivalsApiUrl,
+      endpoint: `player/${id}`,
+      validator: isPlayer,
+      cacheKey: `player/${id}`
     });
-
-    if (!response) {
-      return undefined;
-    }
-
-    // validamos que response no sea un APIError
-    if ('errors' in response) {
-      return response;
-    }
-
-    // Validate response with typia
-    const validation = isPlayer(response);
-    if (!validation.success) {
-      console.error('Invalid API response:', validation.errors);
-      return undefined;
-    }
-
-    return response;
   }
+
+  // async fetchPlayer(id: string): Promise<PlayerDTO | undefined | APIError> {
+  //   if (await this.redisClient.EXISTS(`player/${id}`)) {
+  //     const user = await this.redisClient.GET(`player/${id}`);
+  //     if (!user || user === 'null') {
+  //       return undefined;
+  //     }
+  //     return JSON.parse(user) as PlayerDTO | APIError;
+  //   }
+
+  //   const url = `${this.trackerApiUrl}/profile/ign/${encodeURIComponent(id)}`;
+  //   const response = await this.fetchJson<PlayerDTO>(url);
+
+  //   await this.redisClient.SET(`player/${id}`, JSON.stringify(response), {
+  //     EX: 15 * 60
+  //   });
+
+  //   if (!response) {
+  //     return undefined;
+  //   }
+
+  //   // validamos que response no sea un APIError
+  //   if ('errors' in response) {
+  //     return response;
+  //   }
+
+  //   // Validate response with typia
+  //   const validation = isPlayer(response);
+  //   if (!validation.success) {
+  //     console.error('Invalid API response:', validation.errors);
+  //     return undefined;
+  //   }
+
+  //   return response;
+  // }
 
   // Ranked
   public getRankedStats(name: string) {
@@ -226,7 +244,8 @@ export class Api {
     endpoint,
     validator,
     retries = this.maxRetries,
-    query
+    query,
+    expireTime
   }: {
     endpoint: string;
     domain: Api['marvelRivalsApiUrl' | 'trackerApiUrl'];
@@ -234,6 +253,7 @@ export class Api {
     cacheKey?: string;
     query?: Record<string, string>;
     retries?: number;
+    expireTime?: number;
   }): Promise<null | T> {
     if (cacheKey) {
       const cachedData = await this.redisClient.GET(cacheKey);
@@ -259,7 +279,7 @@ export class Api {
       if (response.status === 404) {
         if (cacheKey) {
           await this.redisClient.SET(cacheKey, 'null', {
-            EX: 15 * 60
+            EX: expireTime
           });
         }
         return null;
@@ -289,46 +309,46 @@ export class Api {
     }
     if (cacheKey) {
       await this.redisClient.SET(cacheKey, JSON.stringify(check.data), {
-        EX: 15 * 60
+        EX: expireTime
       });
     }
     return check.data;
   }
 
-  private async fetchJson<T>(url: string): Promise<APIError | null | T> {
-    try {
-      const response = await fetch(url, {
-        headers: {
-          'User-Agent': 'Chrome/121',
-          Accept: 'application/json',
-          'Accept-Language': 'es-AR,en;q=0.9',
-          'Accept-Encoding': 'gzip, deflate, br',
-          Connection: 'keep-alive',
-          'Cache-Control': 'no-cache',
-          Pragma: 'no-cache',
-          DNT: '1',
-          'Upgrade-Insecure-Requests': '1'
-        },
-        credentials: 'omit',
-        referrerPolicy: 'strict-origin-when-cross-origin',
-        mode: 'cors'
-      });
+  // private async fetchJson<T>(url: string): Promise<APIError | null | T> {
+  //   try {
+  //     const response = await fetch(url, {
+  //       headers: {
+  //         'User-Agent': 'Chrome/121',
+  //         Accept: 'application/json',
+  //         'Accept-Language': 'es-AR,en;q=0.9',
+  //         'Accept-Encoding': 'gzip, deflate, br',
+  //         Connection: 'keep-alive',
+  //         'Cache-Control': 'no-cache',
+  //         Pragma: 'no-cache',
+  //         DNT: '1',
+  //         'Upgrade-Insecure-Requests': '1'
+  //       },
+  //       credentials: 'omit',
+  //       referrerPolicy: 'strict-origin-when-cross-origin',
+  //       mode: 'cors'
+  //     });
 
-      if (response.status === 400) {
-        return await response.json() as APIError;
-      }
+  //     if (response.status === 400) {
+  //       return await response.json() as APIError;
+  //     }
 
-      if (!response.ok) {
-        throw new Error(await response.text());
-      }
+  //     if (!response.ok) {
+  //       throw new Error(await response.text());
+  //     }
 
-      const jsonData = await response.json();
+  //     const jsonData = await response.json();
 
-      return jsonData as T;
-    } catch (error) {
-      throw new Error(`Failed to fetch JSON: ${String(error)}`);
-    }
-  }
+  //     return jsonData as T;
+  //   } catch (error) {
+  //     throw new Error(`Failed to fetch JSON: ${String(error)}`);
+  //   }
+  // }
 
   private async fetchApi({ domain, endpoint, query }: {
     domain: Api['marvelRivalsApiUrl' | 'trackerApiUrl'];

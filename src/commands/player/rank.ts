@@ -31,7 +31,7 @@ export default class RankCommand extends SubCommand {
             });
         }
 
-        const [player] = await ctx.client.api.getPlayer(nameOrId);
+        const player = await ctx.client.api.getPlayer(nameOrId);
         if (!player) {
             return ctx.editOrReply({
                 content: ctx.t.commands.commonErrors.playerNotFound.get()
@@ -52,24 +52,24 @@ export default class RankCommand extends SubCommand {
             });
         }
 
-        if (!player.data.segments.filter((segment) => segment.type === 'ranked-peaks').length) {
+        if (!player.rank_history.length) {
             return ctx.editOrReply({
-                content: ctx.t.commands.core.rank.noRankHistory(player.data.platformInfo.platformUserIdentifier, player.data.metadata.clubMiniName).get()
+                content: ctx.t.commands.core.rank.noRankHistory(player.player.name, player.player.team.club_team_mini_name).get()
             });
         }
 
-        const playerRank = await ctx.client.api.getRankedStats(player.data.platformInfo.platformUserIdentifier);
+        const playerRank = await ctx.client.api.getRankedStats(player.player.name);
         if (!playerRank) {
             return ctx.editOrReply({
-                content: ctx.t.commands.core.rank.noRankHistory(player.data.platformInfo.platformUserIdentifier, player.data.metadata.clubMiniName).get()
+                content: ctx.t.commands.core.rank.noRankHistory(player.player.name, player.player.team.club_team_mini_name).get()
             });
         }
 
-        const bufferGraph = await generateRankGraph(playerRank.data, player.data);
+        const bufferGraph = await generateRankGraph(playerRank.data, player);
 
         if (!bufferGraph) {
             return ctx.editOrReply({
-                content: ctx.t.commands.core.rank.noRankHistory(player.data.platformInfo.platformUserIdentifier, player.data.metadata.clubMiniName).get()
+                content: ctx.t.commands.core.rank.noRankHistory(player.player.name, player.player.team.club_team_mini_name).get()
             });
         }
 

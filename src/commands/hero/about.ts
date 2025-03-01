@@ -110,7 +110,7 @@ export default class About extends SubCommand {
         const heroNameParsed = parseNameForRivalSkins(hero.name);
         baseEmbed.setThumbnail(
             `https://mrapi.org/assets/characters/${parseNameForCharacterIcon(
-                hero.name.replaceAll(' ', '-')
+                hero.name
             )
             }-square.png`
         );
@@ -216,7 +216,7 @@ export default class About extends SubCommand {
 
             for (const field in abilityData.additional_fields) {
                 const fieldContent = abilityData
-                    .additional_fields[field as keyof typeof abilityData.additional_fields];
+                    .additional_fields[field];
                 if (!fieldContent) {
                     continue;
                 }
@@ -308,7 +308,8 @@ export default class About extends SubCommand {
     }
 }
 
-function parseNameForCharacterIcon(name: string) {
+export function parseNameForCharacterIcon(name: string) {
+    name = name.replaceAll(' ', '-');
     switch (name) {
         case 'hulk':
             return 'bruce-banner';

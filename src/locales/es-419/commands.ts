@@ -8,7 +8,7 @@ const commands = {
         privateProfile: ':warning: Este perfil está configurado como privado en el juego. Para cambiarlo, sigue las instrucciones que se muestran e intenta de nuevo.'
     },
     commonOptions: {
-        nameOrId: 'Ingresa el nombre o ID del jugador para identificarlo.'
+        nameOrId: 'Ingresa el nombre del jugador para identificarlo.'
     },
     middlewares: {
         cooldown: {
@@ -72,12 +72,13 @@ const commands = {
         update: {
             name: 'update',
             description: 'Actualiza las estadísticas de un jugador.',
-            alrreadyQueued: (playerName, clubTeamId, uid) => `:warning: **${playerName}${clubTeamId === ''
+            updatedRecently: (playerName) => `:warning: **${playerName}** ya se actualizó recientemente. Intenta de nuevo más tarde.`,
+            cantUpdate: (playerName, clubTeamId, uid) => `No se puede actualizar **${playerName}${clubTeamId === ''
                 ? '** '
-                : `#${clubTeamId}** `}(${uid}) ya está actualizado (en los últimos 30 minutos).`,
+                : `#${clubTeamId}** `}(${uid}). Intenta de nuevo más tarde.`,
             success: (playerName, clubTeamId, uid) => `:white_check_mark: **${playerName}${clubTeamId === ''
                 ? '** '
-                : `#${clubTeamId}** `}(${uid}) estadísticas actualizadas. Espera 30 minutos antes de usar este comando nuevamente.`
+                : `#${clubTeamId}** `}(${uid}) estadísticas actualizadas. Los datos pueden tardar unos minutos en aparecer.`
         }
     },
     game: {

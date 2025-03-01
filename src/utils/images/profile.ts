@@ -33,7 +33,7 @@ export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[]) {
     ctx.fillStyle = '#313338';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const mapBackground = await loadImage(join(process.cwd(), 'assets', 'profile', 'map.png'));
+    const mapBackground = await loadImage(join(process.cwd(), 'assets', 'profile', 'profile_map.png'));
     const userIcon = await loadIcon(data.player.icon.player_icon_id);
     const levelBackground = await loadImage(join(process.cwd(), 'assets', 'profile', 'level_bg.png'));
 

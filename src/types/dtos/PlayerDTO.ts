@@ -156,8 +156,8 @@ export interface RankGameSeason {
 
 export interface Rank {
   readonly rank: string;
-  readonly image: string;
-  readonly color: string;
+  readonly image: string | null;
+  readonly color: string | null;
 }
 
 export interface Team {

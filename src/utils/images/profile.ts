@@ -23,7 +23,8 @@ function getRankPath(rank: string) {
 }
 
 export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[]) {
-    const mostplayed = data.heroes_ranked.sort((a, b) => b.play_time - a.play_time).at(0);
+    const concatedHeroes = data.heroes_ranked.concat(data.heroes_unranked);
+    const mostplayed = concatedHeroes.toSorted((a, b) => b.play_time - a.play_time).at(0);
     const background = await loadImage(join(process.cwd(), 'assets', 'profile', 'background.png'));
 
     const canvas = createCanvas(background.width, background.height);
@@ -32,11 +33,11 @@ export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[]) {
     ctx.fillStyle = '#313338';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // const mapBackground = await loadImage(join(process.cwd(), 'assets', 'profile', 'map.png'));
+    const mapBackground = await loadImage(join(process.cwd(), 'assets', 'profile', 'map.png'));
     const userIcon = await loadIcon(data.player.icon.player_icon_id);
     const levelBackground = await loadImage(join(process.cwd(), 'assets', 'profile', 'level_bg.png'));
 
-    // ctx.drawImage(mapBackground, -225, 0);
+    ctx.drawImage(mapBackground, -225, 0);
     if (mostplayed?.hero_id) {
         const heroBackground = await loadImage(join(process.cwd(), 'assets', 'heroes_bg', `${mostplayed.hero_id}.png`));
         ctx.drawImage(heroBackground, 0, 0, canvas.width, canvas.height);
@@ -69,13 +70,15 @@ export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[]) {
     ctx.font = '900 13px RefrigeratorDeluxeBold';
     ctx.fillText(data.uid.toString(), 260, 110);
 
-    const rankIcon = await loadImage(getRankPath(data.player.rank.rank));
-    ctx.drawImage(rankIcon, 652, 23, 120, 120);
-    ctx.font = '900 18px RefrigeratorDeluxeBold';
-    ctx.fillStyle = data.player.rank.color;
-    const rankNameText = data.player.rank.rank.toUpperCase();
-    const rankNameMetrics = ctx.measureText(rankNameText);
-    ctx.fillText(rankNameText, 711 - rankNameMetrics.width / 2, 138);
+    if (data.player.rank.color && data.player.rank.image) {
+        const rankIcon = await loadImage(getRankPath(data.player.rank.rank));
+        ctx.drawImage(rankIcon, 652, 23, 120, 120);
+        ctx.font = '900 18px RefrigeratorDeluxeBold';
+        ctx.fillStyle = data.player.rank.color;
+        const rankNameText = data.player.rank.rank.toUpperCase();
+        const rankNameMetrics = ctx.measureText(rankNameText);
+        ctx.fillText(rankNameText, 711 - rankNameMetrics.width / 2, 138);
+    }
 
     ctx.fillStyle = 'black';
     ctx.font = '900 30px RefrigeratorDeluxeBold';
@@ -93,7 +96,6 @@ export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[]) {
     const winsMetrics = ctx.measureText(data.overall_stats.total_wins.toString());
     ctx.fillText(data.overall_stats.total_wins.toString(), 727 - winsMetrics.width / 2, 295);
 
-    const concatedHeroes = data.heroes_ranked.concat(data.heroes_unranked);
     const totalMvp = (data.overall_stats.ranked.total_mvp + data.overall_stats.unranked.total_mvp).toString();
     const totalSvp = (data.overall_stats.ranked.total_svp + data.overall_stats.unranked.total_svp).toString();
 
@@ -321,7 +323,7 @@ export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[]) {
         }
     }
 
-    const topHeroes = Object.values(rawHeroes).sort((a, b) => b.matches - a.matches).slice(0, 3);
+    const topHeroes = Object.values(rawHeroes).toSorted((a, b) => b.matches - a.matches).slice(0, 3);
 
     for (let i = 0; i < topHeroes.length; i++) {
         const hero = topHeroes.at(i)!;

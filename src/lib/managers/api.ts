@@ -286,6 +286,12 @@ export class Api {
         return null;
       }
 
+      if (!response.ok) {
+        const text = await response.text();
+        this.logger.error(text);
+        throw new Error(text);
+      }
+
       data = await response.json();
     } catch (error) {
       if (retries > 0) {

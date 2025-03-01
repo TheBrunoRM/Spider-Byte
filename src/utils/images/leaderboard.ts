@@ -51,7 +51,7 @@ export async function generateLeaderboard(data: LeaderboardPlayerHeroDTO['player
             ctx.restore();
         }
 
-        const icon = await loadIcon(player.info.cur_head_icon_id);
+        const icon = await loadIcon(player.info.cur_head_icon_id).catch(() => loadIcon('30000001'));
         ctx.drawImage(icon, x + 6, y + 10, 38, 38);
 
         ctx.fillStyle = 'black';

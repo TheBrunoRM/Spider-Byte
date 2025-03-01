@@ -23,13 +23,12 @@ export async function generateCompare(players: [PlayerDTO, PlayerDTO]) {
         let kills = 0;
         let deaths = 0;
         let assists = 0;
-        let mvp = 0;
+        const mvp = player.overall_stats.ranked.total_mvp + player.overall_stats.unranked.total_mvp;
 
         player.heroes_ranked.concat(player.heroes_unranked).forEach((hero) => {
             kills += hero.kills;
             deaths += hero.deaths;
             assists += hero.assists;
-            mvp += hero.mvp;
         });
 
         const values = [

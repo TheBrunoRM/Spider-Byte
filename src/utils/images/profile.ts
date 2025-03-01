@@ -95,8 +95,8 @@ export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[]) {
     ctx.fillText(data.overall_stats.total_wins.toString(), 727 - winsMetrics.width / 2, 295);
 
     const concatedHeroes = data.heroes_ranked.concat(data.heroes_unranked);
-    const totalMvp = concatedHeroes.reduce((acc, cur) => acc + cur.mvp, 0).toString();
-    const totalSvp = concatedHeroes.reduce((acc, cur) => acc + cur.svp, 0).toString();
+    const totalMvp = (data.overall_stats.ranked.total_mvp + data.overall_stats.unranked.total_mvp).toString();
+    const totalSvp = (data.overall_stats.ranked.total_svp + data.overall_stats.unranked.total_svp).toString();
 
     const mvpMetrics = ctx.measureText(totalMvp);
     ctx.fillText(totalMvp, 861 - mvpMetrics.width / 2, 295);
@@ -104,9 +104,6 @@ export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[]) {
     const svpMetrics = ctx.measureText(totalSvp);
     ctx.fillText(totalSvp, 1_004 - svpMetrics.width / 2, 295);
 
-    // const duelist = data.segments.find((x) => x.type === 'hero-role' && x.attributes.roleId === 'duelist');
-    // const strategist = data.segments.find((x) => x.type === 'hero-role' && x.attributes.roleId === 'strategist');
-    // const vanguard = data.segments.find((x) => x.type === 'hero-role' && x.attributes.roleId === 'vanguard');
     let heal = 0;
     let damage = 0;
     let damage_taken = 0;
@@ -197,8 +194,12 @@ export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[]) {
     }
 
     {
-        const pct = (duelist.wins / duelist.matches * 100).toFixed(1);
-        const kdaTextRatio = ((duelist.kills + duelist.assists) / duelist.deaths).toFixed(1);
+        const pct = duelist.wins
+            ? (duelist.wins / duelist.matches * 100).toFixed(1)
+            : '0.0';
+        const kdaTextRatio = duelist.kills || duelist.assists
+            ? ((duelist.kills + duelist.assists) / duelist.deaths).toFixed(1)
+            : '0.0';
 
         ctx.fillStyle = 'black';
         ctx.font = '900 20px RefrigeratorDeluxeBold';
@@ -208,14 +209,24 @@ export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[]) {
 
         ctx.fillStyle = '#818181';
         ctx.font = '900 18px RefrigeratorDeluxeBold';
-        const kdaText = `${(duelist.kills / duelist.matches).toFixed(0)}/${(duelist.deaths / duelist.matches).toFixed(0)}/${(duelist.assists / duelist.matches).toFixed(0)}`;
+        const kdaText = `${(duelist.kills
+            ? duelist.kills / duelist.matches
+            : 0).toFixed(0)}/${(duelist.deaths
+                ? duelist.deaths / duelist.matches
+                : 0).toFixed(0)}/${(duelist.assists
+                    ? duelist.assists / duelist.matches
+                    : 0).toFixed(0)}`;
         const kdaTextMetrics = ctx.measureText(kdaTextRatio);
         ctx.fillText(kdaText, 255 - kdaTextMetrics.width / 2, 278);
     }
 
     {
-        const pct = (strategist.wins / strategist.matches * 100).toFixed(1);
-        const kdaTextRatio = ((strategist.kills + strategist.assists) / strategist.deaths).toFixed(1);
+        const pct = strategist.wins
+            ? (strategist.wins / strategist.matches * 100).toFixed(1)
+            : '0.0';
+        const kdaTextRatio = strategist.kills || strategist.assists
+            ? ((strategist.kills + strategist.assists) / strategist.deaths).toFixed(1)
+            : '0.0';
 
         ctx.fillStyle = 'black';
         ctx.font = '900 20px RefrigeratorDeluxeBold';
@@ -225,14 +236,24 @@ export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[]) {
 
         ctx.fillStyle = '#818181';
         ctx.font = '900 18px RefrigeratorDeluxeBold';
-        const kdaText = `${(strategist.kills / strategist.matches).toFixed(0)}/${(strategist.deaths / strategist.matches).toFixed(0)}/${(strategist.assists / strategist.matches).toFixed(0)}`;
+        const kdaText = `${(strategist.kills
+            ? strategist.kills / strategist.matches
+            : 0).toFixed(0)}/${(strategist.deaths
+                ? strategist.deaths / strategist.matches
+                : 0).toFixed(0)}/${(strategist.assists
+                    ? strategist.assists / strategist.matches
+                    : 0).toFixed(0)}`;
         const kdaTextMetrics = ctx.measureText(kdaTextRatio);
         ctx.fillText(kdaText, 255 - kdaTextMetrics.width / 2, 345);
     }
 
     {
-        const pct = (vanguard.wins / vanguard.matches * 100).toFixed(1);
-        const kdaTextRatio = ((vanguard.kills + vanguard.assists) / vanguard.deaths).toFixed(1);
+        const pct = vanguard.wins
+            ? (vanguard.wins / vanguard.matches * 100).toFixed(1)
+            : '0.0';
+        const kdaTextRatio = vanguard.kills || vanguard.assists
+            ? ((vanguard.kills + vanguard.assists) / vanguard.deaths).toFixed(1)
+            : '0.0';
 
         ctx.fillStyle = 'black';
         ctx.font = '900 20px RefrigeratorDeluxeBold';
@@ -242,7 +263,13 @@ export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[]) {
 
         ctx.fillStyle = '#818181';
         ctx.font = '900 18px RefrigeratorDeluxeBold';
-        const kdaText = `${(vanguard.kills / vanguard.matches).toFixed(0)}/${(vanguard.deaths / vanguard.matches).toFixed(0)}/${(vanguard.assists / vanguard.matches).toFixed(0)}`;
+        const kdaText = `${(vanguard.kills
+            ? vanguard.kills / vanguard.matches
+            : 0).toFixed(0)}/${(vanguard.deaths
+                ? vanguard.deaths / vanguard.matches
+                : 0).toFixed(0)}/${(vanguard.assists
+                    ? vanguard.assists / vanguard.matches
+                    : 0).toFixed(0)}`;
         const kdaTextMetrics = ctx.measureText(kdaTextRatio);
         ctx.fillText(kdaText, 255 - kdaTextMetrics.width / 2, 410);
     }

@@ -58,6 +58,10 @@ export async function generateRankGraph(ranked: RankedDTO['data'], player: Playe
     // Draw current rank
     const currentRank = rankHistory[0][1] as DatumClass | null;
     if (currentRank) {
+        ctx.fillStyle = FONT_COLOR_WHITE;
+        ctx.textAlign = 'left';
+        ctx.font = `bold ${FONT_SIZE_LARGE}px RefrigeratorDeluxeBold`;
+
         const rankText = currentRank.value[0];
         const rankPath = getRankPath(rankText);
         const rankImage = await loadImage(await Bun.file(join(process.cwd(), 'assets', 'ranks', rankPath)).bytes());
@@ -66,11 +70,6 @@ export async function generateRankGraph(ranked: RankedDTO['data'], player: Playe
         const totalWidth = RANK_IMAGE_SIZE + spacing + textWidth;
         const rankX = (CANVAS_WIDTH - totalWidth) / 2;
         const rankY = 50;
-
-        ctx.fillStyle = FONT_COLOR_WHITE;
-        ctx.textAlign = 'left';
-        ctx.font = `bold ${FONT_SIZE_LARGE}px RefrigeratorDeluxeBold`;
-
 
         ctx.drawImage(rankImage, rankX, rankY - 10, RANK_IMAGE_SIZE, RANK_IMAGE_SIZE);
         ctx.fillText(rankText, rankX + RANK_IMAGE_SIZE + spacing, rankY + RANK_IMAGE_SIZE / 2);
@@ -81,7 +80,7 @@ export async function generateRankGraph(ranked: RankedDTO['data'], player: Playe
         const season = Object.values(player.player.info.rank_game_season).at(-1);
 
         if (season) {
-            const pointsText = `${season.rank_score} RS`;
+            const pointsText = `${season.rank_score.toFixed(0)} RS`;
             const pointsTextWidth = ctx.measureText(pointsText).width;
             const pointsX = rankX + RANK_IMAGE_SIZE + spacing + (textWidth - pointsTextWidth) / 2;
             const pointsY = rankY + RANK_IMAGE_SIZE / 2 + 25;

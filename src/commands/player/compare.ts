@@ -60,7 +60,7 @@ export default class CompareCommand extends SubCommand {
             });
         }
 
-        if (playerOne.player.name === playerTwo.player.name) {
+        if (playerOne.player.uid === playerTwo.player.uid) {
             return ctx.editOrReply({
                 content: ctx.t.commands.core.compare.samePlayer.get()
             });

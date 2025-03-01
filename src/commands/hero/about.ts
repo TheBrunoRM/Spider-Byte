@@ -26,7 +26,7 @@ import type {
 import { parseNameForRivalSkins } from '../../utils/functions/skins';
 import { capitalize } from '../../utils/functions/capitalize';
 import { Role } from '../../types/dtos/HeroesDTO';
-import { XEROS_DOMAIN } from '../../utils/env';
+import { RIVALSDB_DOMAIN } from '../../utils/env';
 
 const colorPerRole = {
     [Role.Duelist]: '#FF4500',
@@ -109,20 +109,20 @@ export default class About extends SubCommand {
             colorPerRole[capitalize(hero.role) as Role] as ColorResolvable
         );
         const heroNameParsed = parseNameForRivalSkins(hero.name);
-        baseEmbed.setThumbnail(`${XEROS_DOMAIN}/images/heroes/${hero.id}/base/square.png`);
+        baseEmbed.setThumbnail(`${RIVALSDB_DOMAIN}/images/heroes/${hero.id}/base/square.png`);
         baseEmbed.setAuthor({
             name: `${hero.real_name} (${heroNameParsed})`,
             iconUrl:
-                `${XEROS_DOMAIN}/images/heroes/${hero.id}/kill-icons/killicon-2.png`
+                `${RIVALSDB_DOMAIN}/images/heroes/${hero.id}/kill-icons/killicon-2.png`
         });
         baseEmbed.setDescription(hero.bio)
             .setImage(
-                `${XEROS_DOMAIN}/images/heroes/${hero.id}/story-images/hero-story.png`
+                `${RIVALSDB_DOMAIN}/images/heroes/${hero.id}/story-images/hero-story.png`
             );
         baseEmbed.setFooter({
             text: capitalize(hero.role)
         });
-        console.log(baseEmbed.toJSON());
+
         const heroEmbed = new Embed(baseEmbed.toJSON());
         const loreEmbed = new Embed(baseEmbed.toJSON());
         loreEmbed.setDescription(hero.lore);

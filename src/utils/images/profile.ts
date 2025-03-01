@@ -9,7 +9,7 @@ import type { Mutable } from '../types';
 
 import { Role } from '../../types/dtos/HeroesDTO';
 import { loadHeroThumbnail, loadIcon } from './_';
-import { XEROS_DOMAIN } from '../env';
+import { RIVALSDB_DOMAIN } from '../env';
 
 function getRankPath(rank: string) {
     let p: string;
@@ -46,7 +46,7 @@ export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[]) {
     if (mostplayed) {
         let historyIcon: Image;
         try {
-            historyIcon = await loadImage(`${XEROS_DOMAIN}/images/heroes/${mostplayed.hero_id}/story-images/hero-story.png`);
+            historyIcon = await loadImage(`${RIVALSDB_DOMAIN}/images/heroes/${mostplayed.hero_id}/story-images/hero-story.png`);
             ctx.drawImage(historyIcon, 768, 33, 344, 120);
         } catch (e) {
             console.log({ e }, 'historyIcon');

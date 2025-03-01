@@ -16,10 +16,10 @@ if (!MARVELRIVALS_DOMAIN) {
     throw new Error('MARVELRIVALS is not defined');
 }
 
-const XEROS_DOMAIN = Bun.env.XEROS!;
+const RIVALSDB_DOMAIN = Bun.env.RIVALSDB!;
 
-if (!XEROS_DOMAIN) {
-    throw new Error('XEROS is not defined');
+if (!RIVALSDB_DOMAIN) {
+    throw new Error('RIVALSDB is not defined');
 }
 
-export { MARVELRIVALS_DOMAIN, TRACKER_DOMAIN, XEROS_DOMAIN, API_KEY };
+export { MARVELRIVALS_DOMAIN, TRACKER_DOMAIN, RIVALSDB_DOMAIN, API_KEY };

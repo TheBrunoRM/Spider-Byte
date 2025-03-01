@@ -63,7 +63,7 @@ export default class UpdateCommand extends SubCommand {
         }
 
         await ctx.client.redis.SET(cacheKey, '1', {
-            EX: 60
+            EX: 60 * 60
         });
 
         return ctx.editOrReply({

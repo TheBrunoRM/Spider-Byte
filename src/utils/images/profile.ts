@@ -8,7 +8,7 @@ import type { HeroesDTO } from '../../types/dtos/HeroesDTO';
 import type { Mutable } from '../types';
 
 import { Role } from '../../types/dtos/HeroesDTO';
-import { loadHeroThumbnail, loadIcon } from './_';
+import { loadHeroSquare, loadIcon } from './_';
 import { RIVALSDB_DOMAIN } from '../env';
 
 function getRankPath(rank: string) {
@@ -328,7 +328,7 @@ export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[]) {
     for (let i = 0; i < topHeroes.length; i++) {
         const hero = topHeroes.at(i)!;
         const y = 432 + i * 61;
-        const heroIcon = await loadHeroThumbnail(hero.hero_thumbnail);
+        const heroIcon = await loadHeroSquare(hero.hero_id);
 
         ctx.drawImage(heroIcon, 370, y, 50, 50);
         // ctx.fillStyle = hero.metadata.color;

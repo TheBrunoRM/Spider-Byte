@@ -26,6 +26,7 @@ import type {
 import { parseNameForRivalSkins } from '../../utils/functions/skins';
 import { capitalize } from '../../utils/functions/capitalize';
 import { Role } from '../../types/dtos/HeroesDTO';
+import { XEROS_DOMAIN } from '../../utils/env';
 
 const colorPerRole = {
     [Role.Duelist]: '#FF4500',
@@ -108,26 +109,20 @@ export default class About extends SubCommand {
             colorPerRole[capitalize(hero.role) as Role] as ColorResolvable
         );
         const heroNameParsed = parseNameForRivalSkins(hero.name);
-        baseEmbed.setThumbnail(
-            `https://mrapi.org/assets/characters/${parseNameForCharacterIcon(
-                hero.name
-            )
-            }-square.png`
-        );
+        baseEmbed.setThumbnail(`${XEROS_DOMAIN}/images/heroes/${hero.id}/base/square.png`);
         baseEmbed.setAuthor({
             name: `${hero.real_name} (${heroNameParsed})`,
             iconUrl:
-                `https://rivalskins.com/wp-content/uploads/marvel-assets/assets/kill-icons/${heroNameParsed.replaceAll(' ', '%20')
-                }%20Deluxe%20KO%20Prompt%202.png`
+                `${XEROS_DOMAIN}/images/heroes/${hero.id}/kill-icons/killicon-2.png`
         });
         baseEmbed.setDescription(hero.bio)
             .setImage(
-                `https://rivalskins.com/wp-content/uploads/marvel-assets/assets/hero-story-images/${heroNameParsed.replaceAll(' ', '%20')
-                }%20Story.png`
+                `${XEROS_DOMAIN}/images/heroes/${hero.id}/story-images/hero-story.png`
             );
         baseEmbed.setFooter({
             text: capitalize(hero.role)
         });
+        console.log(baseEmbed.toJSON());
         const heroEmbed = new Embed(baseEmbed.toJSON());
         const loreEmbed = new Embed(baseEmbed.toJSON());
         loreEmbed.setDescription(hero.lore);
@@ -306,13 +301,4 @@ export default class About extends SubCommand {
             buttonRow.addComponents(buttons)
         ];
     }
-}
-
-export function parseNameForCharacterIcon(name: string) {
-    name = name.replaceAll(' ', '-');
-    switch (name) {
-        case 'hulk':
-            return 'bruce-banner';
-    }
-    return name;
 }

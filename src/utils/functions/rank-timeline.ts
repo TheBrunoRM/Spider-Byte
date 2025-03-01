@@ -1,3 +1,5 @@
+import { MARVELRIVALS_DOMAIN } from '../env';
+
 export const rankedImages: string[] = [
     'bronze.png',
     'silver.png',
@@ -79,7 +81,7 @@ export function getRank(level: number): RankInfo {
                     rank: name,
                     color: rankedColors[i],
                     image: rankedImages[i],
-                    imageURL: `https://marvelrivalsapi.com/rivals/ranked/${rankedImages[i]}`
+                    imageURL: `${MARVELRIVALS_DOMAIN}/rivals/ranked/${rankedImages[i]}`
                 };
             }
             const tierIndex = (level - levels[0]) % 3;
@@ -88,7 +90,7 @@ export function getRank(level: number): RankInfo {
                 rank: `${name} ${tier}`,
                 color: rankedColors[i],
                 image: rankedImages[i],
-                imageURL: `https://marvelrivalsapi.com/rivals/ranked/${rankedImages[i]}`
+                imageURL: `${MARVELRIVALS_DOMAIN}/rivals/ranked/${rankedImages[i]}`
             };
         }
     }

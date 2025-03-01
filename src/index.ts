@@ -8,6 +8,7 @@ import type { Ratelimit } from './middlewares/cooldown';
 
 import { middlewares } from './middlewares';
 import { Api } from './lib/managers/api';
+import { API_KEY } from './utils/env';
 
 // Register fonts
 GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'RefrigeratorDeluxe.otf'), 'RefrigeratorDeluxe');
@@ -98,7 +99,7 @@ client.redis = await createClient()
         client.logger.error('Redis Client Error', err);
     }).connect();
 
-client.api = new Api((await client.getRC()).apiKeys, client.redis);
+client.api = new Api(API_KEY, client.redis);
 
 await client.api.getHeroes();
 
@@ -112,9 +113,7 @@ declare module 'seyfert' {
     interface RegisteredMiddlewares
         extends ParseMiddlewares<typeof middlewares> { }
 
-    interface ExtendedRC {
-        apiKeys: string[];
-    }
+    interface ExtendedRC { }
 
     interface UsingClient extends ParseClient<Client<true>> {
         api: Api;

@@ -2,8 +2,9 @@ import { loadImage } from '@napi-rs/canvas';
 import { join } from 'node:path';
 
 import { getRank } from '../functions/rank-timeline';
+import { MARVELRIVALS_DOMAIN } from '../env';
 
-const cdnURL = `${Bun.env.MARVELRIVALS!}/rivals`;
+const cdnURL = `${MARVELRIVALS_DOMAIN}/rivals`;
 
 export async function loadIcon(iconID: string) {
     const path = join(process.cwd(), 'cache', 'user_icon', `${iconID}.png`);
@@ -11,7 +12,7 @@ export async function loadIcon(iconID: string) {
     if (await file.exists()) {
         return loadImage(path);
     }
-    const response = await fetch(`https://marvelrivalsapi.com/rivals/players/heads/player_head_${iconID}.png`);
+    const response = await fetch(`${MARVELRIVALS_DOMAIN}/rivals/players/heads/player_head_${iconID}.png`);
     const bytes = await response.bytes();
     await Bun.write(path, bytes);
     return loadImage(path);

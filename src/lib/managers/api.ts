@@ -12,6 +12,7 @@ import type { RankedDTO } from '../../types/v2/RankedDTO';
 import type { HeroDTO } from '../../types/dtos/HeroDTO';
 import type { CareerDTO } from '../../types/v2/Career';
 
+import { MARVELRIVALS_DOMAIN, TRACKER_DOMAIN } from '../../utils/env';
 import { isProduction } from '../constants';
 
 const isHeroes = createValidate<HeroesDTO[]>();
@@ -25,16 +26,6 @@ const isPlayer = createValidate<PlayerDTO>();
 const isRanked = createValidate<RankedDTO>();
 const isCareer = createValidate<CareerDTO>();
 const isUpdatedPlayer = createValidate<UpdateDTO>();
-
-const TRACKER_DOMAIN = Bun.env.TRACKER!;
-const MARVELRIVALS_DOMAIN = Bun.env.MARVELRIVALS!;
-
-if (!TRACKER_DOMAIN) {
-  throw new Error('TRACKER is not defined');
-}
-if (!MARVELRIVALS_DOMAIN) {
-  throw new Error('MARVELRIVALS is not defined');
-}
 
 export class Api {
   logger = new Logger({

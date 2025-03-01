@@ -6,12 +6,6 @@ if (!BOT_TOKEN?.trim()) {
     throw new Error('Bun.env.BOT_TOKEN is not a valid token');
 }
 
-const API_KEY = Bun.env.API_KEY?.split(',');
-
-if (!API_KEY?.length) {
-    throw new Error('Bun.env.API_KEY is not a valid api key');
-}
-
 export default config.bot({
     token: BOT_TOKEN,
     locations: {
@@ -20,6 +14,5 @@ export default config.bot({
         langs: 'locales',
         events: 'events'
     },
-    apiKeys: API_KEY,
     intents: ['GuildMessages']
 });

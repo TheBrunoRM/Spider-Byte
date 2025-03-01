@@ -72,7 +72,8 @@ export class Api {
       domain: this.marvelRivalsApiUrl,
       endpoint: `patch-note/${id}`,
       validator: isFormattedPatch,
-      cacheKey: `patch-notes/${id}`
+      cacheKey: `patch-notes/${id}`,
+      expireTime: 60 * 60
     });
   }
 
@@ -81,7 +82,8 @@ export class Api {
       domain: this.marvelRivalsApiUrl,
       endpoint: 'patch-notes',
       validator: isPatchNotes,
-      cacheKey: 'patch-notes'
+      cacheKey: 'patch-notes',
+      expireTime: 60 * 60
     });
   }
 
@@ -98,7 +100,8 @@ export class Api {
         mode,
         season: season.toString()
       },
-      cacheKey: `career/${id}/${mode}/${season}`
+      cacheKey: `career/${id}/${mode}/${season}`,
+      expireTime: 5 * 60
     });
   }
 
@@ -108,7 +111,8 @@ export class Api {
       domain: this.marvelRivalsApiUrl,
       endpoint: `player/${id}/match-history`,
       validator: isMatchHistory,
-      cacheKey: `match-history/${id}`
+      cacheKey: `match-history/${id}`,
+      expireTime: 5 * 60
     });
   }
 
@@ -121,12 +125,13 @@ export class Api {
     });
   }
 
-  public async searchPlayer(username: string) {
+  public searchPlayer(username: string) {
     return this.fetchWithRetry({
       domain: this.marvelRivalsApiUrl,
       endpoint: `find-player/${encodeURIComponent(username)}`,
       validator: isFindedPlayer,
-      cacheKey: `find-player/${username}`
+      cacheKey: `find-player/${username}`,
+      expireTime: 30 * 60
     });
   }
 
@@ -147,7 +152,8 @@ export class Api {
       domain: this.marvelRivalsApiUrl,
       endpoint: `player/${id}`,
       validator: isPlayer,
-      cacheKey: `player/${id}`
+      cacheKey: `player/${id}`,
+      expireTime: 5 * 60
     });
   }
 
@@ -192,7 +198,8 @@ export class Api {
       domain: this.trackerApiUrl,
       endpoint: `profile/ign/${encodeURIComponent(name)}/stats/overview/ranked`,
       validator: isRanked,
-      cacheKey: `ranked-stats/${name}`
+      cacheKey: `ranked-stats/${name}`,
+      expireTime: 5 * 60
     });
   }
 
@@ -205,7 +212,8 @@ export class Api {
       cacheKey: `leaderboard-hero/${nameOrId}/${platform}`,
       query: {
         platform
-      }
+      },
+      expireTime: 15 * 60
     });
   }
 
@@ -214,7 +222,8 @@ export class Api {
       domain: this.marvelRivalsApiUrl,
       endpoint: 'heroes',
       validator: isHeroes,
-      cacheKey: 'heroes'
+      cacheKey: 'heroes',
+      expireTime: 24 * 60 * 60
     });
     return heroes ?? [];
   }
@@ -224,7 +233,8 @@ export class Api {
       domain: this.marvelRivalsApiUrl,
       endpoint: `heroes/hero/${nameOrId}`,
       validator: isHero,
-      cacheKey: `hero/${nameOrId}`
+      cacheKey: `hero/${nameOrId}`,
+      expireTime: 24 * 60 * 60
     });
   }
 

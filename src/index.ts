@@ -30,9 +30,11 @@ const client = new Client({
 
                 const content = [
                     `Report this error on the [support server](<https://discord.gg/AcruVkyYHm>) with the ID \`${errorId}\`.`,
-                    Formatter.codeBlock(error instanceof Error
+                    Formatter.codeBlock((error instanceof Error
                         ? error.stack ?? error.message
-                        : String(error) || 'Unknown error', 'ts')
+                        : typeof error === 'object' && error && 'message' in error && typeof error.message === 'string'
+                            ? error.message
+                            : 'Unknown error').slice(0, 1_500), 'ts')
                 ];
 
                 return ctx.editOrReply({
@@ -53,7 +55,7 @@ const client = new Client({
                     metadata
                 );
                 return ctx.editOrReply({
-                    content: Object.values(metadata)[0].value as string || 'Unknown error. Try again.',
+                    content: Object.entries(metadata).filter(([, value]) => value.failed).map(([key, value]) => `${key}: ${value.value as string}`).join('\n'),
                     flags: MessageFlags.Ephemeral
                 });
             }
@@ -125,4 +127,92 @@ declare module 'seyfert' {
     interface ExtraProps {
         ratelimit?: Ratelimit;
     }
+}
+export interface HerouwuDTO {
+    readonly name: string;
+    readonly fullName: string;
+    readonly role: string;
+    readonly difficulty: number;
+    readonly stats: HerouwuDTOStats;
+    readonly lore: Lore;
+    readonly images: Images;
+    readonly abilities: Ability[];
+}
+
+export interface Ability {
+    readonly id: string;
+    readonly name: string;
+    readonly icon: string;
+    readonly description: string;
+    readonly stats: AbilityStats;
+}
+
+export interface AbilityStats {
+    readonly Key: string;
+    readonly Casting?: string;
+    readonly Damage?: string;
+    readonly 'Attack Range'?: string;
+    readonly 'Attack Interval'?: string;
+    readonly 'Special Effect'?: string;
+    readonly 'Movement Boost'?: string;
+    readonly Duration?: string;
+    readonly 'Spell Field Range'?: string;
+    readonly Cooldown?: string;
+    readonly 'Maximum Distance'?: string;
+    readonly 'Energy Cost'?: string;
+    readonly Range?: string;
+    readonly 'Bonus Health Growth'?: string;
+    readonly 'Bonus Max Health'?: string;
+}
+
+export interface Images {
+    readonly card: string;
+    readonly story: string;
+    readonly base: string[];
+    readonly playerheads: string[];
+    readonly nameplates: string[];
+    readonly lordIcons: any[];
+    readonly killIcons: any[];
+    readonly costumes: Costume[];
+}
+
+export interface Costume {
+    readonly name: string;
+    readonly description: string;
+    readonly price: Price;
+    readonly source: Source;
+    readonly image: string;
+}
+
+export interface Price {
+    readonly amount: string;
+}
+
+export interface Source {
+    readonly name: string;
+    readonly date: string;
+    readonly uuid: string;
+    readonly season: string;
+    readonly quality: string;
+}
+
+export interface Lore {
+    readonly fullLore: string;
+}
+
+export interface HerouwuDTOStats {
+    readonly base: Base;
+    readonly competive: Competive;
+}
+
+export interface Base {
+    readonly Health: string;
+    readonly 'Movement Speed': string;
+}
+
+export interface Competive {
+    readonly matches: number;
+    readonly wins: number;
+    readonly bans: number;
+    readonly winRate: string;
 }

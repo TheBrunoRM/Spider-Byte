@@ -45,10 +45,29 @@ export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[]) {
     ctx.drawImage(background, 0, 0);
     ctx.drawImage(userIcon, 99, 43, 100, 100);
     if (mostplayed) {
-        let historyIcon: Image;
+        let heroHistoryImage: Image;
         try {
-            historyIcon = await loadImage(`${RIVALSDB_DOMAIN}/images/heroes/${mostplayed.hero_id}/story-images/hero-story.png`);
-            ctx.drawImage(historyIcon, 768, 33, 344, 120);
+            heroHistoryImage = await loadImage(`${RIVALSDB_DOMAIN}/images/heroes/${mostplayed.hero_id}/story-images/hero-story.png`);
+            const histH = 120;
+            const histW = 344;
+            const histX = 768;
+            const histY = 33;
+
+            const heroHistoryCanvas = createCanvas(histW, histH);
+            const heroHistoryCtx = heroHistoryCanvas.getContext('2d');
+
+            heroHistoryCtx.drawImage(heroHistoryImage, 0, 0, histW, histH);
+
+            const gradient = heroHistoryCtx.createLinearGradient(0, 0, histW, 0);
+            gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+            gradient.addColorStop(0.3, 'rgba(0, 0, 0, 0.5)');
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 1)');
+
+            heroHistoryCtx.globalCompositeOperation = 'destination-in';
+            heroHistoryCtx.fillStyle = gradient;
+            heroHistoryCtx.fillRect(0, 0, histW, histH);
+
+            ctx.drawImage(heroHistoryCanvas, histX, histY);
         } catch (e) {
             console.log({ e }, 'historyIcon');
         }

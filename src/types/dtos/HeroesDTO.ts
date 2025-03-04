@@ -74,8 +74,8 @@ export interface Transformation {
   readonly id: number;
   readonly name: string;
   readonly icon: string;
-  readonly health: string;
-  readonly movement_speed: MovementSpeed;
+  readonly health: string | null;
+  readonly movement_speed: MovementSpeed | null;
 }
 
 export enum MovementSpeed {

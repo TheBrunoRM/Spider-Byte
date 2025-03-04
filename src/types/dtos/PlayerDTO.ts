@@ -83,7 +83,7 @@ export interface MatchHistory {
 
 export interface PlayerPerformance {
   readonly player_uid: number;
-  readonly hero_id: number;
+  readonly hero_id?: number;
   readonly kills: number;
   readonly deaths: number;
   readonly assists: number;

@@ -17,9 +17,12 @@
   "dependencies": {
     "@napi-rs/canvas": "^0.1.67",
     "@redis/client": "^1.6.0",
+    "@resvg/resvg-js": "^2.6.2",
     "cheerio": "^1.0.0",
     "didyoumean2": "^7.0.4",
     "domhandler": "^5.0.3",
+    "satori": "^0.12.1",
+    "satori-html": "^0.3.2",
     "seyfert": "^2.2.1-dev-13573766445.0",
     "sharp": "^0.33.5"
   },

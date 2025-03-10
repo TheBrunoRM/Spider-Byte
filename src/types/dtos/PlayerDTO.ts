@@ -27,8 +27,8 @@ export interface HeroMatchup {
 export enum HeroClass {
   Duelist = 'Duelist',
   Strategist = 'Strategist',
-  Unknown = 'Unknown',
-  Vanguard = 'Vanguard'
+  Vanguard = 'Vanguard',
+  Unknown = 'Unknown'
 }
 
 export interface HeroesRanked {

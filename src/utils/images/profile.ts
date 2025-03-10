@@ -161,7 +161,7 @@ export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[]) {
     };
 
     for (const hero of concatedHeroes) {
-        const role = allHeroes.find((x) => x.id === hero.hero_id)?.role;
+        const role = allHeroes.find((x) => Number(x.id) === hero.hero_id)?.role;
         if (!role) {
             console.log('Unexpected role', hero);
             continue;

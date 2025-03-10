@@ -1,5 +1,5 @@
 export interface HeroesDTO {
-  readonly id: number;
+  readonly id: string;
   readonly name: string;
   readonly real_name: string;
   readonly imageUrl: string;
@@ -11,16 +11,18 @@ export interface HeroesDTO {
   readonly lore: string;
   readonly transformations: Transformation[];
   readonly costumes: Costume[];
-  readonly abilities: Ability[];
+  readonly abilities: Ability[] | null;
 }
 
 export interface Ability {
   readonly id: number;
-  readonly name: string;
-  readonly icon: string;
+  readonly icon?: string;
+  readonly name?: string;
   readonly type: Type;
   readonly isCollab: boolean;
+  readonly description?: string;
   readonly additional_fields?: Record<string, string>;
+  readonly transformation_id: string;
 }
 
 export enum Type {
@@ -37,31 +39,19 @@ export enum AttackType {
 }
 
 export interface Costume {
-  readonly id: number;
+  readonly id: string;
   readonly name: string;
-  readonly imageUrl: string;
+  readonly icon: string;
   readonly quality: Quality;
   readonly description: string;
   readonly appearance: string;
 }
 
-export interface Quality {
-  readonly name: Name;
-  readonly color: Color;
-  readonly value: number;
-  readonly icon: Icon;
-}
-
-export enum Color {
-  Gray = 'gray'
-}
-
-export enum Icon {
-  CostumesRarityQuality1png = '/costumes/rarity/quality_1.png'
-}
-
-export enum Name {
-  Default = 'Default'
+export enum Quality {
+  Blue = 'BLUE',
+  NoQuality = 'NO_QUALITY',
+  Orange = 'ORANGE',
+  Purple = 'PURPLE'
 }
 
 export enum Role {
@@ -71,7 +61,7 @@ export enum Role {
 }
 
 export interface Transformation {
-  readonly id: number;
+  readonly id: string;
   readonly name: string;
   readonly icon: string;
   readonly health: string | null;
@@ -80,7 +70,6 @@ export interface Transformation {
 
 export enum MovementSpeed {
   MovementSpeed6MS = '6 m/s',
-  The0MS = '0 m/s',
   The6MS = '6m/s',
   The7MS = '7m/s'
 }

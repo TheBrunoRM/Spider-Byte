@@ -5,8 +5,8 @@ export interface MatchHistoryDTO {
 export interface MatchHistory {
   readonly match_map_id: number;
   readonly map_thumbnail?: string;
-  readonly match_play_duration: string;
-  readonly match_season: number;
+  readonly match_play_duration: number;
+  readonly match_season: string;
   readonly match_uid: string;
   readonly match_winner_side: number;
   readonly mvp_uid: number;
@@ -42,7 +42,7 @@ export interface PlayerHero {
   readonly kills: number;
   readonly deaths: number;
   readonly assists: number;
-  readonly play_time: string;
+  readonly play_time: number;
   readonly total_hero_damage: number;
   readonly total_damage_taken: number;
   readonly total_hero_heal: number;

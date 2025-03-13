@@ -106,12 +106,12 @@ export class Api {
   }
 
   // Matches
-  public getMatchHistory(id: string) {
+  public getMatchHistory(userNameOrId: string) {
     return this.fetchWithRetry({
       domain: this.marvelRivalsApiUrl,
-      endpoint: `player/${id}/match-history`,
+      endpoint: `player/${encodeURIComponent(userNameOrId)}/match-history`,
       validator: isMatchHistory,
-      cacheKey: `match-history/${id}`,
+      cacheKey: `match-history/${userNameOrId}`,
       expireTime: 5 * 60
     });
   }

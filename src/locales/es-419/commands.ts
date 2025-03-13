@@ -118,6 +118,13 @@ const commands = {
                 platform: 'La plataforma para obtener información de clasificación.'
             }
         }
+    },
+    match: {
+        history: {
+            name: 'historial',
+            description: 'Muestra el historial de partidas de un jugador.',
+            noHistory: (playerName) => `:warning: **${playerName}** no tiene historial de partidas.`
+        }
     }
 } satisfies typeof English;
 

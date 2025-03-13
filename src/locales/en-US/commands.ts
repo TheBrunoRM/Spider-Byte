@@ -116,5 +116,12 @@ export const commands = {
                 platform: 'The platform to get leaderboard info for.'
             }
         }
+    },
+    match: {
+        history: {
+            name: 'history',
+            description: 'View match history for a specific player.',
+            noHistory: (playerName: string) => `:warning: No match history found for **${playerName}**.`
+        }
     }
 };

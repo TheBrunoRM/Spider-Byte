@@ -22,4 +22,10 @@ if (!RIVALSDB_DOMAIN) {
     throw new Error('RIVALSDB is not defined');
 }
 
-export { MARVELRIVALS_DOMAIN, RIVALSDB_DOMAIN, TRACKER_DOMAIN, API_KEY };
+const STICKY_API_DOMAIN = Bun.env.STICKY_API!;
+
+if (!STICKY_API_DOMAIN) {
+    throw new Error('STICKY_API is not defined');
+}
+
+export { MARVELRIVALS_DOMAIN, STICKY_API_DOMAIN, RIVALSDB_DOMAIN, TRACKER_DOMAIN, API_KEY };

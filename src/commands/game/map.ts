@@ -9,7 +9,7 @@ const options = {
         locales: {
             description: 'commands.game.map.options.name'
         },
-        choices: mapsJson.maps.map((map) => ({
+        choices: mapsJson.maps.slice(0, 25).map((map) => ({
             name: map.full_name,
             value: map.id.toString()
         })),
@@ -39,7 +39,6 @@ export default class MapCommand extends SubCommand {
 
         const mapEmbed = new Embed()
             .setTitle(map.full_name)
-            .setURL(map.video)
             .setDescription(map.description)
             .setColor('Blurple')
             .setImage(ctx.client.api.buildImage(map.images[2].replace('/rivals', '')))
@@ -60,13 +59,18 @@ export default class MapCommand extends SubCommand {
                     name: Formatter.underline('Location'),
                     value: map.location,
                     inline: true
-                },
-                {
-                    name: Formatter.underline('Sub Map'),
-                    value: `* ${map.sub_map.id} - ${map.sub_map.name ?? 'N/A'}`,
-                    inline: true
                 }
             ]);
+        if (map.video) {
+            mapEmbed.setURL(map.video);
+        }
+        if (map.sub_map.id) {
+            mapEmbed.addFields({
+                name: Formatter.underline('Sub Map'),
+                value: `* ${map.sub_map.id} - ${map.sub_map.name ?? 'N/A'}`,
+                inline: true
+            });
+        }
 
         return ctx.editOrReply({ embeds: [mapEmbed] });
     }

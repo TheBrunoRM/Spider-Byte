@@ -166,12 +166,12 @@ export default class About extends SubCommand {
             })
         );
 
-        collector.run<ButtonInteraction>('abilities', async (interaction) => {
-            await interaction.update({
-                embeds: [interaction.message.embeds[0]],
-                components: this.generateActionRowSelectMenu(hero.abilities)
-            });
-        });
+        collector.run<ButtonInteraction>('abilities', async (interaction) => interaction.update({
+            embeds: [interaction.message.embeds[0]],
+            components: hero.abilities
+                ? this.generateActionRowSelectMenu(hero.abilities)
+                : []
+        }));
 
         collector.run<ButtonInteraction>(/video_[0-9]{1,}/, async (interaction) => {
             const abilityID = interaction.customId.slice(6);
@@ -187,6 +187,9 @@ export default class About extends SubCommand {
         });
 
         collector.run<SelectMenuInteraction>(/./, async (interaction) => {
+            if (!hero.abilities) {
+                return;
+            }
             const abilityId = interaction.values.at(0);
             if (!abilityId) {
                 return;
@@ -211,7 +214,7 @@ export default class About extends SubCommand {
 
             for (const field in abilityData.additional_fields) {
                 const fieldContent = abilityData
-                    .additional_fields[field];
+                    .additional_fields[field as keyof typeof abilityData.additional_fields];
                 if (!fieldContent) {
                     continue;
                 }
@@ -219,10 +222,12 @@ export default class About extends SubCommand {
             }
 
             abilityEmbed
-                .setTitle(`${abilityData.name || abilityData2.name} (${abilityData.type})`);
+                .setTitle(`${abilityData.name || abilityData2.name!} (${abilityData.type})`);
             if (abilityData.icon) {
                 abilityEmbed.setThumbnail(
-                    ctx.client.api.buildImage(abilityData.icon || abilityData2.icon)
+                    abilityData.icon || abilityData2.icon
+                        ? ctx.client.api.buildImage(abilityData.icon || abilityData2.icon!)
+                        : undefined
                 );
             }
             abilityEmbed.setDescription(description.join('\n'));
@@ -230,7 +235,7 @@ export default class About extends SubCommand {
                 embeds: [abilityEmbed],
                 components: this.generateActionRowSelectMenu(
                     hero.abilities,
-                    abilityData
+                    abilityData as unknown as Omit<Ability, 'name' | 'type'>
                 )
             });
         });

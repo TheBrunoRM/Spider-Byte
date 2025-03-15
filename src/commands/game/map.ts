@@ -1,4 +1,5 @@
 import { type CommandContext, createStringOption, SubCommand, Formatter, LocalesT, Declare, Options, Embed } from 'seyfert';
+import didYouMean, { ReturnTypeEnums } from 'didyoumean2';
 
 import mapsJson from '../../../assets/json/maps.json';
 
@@ -9,11 +10,62 @@ const options = {
         locales: {
             description: 'commands.game.map.options.name'
         },
-        choices: mapsJson.maps.slice(0, 25).map((map) => ({
-            name: map.full_name,
-            value: map.id.toString()
-        })),
-        required: true
+        // choices: mapsJson.maps.slice(0, 25).map((map) => ({
+        //     name: map.full_name,
+        //     value: map.id.toString()
+        // })),
+        required: true,
+        async autocomplete(interaction) {
+            const input = interaction.getInput();
+            const maps = mapsJson.maps;
+
+            const uniqueMaps = new Map();
+
+            if (input.length) {
+                const matches = didYouMean(
+                    input,
+                    maps.map((map) => map.name),
+                    {
+                        returnType: ReturnTypeEnums.ALL_SORTED_MATCHES,
+                        threshold: 0.1
+                    }
+                ).slice(0, 25);
+
+                for (const mapName of matches) {
+                    const matchingMaps = maps.filter((m) => m.full_name === mapName);
+
+                    matchingMaps.forEach((map) => {
+                        const displayName = matchingMaps.length > 1
+                            ? `${map.full_name} (${map.location})`
+                            : map.full_name;
+
+                        uniqueMaps.set(displayName, map.id);
+                    });
+                }
+            } else {
+                maps.toSorted((a, b) => a.name.localeCompare(b.name))
+                    .slice(0, 25)
+                    .forEach((map) => {
+                        const sameNameMaps = maps.filter((m) => m.name === map.name);
+                        const displayName = sameNameMaps.length > 1
+                            ? `${map.full_name} (${map.location})`
+                            : map.full_name;
+
+                        uniqueMaps.set(displayName, map.id);
+                    });
+            }
+            const result = Array.from(uniqueMaps.entries()).map(([name, id]) => ({
+                name,
+                value: String(id)
+            }));
+
+            return interaction.respond(result.length
+                ? result
+                : maps.slice(0, 25).map((map) => ({
+                    name: map.full_name,
+                    value: map.id
+                })));
+        }
     })
 };
 
@@ -48,13 +100,13 @@ export default class MapCommand extends SubCommand {
                     value: map.game_mode,
                     inline: true
                 },
-                {
-                    name: Formatter.underline('Competitiveness'),
-                    value: map.is_competitve
-                        ? 'Competitive'
-                        : 'Casual',
-                    inline: true
-                },
+                // {
+                //     name: Formatter.underline('Competitiveness'),
+                //     value: map.is_competitve
+                //         ? 'Competitive'
+                //         : 'Casual',
+                //     inline: true
+                // },
                 {
                     name: Formatter.underline('Location'),
                     value: map.location,

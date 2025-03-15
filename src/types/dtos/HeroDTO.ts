@@ -21,7 +21,7 @@ export interface HeroDTO {
 
 export interface Ability {
   readonly id: number;
-  readonly icon: string;
+  readonly icon?: string;
   readonly name?: string;
   readonly type: string;
   readonly isCollab: boolean;

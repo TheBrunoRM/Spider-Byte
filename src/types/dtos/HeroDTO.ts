@@ -3,7 +3,7 @@ export interface HeroDTO {
   readonly name: string;
   readonly real_name: string;
   readonly imageUrl: string;
-  readonly badges: Badges;
+  readonly badges: undefined | Badges;
   readonly ko?: Ko;
   readonly story_card?: string;
   readonly hero_card?: string;
@@ -13,7 +13,7 @@ export interface HeroDTO {
   readonly difficulty: string;
   readonly bio: string;
   readonly lore: string;
-  readonly lore_card: string;
+  readonly lore_card?: string;
   readonly transformations: Transformation[];
   readonly costumes: Costume[];
   readonly abilities: Ability[];
@@ -22,7 +22,7 @@ export interface HeroDTO {
 export interface Ability {
   readonly id: number;
   readonly icon: string;
-  readonly name: string;
+  readonly name?: string;
   readonly type: string;
   readonly isCollab: boolean;
   readonly description?: string;
@@ -31,7 +31,7 @@ export interface Ability {
 }
 
 export interface AdditionalFields {
-  readonly Key: string;
+  readonly Key?: string;
   readonly 'Special Effect'?: string;
   readonly Damage?: string;
   readonly Casting?: string;

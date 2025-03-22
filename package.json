@@ -5,10 +5,10 @@
   "devDependencies": {
     "@marcrock22/eslint": "github:marcrock22/eslintcf",
     "@types/bun": "^1.2.5",
-    "eslint": "^9.22.0",
+    "eslint": "^9.23.0",
     "rimraf": "^6.0.1",
     "ts-patch": "^3.3.0",
-    "typescript-eslint": "^8.26.1",
+    "typescript-eslint": "^8.27.0",
     "typia": "^8.0.3"
   },
   "peerDependencies": {
@@ -23,7 +23,7 @@
     "domhandler": "^5.0.3",
     "satori": "^0.12.1",
     "satori-html": "^0.3.2",
-    "seyfert": "^2.2.1-dev-13826509766.0",
+    "seyfert": "^2.2.1-dev-13937969432.0",
     "sharp": "^0.33.5"
   },
   "scripts": {

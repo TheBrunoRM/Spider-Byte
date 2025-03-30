@@ -133,6 +133,7 @@ export interface Player {
 export interface Icon {
   readonly player_icon_id: string;
   readonly player_icon: string;
+  readonly banner?: string;
 }
 
 export interface Info {

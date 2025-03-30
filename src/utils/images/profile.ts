@@ -1,4 +1,4 @@
-// import type { Image } from '@napi-rs/canvas';
+import type { Image } from '@napi-rs/canvas';
 
 import { createCanvas, loadImage } from '@napi-rs/canvas';
 import { join } from 'node:path';
@@ -9,7 +9,7 @@ import type { Mutable } from '../types';
 
 import { Role } from '../../types/dtos/HeroesDTO';
 import { loadHeroSquare, loadIcon } from './_';
-// import { RIVALSDB_DOMAIN } from '../env';
+import { RIVALSDB_DOMAIN } from '../env';
 
 function getRankPath(rank: string) {
     let p: string;
@@ -44,36 +44,35 @@ export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[]) {
     }
     ctx.drawImage(background, 0, 0);
     ctx.drawImage(userIcon, 99, 43, 100, 100);
-    // CDN DOWN
-    // if (mostplayed) {
-    //     let heroHistoryImage: Image;
-    //     try {
-    //         console.log(`${RIVALSDB_DOMAIN}images/heroes/${mostplayed.hero_id}/story-images/hero-story.png`);
-    //         heroHistoryImage = await loadImage(`${RIVALSDB_DOMAIN}/images/heroes/${mostplayed.hero_id}/story-images/hero-story.png`);
-    //         const histH = 120;
-    //         const histW = 344;
-    //         const histX = 768;
-    //         const histY = 33;
+    if (mostplayed) {
+        let heroHistoryImage: Image;
+        try {
+            console.log(`${RIVALSDB_DOMAIN}images/heroes/${mostplayed.hero_id}/story-images/hero-story.png`);
+            heroHistoryImage = await loadImage(`${RIVALSDB_DOMAIN}/images/heroes/${mostplayed.hero_id}/story-images/hero-story.png`);
+            const histH = 120;
+            const histW = 344;
+            const histX = 768;
+            const histY = 33;
 
-    //         const heroHistoryCanvas = createCanvas(histW, histH);
-    //         const heroHistoryCtx = heroHistoryCanvas.getContext('2d');
+            const heroHistoryCanvas = createCanvas(histW, histH);
+            const heroHistoryCtx = heroHistoryCanvas.getContext('2d');
 
-    //         heroHistoryCtx.drawImage(heroHistoryImage, 0, 0, histW, histH);
+            heroHistoryCtx.drawImage(heroHistoryImage, 0, 0, histW, histH);
 
-    //         const gradient = heroHistoryCtx.createLinearGradient(0, 0, histW, 0);
-    //         gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
-    //         gradient.addColorStop(0.3, 'rgba(0, 0, 0, 0.5)');
-    //         gradient.addColorStop(1, 'rgba(0, 0, 0, 1)');
+            const gradient = heroHistoryCtx.createLinearGradient(0, 0, histW, 0);
+            gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+            gradient.addColorStop(0.3, 'rgba(0, 0, 0, 0.5)');
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 1)');
 
-    //         heroHistoryCtx.globalCompositeOperation = 'destination-in';
-    //         heroHistoryCtx.fillStyle = gradient;
-    //         heroHistoryCtx.fillRect(0, 0, histW, histH);
+            heroHistoryCtx.globalCompositeOperation = 'destination-in';
+            heroHistoryCtx.fillStyle = gradient;
+            heroHistoryCtx.fillRect(0, 0, histW, histH);
 
-    //         ctx.drawImage(heroHistoryCanvas, histX, histY);
-    //     } catch (e) {
-    //         console.log({ e }, 'historyIcon');
-    //     }
-    // }
+            ctx.drawImage(heroHistoryCanvas, histX, histY);
+        } catch (e) {
+            console.log({ e }, 'historyIcon');
+        }
+    }
 
     ctx.font = '900 36px RefrigeratorDeluxeBold';
     ctx.fillStyle = 'white';

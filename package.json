@@ -4,12 +4,12 @@
   "type": "module",
   "devDependencies": {
     "@marcrock22/eslint": "github:marcrock22/eslintcf",
-    "@types/bun": "^1.2.5",
+    "@types/bun": "^1.2.8",
     "eslint": "^9.23.0",
     "rimraf": "^6.0.1",
     "ts-patch": "^3.3.0",
-    "typescript-eslint": "^8.27.0",
-    "typia": "^8.0.3"
+    "typescript-eslint": "^8.28.0",
+    "typia": "^8.1.1"
   },
   "peerDependencies": {
     "typescript": "~5.8.2"
@@ -21,7 +21,7 @@
     "cheerio": "^1.0.0",
     "didyoumean2": "^7.0.4",
     "domhandler": "^5.0.3",
-    "satori": "^0.12.1",
+    "satori": "^0.12.2",
     "satori-html": "^0.3.2",
     "seyfert": "^2.2.1-dev-13937969432.0",
     "sharp": "^0.33.5"

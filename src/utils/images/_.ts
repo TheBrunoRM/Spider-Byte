@@ -1,8 +1,8 @@
 import { loadImage } from '@napi-rs/canvas';
 import { join } from 'node:path';
 
-import { MARVELRIVALS_DOMAIN, RIVALSDB_DOMAIN } from '../env';
 import { getRank } from '../functions/rank-timeline';
+import { MARVELRIVALS_DOMAIN } from '../env';
 
 const cdnURL = `${MARVELRIVALS_DOMAIN}/rivals`;
 
@@ -49,7 +49,9 @@ export async function loadHeroSquare(hero_id: number) {
     if (await file.exists()) {
         return loadImage(path);
     }
-    const response = await fetch(`${RIVALSDB_DOMAIN}/images/heroes/${hero_id}/base/square.png`);
+    const TEMPORAL_URL = `https://rivalsmeta.com/_ipx/q_70&s_100x100/images/heroes/SelectHero/img_selecthero_${hero_id}001.png`;
+    // `${RIVALSDB_DOMAIN}/images/heroes/${hero_id}/base/square.png`
+    const response = await fetch(TEMPORAL_URL);
     const bytes = await response.bytes();
     await Bun.write(path, bytes);
     return loadImage(path);

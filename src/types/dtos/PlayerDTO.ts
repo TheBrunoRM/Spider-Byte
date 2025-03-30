@@ -68,7 +68,6 @@ export interface Map {
 export interface MatchHistory {
   readonly match_uid: string;
   readonly map_id: number;
-  readonly map_thumbnail?: string;
   readonly duration: number;
   readonly season: number;
   readonly winner_side: number;
@@ -79,6 +78,7 @@ export interface MatchHistory {
   readonly game_mode_id: number;
   readonly score_info: Record<string, number> | null;
   readonly player_performance: PlayerPerformance;
+  readonly map_thumbnail?: string;
 }
 
 export interface PlayerPerformance {
@@ -133,7 +133,6 @@ export interface Player {
 export interface Icon {
   readonly player_icon_id: string;
   readonly player_icon: string;
-  readonly banner: string;
 }
 
 export interface Info {

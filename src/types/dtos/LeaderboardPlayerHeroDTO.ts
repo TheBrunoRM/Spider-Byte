@@ -1,5 +1,5 @@
 export interface LeaderboardPlayerHeroDTO {
-    _id: number;
+    _id?: number;
     players: Player[];
 }
 

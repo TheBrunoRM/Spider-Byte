@@ -311,7 +311,7 @@ export class Api {
     const check = validator(data);
 
     if (!check.success) {
-      console.log(check.errors);
+      console.log(check.errors, `${domain}/${endpoint}`);
       throw new Error(check.errors.map((err) => `Expected: ${err.expected} on ${err.path}`).join('\n'));
     }
     if (cacheKey) {

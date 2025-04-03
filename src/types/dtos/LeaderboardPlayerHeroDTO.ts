@@ -27,13 +27,13 @@ export interface Info {
 }
 
 export interface RankSeason {
-    rank_game_id: number;
-    level: number;
-    rank_score: string;
-    max_level: number;
-    max_rank_score: string;
-    update_time: number;
-    win_count: number;
-    protect_score: number;
-    diff_score: string;
+    // rank_game_id: number;
+    level?: number;
+    // rank_score: string;
+    // max_level: number;
+    // max_rank_score: string;
+    // update_time: number;
+    // win_count: number;
+    // protect_score: number;
+    // diff_score: string;
 }

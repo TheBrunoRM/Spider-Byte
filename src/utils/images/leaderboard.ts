@@ -65,8 +65,10 @@ export async function generateLeaderboard(data: LeaderboardPlayerHeroDTO['player
         const winrateMetrics = ctx.measureText(winrateText);
         ctx.fillText(winrateText, 560 - winrateMetrics.width / 2, y + 35);
 
-        const rank = await loadRankIcon(player.info.rank_season.level);
-        ctx.drawImage(rank, 600, y, 60, 60);
+        if (player.info.rank_season.level) {
+            const rank = await loadRankIcon(player.info.rank_season.level);
+            ctx.drawImage(rank, 600, y, 60, 60);
+        }
 
         ctx.fillStyle = 'black';
 

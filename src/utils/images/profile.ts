@@ -47,7 +47,6 @@ export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[]) {
     if (mostplayed) {
         let heroHistoryImage: Image;
         try {
-            console.log(`${RIVALSDB_DOMAIN}images/heroes/${mostplayed.hero_id}/story-images/hero-story.png`);
             heroHistoryImage = await loadImage(`${RIVALSDB_DOMAIN}/images/heroes/${mostplayed.hero_id}/story-images/hero-story.png`);
             const histH = 120;
             const histW = 344;

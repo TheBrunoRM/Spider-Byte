@@ -23,7 +23,7 @@
     "domhandler": "^5.0.3",
     "satori": "^0.12.2",
     "satori-html": "^0.3.2",
-    "seyfert": "^2.2.1-dev-14284105823.0",
+    "seyfert": "^2.2.1-dev-14284346795.0",
     "sharp": "^0.34.0"
   },
   "scripts": {

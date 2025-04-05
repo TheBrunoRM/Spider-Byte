@@ -1,5 +1,6 @@
 import { type IValidation, createValidate } from 'typia';
 import { LogLevels, Logger } from 'seyfert/lib/common';
+import { Bucket } from 'seyfert/lib/api/bucket';
 
 import type { LeaderboardPlayerHeroDTO } from '../../types/dtos/LeaderboardPlayerHeroDTO';
 import type { FormattedPatch, PatchNotesDTO } from '../../types/dtos/PatchNotesDTO';
@@ -27,7 +28,10 @@ const isRanked = createValidate<RankedDTO>();
 const isCareer = createValidate<CareerDTO>();
 const isUpdatedPlayer = createValidate<UpdateDTO>();
 
+
 export class Api {
+  ratelimits = new Map<string, Bucket>();
+
   logger = new Logger({
     name: '[Rivals API]',
     logLevel: isProduction
@@ -69,7 +73,8 @@ export class Api {
       endpoint: `patch-note/${id}`,
       validator: isFormattedPatch,
       cacheKey: `patch-notes/${id}`,
-      expireTime: 60 * 60
+      expireTime: 60 * 60,
+      route: 'patch-notes/:id'
     });
   }
 
@@ -79,7 +84,8 @@ export class Api {
       endpoint: 'patch-notes',
       validator: isPatchNotes,
       cacheKey: 'patch-notes',
-      expireTime: 60 * 60
+      expireTime: 60 * 60,
+      route: 'patch-notes'
     });
   }
 
@@ -97,7 +103,8 @@ export class Api {
         season: season.toString()
       },
       cacheKey: `career/${id}/${mode}/${season}`,
-      expireTime: 5 * 60
+      expireTime: 5 * 60,
+      route: 'profiles/ign/:id/segments/career'
     });
   }
 
@@ -108,7 +115,8 @@ export class Api {
       endpoint: `player/${encodeURIComponent(userNameOrId)}/match-history`,
       validator: isMatchHistory,
       cacheKey: `match-history/${userNameOrId}`,
-      expireTime: 5 * 60
+      expireTime: 5 * 60,
+      route: 'match-history/:id'
     });
   }
 
@@ -117,7 +125,8 @@ export class Api {
     return this.fetchWithRetry({
       domain: this.marvelRivalsApiUrl,
       endpoint: `player/${id}/update`,
-      validator: isUpdatedPlayer
+      validator: isUpdatedPlayer,
+      route: 'player/:id/update'
     });
   }
 
@@ -127,7 +136,8 @@ export class Api {
       endpoint: `find-player/${encodeURIComponent(username)}`,
       validator: isFindedPlayer,
       cacheKey: `find-player/${username}`,
-      expireTime: 30 * 60
+      expireTime: 30 * 60,
+      route: 'find-player/:id'
     });
   }
 
@@ -149,7 +159,8 @@ export class Api {
       endpoint: `player/${id}`,
       validator: isPlayer,
       cacheKey: `player/${id}`,
-      expireTime: 5 * 60
+      expireTime: 5 * 60,
+      route: 'player/:id'
     });
   }
 
@@ -195,7 +206,8 @@ export class Api {
       endpoint: `profile/ign/${encodeURIComponent(name)}/stats/overview/ranked`,
       validator: isRanked,
       cacheKey: `ranked-stats/${name}`,
-      expireTime: 5 * 60
+      expireTime: 5 * 60,
+      route: 'profile/ign/:id/stats/overview/ranked'
     });
   }
 
@@ -209,7 +221,8 @@ export class Api {
       query: {
         platform
       },
-      expireTime: 15 * 60
+      expireTime: 15 * 60,
+      route: 'heroes/leaderboard/:id'
     });
   }
 
@@ -219,7 +232,8 @@ export class Api {
       endpoint: 'heroes',
       validator: isHeroes,
       cacheKey: 'heroes',
-      expireTime: 24 * 60 * 60
+      expireTime: 24 * 60 * 60,
+      route: 'heroes'
     });
     return heroes ?? [];
   }
@@ -230,7 +244,8 @@ export class Api {
       endpoint: `heroes/hero/${nameOrId}`,
       validator: isHero,
       cacheKey: `hero/${nameOrId}`,
-      expireTime: 24 * 60 * 60
+      expireTime: 24 * 60 * 60,
+      route: 'heroes/hero/:id'
     });
   }
 
@@ -241,10 +256,12 @@ export class Api {
     endpoint,
     validator,
     query,
-    expireTime
+    expireTime,
+    route
   }: {
     endpoint: string;
     domain: Api['marvelRivalsApiUrl' | 'trackerApiUrl'];
+    route: string;
     validator: (data: unknown) => IValidation<T>;
     cacheKey?: string;
     query?: Record<string, string>;
@@ -266,26 +283,9 @@ export class Api {
     const response = await this.fetchApi({
       domain,
       endpoint,
-      query: new URLSearchParams(query)
+      query: new URLSearchParams(query),
+      route
     });
-
-    // const xRatelimitLimit = response.headers.get('x-ratelimit-limit');
-    // const xRatelimitRemaining = response.headers.get('x-ratelimit-remaining');
-    // const xRatelimitReset = response.headers.get('x-ratelimit-reset');
-
-    // if (xRatelimitLimit !== null && xRatelimitRemaining !== null && xRatelimitReset !== null) {
-    //   if (
-    //     xRatelimitLimit === 'cache' || xRatelimitRemaining === 'cache' || xRatelimitReset === 'cache'
-    //   ) {
-    //     //
-    //   }
-
-    //   console.log({
-    //     xRatelimitLimit,
-    //     xRatelimitRemaining,
-    //     xRatelimitReset
-    //   });
-    // }
 
     // Si la respuesta es 404 (Not Found), retorna null
     if (response.status === 404) {
@@ -363,39 +363,74 @@ export class Api {
   //   }
   // }
 
-  private async fetchApi({ domain, endpoint, query }: {
+  private async fetchApi({ domain, endpoint, query, route }: {
     domain: Api['marvelRivalsApiUrl' | 'trackerApiUrl'];
     endpoint: string;
     query: URLSearchParams;
+    route: string;
   }) {
-    const url = `${domain}/${endpoint}?${query}`;
+    const callback = async (next: () => void, resolve: (data: Response) => void, reject: (err: unknown) => void) => {
+      const url = `${domain}/${endpoint}?${query}`;
+      const bucket = this.ratelimits.get(route)!;
+      const headers = {
+        'x-api-key': this.rotateApiKey(),
+        'Content-Type': 'application/json',
+        'User-Agent': 'Chrome/121',
+        Accept: 'application/json',
+        'Accept-Language': 'es-AR,en;q=0.9',
+        'Accept-Encoding': 'gzip, deflate, br',
+        Connection: 'keep-alive',
+        'Cache-Control': 'no-cache',
+        Pragma: 'no-cache',
+        DNT: '1',
+        'Upgrade-Insecure-Requests': '1'
+      };
 
-    const headers = {
-      'x-api-key': this.rotateApiKey(),
-      'Content-Type': 'application/json',
-      'User-Agent': 'Chrome/121',
-      Accept: 'application/json',
-      'Accept-Language': 'es-AR,en;q=0.9',
-      'Accept-Encoding': 'gzip, deflate, br',
-      Connection: 'keep-alive',
-      'Cache-Control': 'no-cache',
-      Pragma: 'no-cache',
-      DNT: '1',
-      'Upgrade-Insecure-Requests': '1'
+      const response = await fetch(url, {
+        headers,
+        credentials: 'omit',
+        referrerPolicy: 'strict-origin-when-cross-origin',
+        mode: 'cors'
+      });
+
+      const xRatelimitLimit = response.headers.get('x-ratelimit-limit');
+      const xRatelimitRemaining = response.headers.get('x-ratelimit-remaining');
+      const xRatelimitReset = response.headers.get('x-ratelimit-reset');
+
+      if (xRatelimitLimit !== null && xRatelimitRemaining !== null && xRatelimitReset !== null) {
+        if (
+          xRatelimitLimit === 'cache' || xRatelimitRemaining === 'cache' || xRatelimitReset === 'cache'
+        ) {
+          //
+        } else {
+          bucket.remaining = Number(xRatelimitRemaining);
+          bucket.limit = Number(xRatelimitLimit);
+          bucket.resetAfter = Number(xRatelimitReset) * 1e3 - new Date().getTime();
+        }
+      }
+
+      if (!response.ok || response.status !== 200) {
+        const errorMessage = `API request failed with status ${response.status}: ${response.statusText}`;
+        this.logger.error(errorMessage);
+        next();
+        reject(errorMessage); return;
+      }
+
+      next();
+      resolve(response);
     };
 
-    const response = await fetch(url, {
-      headers,
-      credentials: 'omit',
-      referrerPolicy: 'strict-origin-when-cross-origin',
-      mode: 'cors'
+    const { promise, resolve, reject } = Promise.withResolvers<Response>();
+
+    if (!this.ratelimits.has(route)) {
+      this.ratelimits.set(route, new Bucket(1));
+    }
+    this.ratelimits.get(route)!.push({
+      next: callback,
+      resolve,
+      reject
     });
 
-    if (!response.ok || response.status !== 200) {
-      const errorMessage = `API request failed with status ${response.status}: ${response.statusText}`;
-      this.logger.error(errorMessage);
-    }
-
-    return response;
+    return promise;
   }
 }

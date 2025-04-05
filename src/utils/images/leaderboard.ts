@@ -5,7 +5,7 @@ import { join } from 'node:path';
 
 import type { LeaderboardPlayerHeroDTO } from '../../types/dtos/LeaderboardPlayerHeroDTO';
 
-import { loadRankIcon, loadIcon } from './_';
+import { loadRankIcon, loadUserIcon } from './_';
 
 let first: Image | null = null;
 let second: Image | null = null;
@@ -51,7 +51,7 @@ export async function generateLeaderboard(data: LeaderboardPlayerHeroDTO['player
             ctx.restore();
         }
 
-        const icon = await loadIcon(player.info.cur_head_icon_id).catch(() => loadIcon('30000001'));
+        const icon = await loadUserIcon(player.info.cur_head_icon_id).catch(() => loadUserIcon('30000001'));
         ctx.drawImage(icon, x + 6, y + 10, 38, 38);
 
         ctx.fillStyle = 'black';

@@ -7,9 +7,8 @@ import type { HeroesRanked, PlayerDTO } from '../../types/dtos/PlayerDTO';
 import type { HeroesDTO } from '../../types/dtos/HeroesDTO';
 import type { Mutable } from '../types';
 
+import { loadHeroHistory, loadHeroSquare, loadUserIcon } from './_';
 import { Role } from '../../types/dtos/HeroesDTO';
-import { loadHeroSquare, loadIcon } from './_';
-import { RIVALSDB_DOMAIN } from '../env';
 
 function getRankPath(rank: string) {
     let p: string;
@@ -34,7 +33,7 @@ export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[]) {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     const mapBackground = await loadImage(join(process.cwd(), 'assets', 'profile', 'profile_map.png'));
-    const userIcon = await loadIcon(data.player.icon.player_icon_id);
+    const userIcon = await loadUserIcon(data.player.icon.player_icon_id);
     const levelBackground = await loadImage(join(process.cwd(), 'assets', 'profile', 'level_bg.png'));
 
     ctx.drawImage(mapBackground, -225, 0);
@@ -47,7 +46,7 @@ export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[]) {
     if (mostplayed) {
         let heroHistoryImage: Image;
         try {
-            heroHistoryImage = await loadImage(`${RIVALSDB_DOMAIN}/images/heroes/${mostplayed.hero_id}/story-images/hero-story.png`);
+            heroHistoryImage = await loadHeroHistory(mostplayed.hero_id);
             const histH = 120;
             const histW = 344;
             const histX = 768;
@@ -68,8 +67,8 @@ export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[]) {
             heroHistoryCtx.fillRect(0, 0, histW, histH);
 
             ctx.drawImage(heroHistoryCanvas, histX, histY);
-        } catch (e) {
-            console.log({ e }, 'historyIcon');
+        } catch {
+            //
         }
     }
 
@@ -163,7 +162,6 @@ export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[]) {
     for (const hero of concatedHeroes) {
         const role = allHeroes.find((x) => Number(x.id) === hero.hero_id)?.role;
         if (!role) {
-            console.log('Unexpected role', hero);
             continue;
         }
 

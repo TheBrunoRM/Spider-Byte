@@ -18,24 +18,31 @@ async function loadImageFromCache(
     }
     const response = await fetch(fetchURL);
     if (!response.ok) {
-        console.log(`Failed to fetch ${fetchURL}`);
         const placeholdersPath = join(process.cwd(), 'assets', 'placeholders', `${id}.png`);
         const placeholdersFile = Bun.file(placeholdersPath);
         if (await placeholdersFile.exists()) {
             return loadImage(placeholdersPath);
         }
-        return;
+        throw new Error(`Failed to fetch ${fetchURL}`);
     }
     const bytes = await response.bytes();
     await Bun.write(path, bytes);
     return loadImage(path);
 }
 
-export async function loadIcon(iconID: string) {
+export async function loadUserIcon(iconID: string) {
     return loadImageFromCache(
         'user_icon',
         iconID,
         `${MARVELRIVALS_DOMAIN}/rivals/players/heads/player_head_${iconID}.png`
+    );
+}
+
+export async function loadHeroHistory(heroID: number) {
+    return loadImageFromCache(
+        'hero_icon',
+        heroID,
+        `${RIVALSDB_DOMAIN}/images/heroes/${heroID}/story-images/hero-story.png`
     );
 }
 

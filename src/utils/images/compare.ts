@@ -5,7 +5,7 @@ import { join } from 'node:path';
 
 import type { PlayerDTO } from '../../types/dtos/PlayerDTO';
 
-import { loadIcon } from './_';
+import { loadUserIcon } from './_';
 
 const Y_ICON = 84;
 const Y_NAME = 221;
@@ -55,7 +55,7 @@ export async function generateCompare(players: [PlayerDTO, PlayerDTO]) {
         const xAvatar = i === 0
             ? 65.5
             : 251.5;
-        const avatar = await loadIcon(data.player.icon.player_icon_id);
+        const avatar = await loadUserIcon(data.player.icon.player_icon_id);
 
         ctx.drawImage(avatar, xAvatar, Y_ICON, 100, 100);
 

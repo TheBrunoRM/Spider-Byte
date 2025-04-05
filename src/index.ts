@@ -19,9 +19,7 @@ const client = new Client({
     commands: {
         defaults: {
             onRunError(ctx, error) {
-                const errorId = Math.floor(Math.random() * 1_000_000);
                 client.logger.error(
-                    errorId,
                     ctx.author.id,
                     ctx.author.username,
                     ctx.fullCommandName,
@@ -29,9 +27,9 @@ const client = new Client({
                 );
 
                 const content = [
-                    `Report this error on the [support server](<https://discord.gg/AcruVkyYHm>) with the ID \`${errorId}\`.`,
+                    'Report this error on the [support server](<https://discord.gg/AcruVkyYHm>).',
                     Formatter.codeBlock((error instanceof Error
-                        ? error.stack ?? error.message
+                        ? error.message
                         : typeof error === 'object' && error && 'message' in error && typeof error.message === 'string'
                             ? error.message
                             : 'Unknown error').slice(0, 1_500), 'ts')

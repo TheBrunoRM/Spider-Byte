@@ -1,5 +1,5 @@
-import { LogLevels, Logger, delay } from 'seyfert/lib/common';
 import { type IValidation, createValidate } from 'typia';
+import { LogLevels, Logger } from 'seyfert/lib/common';
 
 import type { LeaderboardPlayerHeroDTO } from '../../types/dtos/LeaderboardPlayerHeroDTO';
 import type { FormattedPatch, PatchNotesDTO } from '../../types/dtos/PatchNotesDTO';
@@ -39,10 +39,6 @@ export class Api {
   private readonly baseTrackerUrl = TRACKER_DOMAIN;
 
   private readonly trackerApiUrl: string = `${this.baseTrackerUrl}/api/v2/marvel-rivals/standard`;
-
-  private readonly retryDelay: number = 1_000;
-
-  private readonly maxRetries: number = 3;
 
   private readonly baseMarvelRivalsUrl: string = MARVELRIVALS_DOMAIN;
 
@@ -244,7 +240,6 @@ export class Api {
     cacheKey,
     endpoint,
     validator,
-    retries = this.maxRetries,
     query,
     expireTime
   }: {
@@ -266,52 +261,63 @@ export class Api {
       }
     }
 
-    let data: unknown;
-    try {
-      this.logger.debug(endpoint);
+    this.logger.debug(endpoint);
 
-      const response = await this.fetchApi({
-        domain,
-        endpoint,
-        query: new URLSearchParams(query)
-      });
+    const response = await this.fetchApi({
+      domain,
+      endpoint,
+      query: new URLSearchParams(query)
+    });
 
-      // Si la respuesta es 404 (Not Found), retorna null
-      if (response.status === 404) {
-        if (cacheKey) {
-          await this.redisClient.SET(cacheKey, 'null', {
-            EX: expireTime
-          });
-        }
-        return null;
-      }
+    // const xRatelimitLimit = response.headers.get('x-ratelimit-limit');
+    // const xRatelimitRemaining = response.headers.get('x-ratelimit-remaining');
+    // const xRatelimitReset = response.headers.get('x-ratelimit-reset');
 
-      if (!response.ok) {
-        const text = await response.text();
-        this.logger.error(text);
-        throw new Error(text);
-      }
+    // if (xRatelimitLimit !== null && xRatelimitRemaining !== null && xRatelimitReset !== null) {
+    //   if (
+    //     xRatelimitLimit === 'cache' || xRatelimitRemaining === 'cache' || xRatelimitReset === 'cache'
+    //   ) {
+    //     //
+    //   }
 
-      data = await response.json();
-    } catch (error) {
-      if (retries > 0) {
-        await delay(this.retryDelay);
-        return this.fetchWithRetry({
-          endpoint,
-          validator,
-          cacheKey,
-          retries: retries - 1,
-          domain,
-          query
+    //   console.log({
+    //     xRatelimitLimit,
+    //     xRatelimitRemaining,
+    //     xRatelimitReset
+    //   });
+    // }
+
+    // Si la respuesta es 404 (Not Found), retorna null
+    if (response.status === 404) {
+      if (cacheKey) {
+        await this.redisClient.SET(cacheKey, 'null', {
+          EX: expireTime
         });
       }
-      throw error;
+      return null;
     }
 
+    if (!response.ok) {
+      const text = await response.text();
+      this.logger.error(text);
+      let err: undefined | string;
+      try {
+        err = (JSON.parse(text) as { message?: string }).message;
+        if (!err) {
+          throw new Error('unknown error');
+        }
+      } catch {
+        err = text;
+      }
+
+      throw new Error(err);
+    }
+
+    const data = await response.json();
     const check = validator(data);
 
     if (!check.success) {
-      console.log(check.errors, `${domain}/${endpoint}`);
+      this.logger.fatal(check.errors, `${domain}/${endpoint}`);
       throw new Error(check.errors.map((err) => `Expected: ${err.expected} on ${err.path}`).join('\n'));
     }
     if (cacheKey) {

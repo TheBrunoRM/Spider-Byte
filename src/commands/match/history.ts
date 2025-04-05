@@ -23,7 +23,7 @@ export default class History extends SubCommand {
 
         const history = await ctx.client.api.getMatchHistory(ctx.options.username);
         if (!history?.match_history.length) {
-            return ctx.write({
+            return ctx.editOrReply({
                 content: ctx.t.commands.match.history.noHistory(ctx.options.username).get()
             });
         }

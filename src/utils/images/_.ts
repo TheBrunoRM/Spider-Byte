@@ -40,7 +40,7 @@ export async function loadUserIcon(iconID: string) {
 
 export async function loadHeroHistory(heroID: number) {
     return loadImageFromCache(
-        'hero_icon',
+        'hero_history',
         heroID,
         `${RIVALSDB_DOMAIN}/images/heroes/${heroID}/story-images/hero-story.png`
     );

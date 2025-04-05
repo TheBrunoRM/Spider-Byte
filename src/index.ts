@@ -6,9 +6,9 @@ import { createClient } from '@redis/client';
 
 import type { Ratelimit } from './middlewares/cooldown';
 
+import { WEBHOOK_TOKEN, WEBHOOK_ID, API_KEY } from './utils/env';
 import { middlewares } from './middlewares';
 import { Api } from './lib/managers/api';
-import { API_KEY } from './utils/env';
 
 // Register fonts
 GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'RefrigeratorDeluxe.otf'), 'RefrigeratorDeluxe');
@@ -33,10 +33,16 @@ const client = new Client({
                         : typeof error === 'object' && error && 'message' in error && typeof error.message === 'string'
                             ? error.message
                             : 'Unknown error').slice(0, 1_500), 'ts')
-                ];
+                ].join('\n');
+
+                void ctx.client.webhooks.writeMessage(WEBHOOK_ID, WEBHOOK_TOKEN, {
+                    body: {
+                        content
+                    }
+                });
 
                 return ctx.editOrReply({
-                    content: content.join('\n')
+                    content
                 });
             },
             onMiddlewaresError(ctx, error) {

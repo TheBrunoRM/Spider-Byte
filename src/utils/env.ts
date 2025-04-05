@@ -28,4 +28,16 @@ if (!STICKY_API_DOMAIN) {
     throw new Error('STICKY_API is not defined');
 }
 
-export { MARVELRIVALS_DOMAIN, STICKY_API_DOMAIN, RIVALSDB_DOMAIN, TRACKER_DOMAIN, API_KEY };
+const WEBHOOK_ID = Bun.env.WEBHOOK_ID!;
+
+if (!WEBHOOK_ID) {
+    throw new Error('WEBHOOK_ID is not defined');
+}
+
+const WEBHOOK_TOKEN = Bun.env.WEBHOOK_TOKEN!;
+
+if (!WEBHOOK_TOKEN) {
+    throw new Error('WEBHOOK_TOKEN is not defined');
+}
+
+export { MARVELRIVALS_DOMAIN, STICKY_API_DOMAIN, RIVALSDB_DOMAIN, TRACKER_DOMAIN, WEBHOOK_TOKEN, WEBHOOK_ID, API_KEY };

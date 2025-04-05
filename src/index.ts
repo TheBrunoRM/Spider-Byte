@@ -37,7 +37,14 @@ const client = new Client({
 
                 void ctx.client.webhooks.writeMessage(WEBHOOK_ID, WEBHOOK_TOKEN, {
                     body: {
-                        content
+                        content,
+                        embeds: [{
+                            description: [
+                                ctx.author.id,
+                                ctx.author.username,
+                                ctx.fullCommandName
+                            ].join('')
+                        }]
                     }
                 }).catch((err: unknown) => {
                     ctx.client.logger.error('webhook', err);

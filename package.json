@@ -5,17 +5,17 @@
   "devDependencies": {
     "@marcrock22/eslint": "github:marcrock22/eslintcf",
     "@types/bun": "^1.2.8",
-    "eslint": "^9.23.0",
+    "eslint": "^9.24.0",
     "rimraf": "^6.0.1",
     "ts-patch": "^3.3.0",
-    "typescript-eslint": "^8.28.0",
-    "typia": "^8.1.1"
+    "typescript-eslint": "^8.29.0",
+    "typia": "^8.2.0"
   },
   "peerDependencies": {
-    "typescript": "~5.8.2"
+    "typescript": "~5.8.3"
   },
   "dependencies": {
-    "@napi-rs/canvas": "^0.1.68",
+    "@napi-rs/canvas": "^0.1.69",
     "@redis/client": "^1.6.0",
     "@resvg/resvg-js": "^2.6.2",
     "cheerio": "^1.0.0",
@@ -23,8 +23,8 @@
     "domhandler": "^5.0.3",
     "satori": "^0.12.2",
     "satori-html": "^0.3.2",
-    "seyfert": "^2.2.1-dev-13937969432.0",
-    "sharp": "^0.33.5"
+    "seyfert": "^2.2.1-dev-14284105823.0",
+    "sharp": "^0.34.0"
   },
   "scripts": {
     "start": "bun run build && bun --env-file=.env ./dist/index.ts",

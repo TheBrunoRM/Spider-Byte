@@ -36,13 +36,13 @@ export interface IsWin {
 }
 
 export interface PlayerHero {
-  readonly hero_id: number;
+  readonly hero_id: number | null;
   readonly hero_name: string;
   readonly hero_type: string;
   readonly kills: number;
   readonly deaths: number;
   readonly assists: number;
-  readonly play_time: number;
+  readonly play_time?: number;
   readonly total_hero_damage: number;
   readonly total_damage_taken: number;
   readonly total_hero_heal: number;

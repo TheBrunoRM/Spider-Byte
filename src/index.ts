@@ -43,7 +43,7 @@ const client = new Client({
                                 ctx.author.id,
                                 ctx.author.username,
                                 ctx.fullCommandName
-                            ].join('')
+                            ].join(' | ')
                         }]
                     }
                 }).catch((err: unknown) => {

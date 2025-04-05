@@ -39,6 +39,8 @@ const client = new Client({
                     body: {
                         content
                     }
+                }).catch((err: unknown) => {
+                    ctx.client.logger.error('webhook', err);
                 });
 
                 return ctx.editOrReply({

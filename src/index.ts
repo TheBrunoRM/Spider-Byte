@@ -73,7 +73,7 @@ const client = new Client({
                 });
             },
             async onAfterRun(ctx) {
-                if (Math.random() < 0.3) {
+                if (Math.random() < 0.15) {
                     const hasVoted = await ctx.client.topgg.hasVoted(ctx.author.id);
                     if (!hasVoted) {
                         await ctx.followup({

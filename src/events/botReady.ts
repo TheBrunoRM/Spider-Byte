@@ -2,7 +2,8 @@ import { createEvent } from 'seyfert';
 
 export default createEvent({
     data: {
-        name: 'botReady'
+        name: 'botReady',
+        once: true
     },
     async run(user, client) {
         client.logger.info(`Logged in as ${user.username}#${user.discriminator} (${user.id})`);

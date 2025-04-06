@@ -139,6 +139,8 @@ client.redis = await createClient()
 
 client.api = new Api(API_KEY, client.redis);
 
+client.topgg = new TopGGAPI(TOPGG_TOKEN);
+
 await client.api.getHeroes();
 
 await client.start();
@@ -147,7 +149,6 @@ await client.uploadCommands({
     cachePath: join(process.cwd(), 'cache', 'seyfert_commands.json')
 });
 
-client.topgg = new TopGGAPI(TOPGG_TOKEN);
 
 declare module 'seyfert' {
     interface RegisteredMiddlewares

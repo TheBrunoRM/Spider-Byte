@@ -1,4 +1,7 @@
 export const commands = {
+    others: {
+        noVoted: 'Consider voting for us on top.gg to get more features. [Click here](https://top.gg/bot/1337677960546881587/vote).'
+    },
     commonErrors: {
         playerNotFound: ':warning: Player not found. Provide a valid name or ID and try again.',
         noNameOrId: ':warning: No player name or ID provided. This is required to proceed.',

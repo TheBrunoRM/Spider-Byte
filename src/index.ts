@@ -1,15 +1,15 @@
 import { type ParseMiddlewares, type ParseLocales, type ParseClient, type UsingClient, Formatter, Client } from 'seyfert';
 import { PresenceUpdateStatus, ActivityType, MessageFlags } from 'seyfert/lib/types';
 import { basename, join, sep } from 'node:path';
+import { Api as TopGGAPI } from '@top-gg/sdk';
 import { GlobalFonts } from '@napi-rs/canvas';
 import { createClient } from '@redis/client';
 
 import type { Ratelimit } from './middlewares/cooldown';
 
-import { WEBHOOK_TOKEN, WEBHOOK_ID, API_KEY } from './utils/env';
+import { WEBHOOK_TOKEN, TOPGG_TOKEN, WEBHOOK_ID, API_KEY } from './utils/env';
 import { middlewares } from './middlewares';
 import { Api } from './lib/managers/api';
-
 // Register fonts
 GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'RefrigeratorDeluxe.otf'), 'RefrigeratorDeluxe');
 GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'RefrigeratorDeluxeBold.otf'), 'RefrigeratorDeluxeBold');
@@ -37,7 +37,7 @@ const client = new Client({
 
                 void ctx.client.webhooks.writeMessage(WEBHOOK_ID, WEBHOOK_TOKEN, {
                     body: {
-                        content,
+                        content: content[1],
                         embeds: [{
                             description: [
                                 ctx.author.id,
@@ -71,6 +71,17 @@ const client = new Client({
                     content: Object.entries(metadata).filter(([, value]) => value.failed).map(([key, value]) => `${key}: ${value.value as string}`).join('\n'),
                     flags: MessageFlags.Ephemeral
                 });
+            },
+            async onAfterRun(ctx) {
+                if (Math.random() < 0.3) {
+                    const hasVoted = await ctx.client.topgg.hasVoted(ctx.author.id);
+                    if (!hasVoted) {
+                        await ctx.followup({
+                            content: ctx.t.commands.others.noVoted.get(),
+                            flags: MessageFlags.Ephemeral
+                        });
+                    }
+                }
             }
         }
     },
@@ -124,6 +135,8 @@ await client.uploadCommands({
     cachePath: join(process.cwd(), 'cache', 'seyfert_commands.json')
 });
 
+client.topgg = new TopGGAPI(TOPGG_TOKEN);
+
 declare module 'seyfert' {
     interface RegisteredMiddlewares
         extends ParseMiddlewares<typeof middlewares> { }
@@ -133,6 +146,7 @@ declare module 'seyfert' {
     interface UsingClient extends ParseClient<Client<true>> {
         api: Api;
         redis: ReturnType<typeof createClient>;
+        topgg: TopGGAPI;
     }
 
     interface DefaultLocale extends ParseLocales<typeof import('./locales/en-US/_')['default']> { }

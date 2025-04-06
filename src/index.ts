@@ -4,6 +4,7 @@ import { basename, join, sep } from 'node:path';
 import { Api as TopGGAPI } from '@top-gg/sdk';
 import { GlobalFonts } from '@napi-rs/canvas';
 import { createClient } from '@redis/client';
+import { AttachmentBuilder } from 'seyfert';
 
 import type { Ratelimit } from './middlewares/cooldown';
 
@@ -19,6 +20,16 @@ const client = new Client({
     commands: {
         defaults: {
             onRunError(ctx, error) {
+                let files: AttachmentBuilder[] | undefined;
+                if (ctx.isChat() && ctx.interaction.data.options?.length) {
+                    files = [
+                        new AttachmentBuilder()
+                            .setFile('buffer', Buffer.from(JSON.stringify(ctx.interaction.data.options, null, 2)))
+                            .setName('options.txt')
+                    ];
+                }
+
+
                 client.logger.error(
                     ctx.author.id,
                     ctx.author.username,
@@ -37,14 +48,15 @@ const client = new Client({
 
                 void ctx.client.webhooks.writeMessage(WEBHOOK_ID, WEBHOOK_TOKEN, {
                     body: {
-                        content: content[1],
+                        content,
                         embeds: [{
                             description: [
                                 ctx.author.id,
                                 ctx.author.username,
                                 ctx.fullCommandName
                             ].join(' | ')
-                        }]
+                        }],
+                        files
                     }
                 }).catch((err: unknown) => {
                     ctx.client.logger.error('webhook', err);

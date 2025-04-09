@@ -86,7 +86,7 @@ const client = new Client({
             },
             async onAfterRun(ctx) {
                 if (Math.random() < 0.15) {
-                    const hasVoted = await ctx.client.topgg.hasVoted(ctx.author.id);
+                    const hasVoted = await ctx.client.topgg.hasVoted(ctx.author.id).catch(() => false);
                     if (!hasVoted) {
                         await ctx.followup({
                             content: ctx.t.commands.others.noVoted.get(),

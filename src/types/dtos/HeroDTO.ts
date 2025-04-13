@@ -71,6 +71,6 @@ export interface Transformation {
   readonly id: string;
   readonly name: string;
   readonly icon: string;
-  readonly health: string;
-  readonly movement_speed: string;
+  readonly health: string | null;
+  readonly movement_speed: string | null;
 }

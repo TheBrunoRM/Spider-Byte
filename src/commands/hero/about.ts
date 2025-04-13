@@ -222,7 +222,7 @@ export default class About extends SubCommand {
             }
 
             abilityEmbed
-                .setTitle(`${abilityData.name || abilityData2.name!} (${abilityData.type})`);
+                .setTitle(`${abilityData.name || abilityData2.name || 'Passiva'} (${abilityData.type})`);
             if (abilityData.icon) {
                 abilityEmbed.setThumbnail(
                     abilityData.icon || abilityData2.icon

@@ -214,7 +214,7 @@ export default class About extends SubCommand {
 
             for (const field in abilityData.additional_fields) {
                 const fieldContent = abilityData
-                    .additional_fields[field as keyof typeof abilityData.additional_fields];
+                    .additional_fields[field];
                 if (!fieldContent) {
                     continue;
                 }
@@ -279,7 +279,7 @@ export default class About extends SubCommand {
                     ability
                 ): ability is MakeRequired<Ability, 'name'> => !ability.isCollab).map((ability) => {
                     const option = new StringSelectOption()
-                        .setLabel(ability.name)
+                        .setLabel(ability.name || '\u200b')
                         .setValue(String(ability.id));
                     return option;
                 })

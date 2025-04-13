@@ -222,7 +222,7 @@ export default class About extends SubCommand {
             }
 
             abilityEmbed
-                .setTitle(`${abilityData.name || abilityData2.name || 'Passiva'} (${abilityData.type})`);
+                .setTitle(`${abilityData.name || abilityData2.name || 'Passive'} (${abilityData.type})`);
             if (abilityData.icon) {
                 abilityEmbed.setThumbnail(
                     abilityData.icon || abilityData2.icon
@@ -279,7 +279,7 @@ export default class About extends SubCommand {
                     ability
                 ): ability is MakeRequired<Ability, 'name'> => !ability.isCollab).map((ability) => {
                     const option = new StringSelectOption()
-                        .setLabel(ability.name || '\u200b')
+                        .setLabel(ability.name || 'Passive')
                         .setValue(String(ability.id));
                     return option;
                 })

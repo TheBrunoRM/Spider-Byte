@@ -1,6 +1,7 @@
 import { type ParseMiddlewares, type ParseLocales, type ParseClient, type UsingClient, Formatter, Client } from 'seyfert';
 import { PresenceUpdateStatus, ActivityType, MessageFlags } from 'seyfert/lib/types';
 import { basename, join, sep } from 'node:path';
+import { PrismaClient } from '@prisma/client';
 import { Api as TopGGAPI } from '@top-gg/sdk';
 import { GlobalFonts } from '@napi-rs/canvas';
 import { createClient } from '@redis/client';
@@ -153,6 +154,8 @@ client.redis = await createClient()
         client.logger.error('Redis Client Error', err);
     }).connect();
 
+client.prisma = new PrismaClient();
+
 client.api = new Api(API_KEY, client.redis);
 
 client.topgg = new TopGGAPI(TOPGG_TOKEN);
@@ -176,6 +179,7 @@ declare module 'seyfert' {
         api: Api;
         redis: ReturnType<typeof createClient>;
         topgg: TopGGAPI;
+        prisma: PrismaClient;
     }
 
     interface DefaultLocale extends ParseLocales<typeof import('./locales/en-US/_')['default']> { }

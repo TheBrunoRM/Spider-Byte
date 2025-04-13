@@ -46,9 +46,9 @@ const client = new Client({
                             : typeof error === 'string'
                                 ? error
                                 : 'Unknown error').slice(0, 1_500), 'ts')
-                ].join('\n');
+                ];
 
-                if (content.includes('This player\'s profile is private.')) {
+                if (content[1].includes('This player\'s profile is private.')) {
                     return ctx.editOrReply({
                         content: ctx.t.commands.commonErrors.privateProfile.get(),
                         files: [
@@ -64,7 +64,7 @@ const client = new Client({
 
                 void ctx.client.webhooks.writeMessage(WEBHOOK_ID, WEBHOOK_TOKEN, {
                     body: {
-                        content,
+                        content: content.slice(1).join('\n'),
                         embeds: [{
                             description: [
                                 ctx.author.id,
@@ -79,7 +79,7 @@ const client = new Client({
                 });
 
                 return ctx.editOrReply({
-                    content
+                    content: content.join('\n')
                 });
             },
             onMiddlewaresError(ctx, error) {

@@ -411,11 +411,11 @@ export class Api {
 
       if (!response.ok || response.status !== 200) {
         let errorMessage: string;
-        if (response.status === 403) {
+        try {
           errorMessage = ((await response.json()) as {
             message?: string;
           }).message ?? 'Unknown error';
-        } else {
+        } catch {
           errorMessage = `API request failed with status ${response.status}: ${response.statusText}`;
         }
         this.logger.error(errorMessage);

@@ -410,7 +410,14 @@ export class Api {
       }
 
       if (!response.ok || response.status !== 200) {
-        const errorMessage = `API request failed with status ${response.status}: ${response.statusText}`;
+        let errorMessage: string;
+        if (response.status === 403) {
+          errorMessage = ((await response.json()) as {
+            message?: string;
+          }).message ?? 'Unknown error';
+        } else {
+          errorMessage = `API request failed with status ${response.status}: ${response.statusText}`;
+        }
         this.logger.error(errorMessage);
         next();
         reject(errorMessage); return;

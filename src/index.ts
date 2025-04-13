@@ -19,7 +19,7 @@ GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'leaderboard
 const client = new Client({
     commands: {
         defaults: {
-            onRunError(ctx, error) {
+            async onRunError(ctx, error) {
                 let files: AttachmentBuilder[] | undefined;
                 if (ctx.isChat() && ctx.interaction.data.options?.length) {
                     files = [
@@ -43,8 +43,24 @@ const client = new Client({
                         ? error.message
                         : typeof error === 'object' && error && 'message' in error && typeof error.message === 'string'
                             ? error.message
-                            : 'Unknown error').slice(0, 1_500), 'ts')
+                            : typeof error === 'string'
+                                ? error
+                                : 'Unknown error').slice(0, 1_500), 'ts')
                 ].join('\n');
+
+                if (content.includes('This player\'s profile is private.')) {
+                    return ctx.editOrReply({
+                        content: ctx.t.commands.commonErrors.privateProfile.get(),
+                        files: [
+                            {
+                                data: await Bun.file(
+                                    join(process.cwd(), 'assets', 'private-profile.png')
+                                ).bytes(),
+                                filename: 'private-profile.png'
+                            }
+                        ]
+                    });
+                }
 
                 void ctx.client.webhooks.writeMessage(WEBHOOK_ID, WEBHOOK_TOKEN, {
                     body: {

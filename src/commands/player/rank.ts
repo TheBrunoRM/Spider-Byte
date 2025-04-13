@@ -1,7 +1,6 @@
 import type { CommandContext } from 'seyfert';
 
 import { createStringOption, SubCommand, LocalesT, Declare, Options } from 'seyfert';
-import { join } from 'node:path';
 
 import { generateRankGraph } from '../../utils/images/ranked';
 
@@ -35,20 +34,6 @@ export default class RankCommand extends SubCommand {
         if (!player) {
             return ctx.editOrReply({
                 content: ctx.t.commands.commonErrors.playerNotFound.get()
-            });
-        }
-
-        if ('errors' in player) {
-            return ctx.editOrReply({
-                content: ctx.t.commands.commonErrors.privateProfile.get(),
-                files: [
-                    {
-                        data: await Bun.file(
-                            join(process.cwd(), 'assets', 'private-profile.png')
-                        ).bytes(),
-                        filename: 'private-profile.png'
-                    }
-                ]
             });
         }
 

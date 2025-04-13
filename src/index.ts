@@ -156,6 +156,8 @@ client.redis = await createClient()
 
 client.prisma = new PrismaClient();
 
+await client.prisma.$connect();
+
 client.api = new Api(API_KEY, client.redis);
 
 client.topgg = new TopGGAPI(TOPGG_TOKEN);

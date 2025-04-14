@@ -1,4 +1,4 @@
-import type { CommandContext } from 'seyfert';
+import type { CommandContext, OKFunction } from 'seyfert';
 
 import { createIntegerOption, createStringOption, createNumberOption, SubCommand, LocalesT, Declare, Options } from 'seyfert';
 
@@ -7,7 +7,14 @@ import { STICKY_API_DOMAIN } from '../../utils/env';
 const options = {
     username: createStringOption({
         description: 'The username to view match history for.',
-        required: true
+        required: true,
+        async value({ context, value }, ok: OKFunction<string>, fail) {
+            const data = await context.client.api.searchPlayer(value);
+            if (!data) {
+                fail(context.t.commands.commonErrors.playerNotFound.get()); return;
+            }
+            ok(data.uid);
+        }
     }),
     season: createNumberOption({
         description: 'Season',

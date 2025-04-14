@@ -1,5 +1,5 @@
+import { MergeOptions, LogLevels, Logger } from 'seyfert/lib/common';
 import { type IValidation, createValidate } from 'typia';
-import { LogLevels, Logger } from 'seyfert/lib/common';
 import { Bucket } from 'seyfert/lib/api/bucket';
 
 import type { LeaderboardPlayerHeroDTO } from '../../types/dtos/LeaderboardPlayerHeroDTO';
@@ -111,14 +111,31 @@ export class Api {
   }
 
   // Matches
-  public getMatchHistory(userNameOrId: string) {
+  public getMatchHistory(userNameOrId: string, options: {
+    season?: 1.5 | 0 | 1 | 2;
+    page?: number;
+    limit?: number;
+    skip?: number;
+    game_mode?: 0 | 1 | 2 | 3 | 9 | 7;
+    timestamp?: number;
+  } = {}) {
+    options = MergeOptions({
+      season: 2,
+      page: 1,
+      limit: 40,
+      skip: 0,
+      game_mode: 0,
+      timestamp: undefined
+    }, options);
+
     return this.fetchWithRetry({
       domain: this.marvelRivalsApiUrlV2,
       endpoint: `player/${encodeURIComponent(userNameOrId)}/match-history`,
       validator: isMatchHistory,
-      cacheKey: `match-history/${userNameOrId}`,
+      cacheKey: `match-history/${userNameOrId}/${Object.entries(options).map((kv) => `${kv[0]}${kv[1] || ''}`).join('_')}`,
       expireTime: 5 * 60,
-      route: 'match-history/:id'
+      route: 'match-history/:id',
+      query: options
     });
   }
 
@@ -266,7 +283,7 @@ export class Api {
     route: string;
     validator: (data: unknown) => IValidation<T>;
     cacheKey?: string;
-    query?: Record<string, string>;
+    query?: Record<string, undefined | string | number>;
     retries?: number;
     expireTime?: number;
   }): Promise<null | T> {
@@ -285,7 +302,13 @@ export class Api {
     const response = await this.fetchApi({
       domain,
       endpoint,
-      query: new URLSearchParams(query),
+      query: query
+        ? new URLSearchParams(
+          Object.fromEntries(
+            Object.entries(query).filter((kv): kv is [string, string | number] => kv.at(1) !== undefined).map(([key, value]) => [key, value.toString()] as const)
+          )
+        )
+        : undefined,
       route
     });
 
@@ -368,11 +391,11 @@ export class Api {
   private async fetchApi({ domain, endpoint, query, route }: {
     domain: Api['marvelRivalsApiUrlV1' | 'marvelRivalsApiUrlV2' | 'trackerApiUrl'];
     endpoint: string;
-    query: URLSearchParams;
+    query?: URLSearchParams;
     route: string;
   }) {
     const callback = async (next: () => void, resolve: (data: Response) => void, reject: (err: unknown) => void) => {
-      const url = `${domain}/${endpoint}?${query}`;
+      const url = `${domain}/${endpoint}?${query ?? ''}`;
       const bucket = this.ratelimits.get(route)!;
       const headers = {
         'x-api-key': this.rotateApiKey(),

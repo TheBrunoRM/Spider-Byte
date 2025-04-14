@@ -46,7 +46,9 @@ export class Api {
 
   private readonly baseMarvelRivalsUrl: string = MARVELRIVALS_DOMAIN;
 
-  private readonly marvelRivalsApiUrl: string = `${this.baseMarvelRivalsUrl}/api/v1`;
+  private readonly marvelRivalsApiUrlV2: string = `${this.baseMarvelRivalsUrl}/api/v2`;
+
+  private readonly marvelRivalsApiUrlV1: string = `${this.baseMarvelRivalsUrl}/api/v1`;
 
   private readonly cdnUrl: string = `${this.baseMarvelRivalsUrl}/rivals`;
 
@@ -69,7 +71,7 @@ export class Api {
   // Patch Notes
   public getPatchNotesById(id: string) {
     return this.fetchWithRetry({
-      domain: this.marvelRivalsApiUrl,
+      domain: this.marvelRivalsApiUrlV1,
       endpoint: `patch-note/${id}`,
       validator: isFormattedPatch,
       cacheKey: `patch-notes/${id}`,
@@ -80,7 +82,7 @@ export class Api {
 
   public getPatchNotes() {
     return this.fetchWithRetry({
-      domain: this.marvelRivalsApiUrl,
+      domain: this.marvelRivalsApiUrlV1,
       endpoint: 'patch-notes',
       validator: isPatchNotes,
       cacheKey: 'patch-notes',
@@ -111,7 +113,7 @@ export class Api {
   // Matches
   public getMatchHistory(userNameOrId: string) {
     return this.fetchWithRetry({
-      domain: this.marvelRivalsApiUrl,
+      domain: this.marvelRivalsApiUrlV2,
       endpoint: `player/${encodeURIComponent(userNameOrId)}/match-history`,
       validator: isMatchHistory,
       cacheKey: `match-history/${userNameOrId}`,
@@ -123,7 +125,7 @@ export class Api {
   // Players
   updatePlayer(id: number) {
     return this.fetchWithRetry({
-      domain: this.marvelRivalsApiUrl,
+      domain: this.marvelRivalsApiUrlV1,
       endpoint: `player/${id}/update`,
       validator: isUpdatedPlayer,
       route: 'player/:id/update'
@@ -132,7 +134,7 @@ export class Api {
 
   public searchPlayer(username: string) {
     return this.fetchWithRetry({
-      domain: this.marvelRivalsApiUrl,
+      domain: this.marvelRivalsApiUrlV1,
       endpoint: `find-player/${encodeURIComponent(username)}`,
       validator: isFindedPlayer,
       cacheKey: `find-player/${username}`,
@@ -155,7 +157,7 @@ export class Api {
 
   fetchPlayer(id: string) {
     return this.fetchWithRetry({
-      domain: this.marvelRivalsApiUrl,
+      domain: this.marvelRivalsApiUrlV1,
       endpoint: `player/${id}`,
       validator: isPlayer,
       cacheKey: `player/${id}`,
@@ -214,7 +216,7 @@ export class Api {
   // Heroes
   public getLeaderboardHero(nameOrId: string, platform: 'xbox' | 'pc' | 'ps' = 'pc') {
     return this.fetchWithRetry({
-      domain: this.marvelRivalsApiUrl,
+      domain: this.marvelRivalsApiUrlV1,
       endpoint: `heroes/leaderboard/${nameOrId}`,
       validator: isLeaderboardPlayerHero,
       cacheKey: `leaderboard-hero/${nameOrId}/${platform}`,
@@ -228,7 +230,7 @@ export class Api {
 
   public async getHeroes() {
     const heroes = await this.fetchWithRetry({
-      domain: this.marvelRivalsApiUrl,
+      domain: this.marvelRivalsApiUrlV1,
       endpoint: 'heroes',
       validator: isHeroes,
       cacheKey: 'heroes',
@@ -240,7 +242,7 @@ export class Api {
 
   public getHero(nameOrId: string) {
     return this.fetchWithRetry({
-      domain: this.marvelRivalsApiUrl,
+      domain: this.marvelRivalsApiUrlV1,
       endpoint: `heroes/hero/${nameOrId}`,
       validator: isHero,
       cacheKey: `hero/${nameOrId}`,
@@ -260,7 +262,7 @@ export class Api {
     route
   }: {
     endpoint: string;
-    domain: Api['marvelRivalsApiUrl' | 'trackerApiUrl'];
+    domain: Api['marvelRivalsApiUrlV1' | 'marvelRivalsApiUrlV2' | 'trackerApiUrl'];
     route: string;
     validator: (data: unknown) => IValidation<T>;
     cacheKey?: string;
@@ -364,7 +366,7 @@ export class Api {
   // }
 
   private async fetchApi({ domain, endpoint, query, route }: {
-    domain: Api['marvelRivalsApiUrl' | 'trackerApiUrl'];
+    domain: Api['marvelRivalsApiUrlV1' | 'marvelRivalsApiUrlV2' | 'trackerApiUrl'];
     endpoint: string;
     query: URLSearchParams;
     route: string;

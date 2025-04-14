@@ -1,5 +1,6 @@
 export interface MatchHistoryDTO {
   readonly match_history: MatchHistory[];
+  readonly pagination: Pagination;
 }
 
 export interface MatchHistory {
@@ -53,4 +54,12 @@ export interface ScoreInfo {
   readonly level: number | null;
   readonly new_level: number | null;
   readonly new_score: number | null;
+}
+
+export interface Pagination {
+  readonly page: number;
+  readonly limit: number;
+  readonly total_matches: number;
+  readonly total_pages: number;
+  readonly has_more: boolean;
 }

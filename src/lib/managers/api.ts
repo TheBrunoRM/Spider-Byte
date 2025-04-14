@@ -412,9 +412,15 @@ export class Api {
       if (!response.ok || response.status !== 200) {
         let errorMessage: string;
         try {
-          errorMessage = ((await response.json()) as {
+          const json = await response.json();
+          errorMessage = (json as {
             message?: string;
-          }).message ?? 'Unknown error';
+          }).message ?? (json as {
+            errors?: {
+              code: string;
+              message: string;
+            }[];
+          }).errors?.[0].message ?? 'Unknown error';
         } catch {
           errorMessage = `API request failed with status ${response.status}: ${response.statusText}`;
         }

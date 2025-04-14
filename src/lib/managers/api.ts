@@ -410,9 +410,11 @@ export class Api {
       }
 
       if (!response.ok || response.status !== 200) {
+        const text = await response.text();
+        this.logger.fatal(text, url);
         let errorMessage: string;
         try {
-          const json = await response.json();
+          const json = JSON.parse(text);
           errorMessage = (json as {
             message?: string;
           }).message ?? (json as {
@@ -424,7 +426,6 @@ export class Api {
         } catch {
           errorMessage = `API request failed with status ${response.status}: ${response.statusText}`;
         }
-        this.logger.error(errorMessage);
         next();
         reject(errorMessage); return;
       }

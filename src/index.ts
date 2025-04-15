@@ -134,7 +134,8 @@ client.setServices({
         aliases: {
             'es-419': ['es-ES'],
             'en-US': ['en-GB']
-        }
+        },
+        default: 'es-419'
     },
     middlewares
 });

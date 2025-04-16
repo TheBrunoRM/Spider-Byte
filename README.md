@@ -36,6 +36,12 @@ Join our [Discord Server](https://discord.gg/AcruVkyYHm) for support, feature re
 
 ---
 
+## 💪 Contributors
+
+- **[@simxnet](https://github.com/simxnet)** - designer
+- **[@simxnet](https://github.com/simxnet)** - frontend engineer
+- **[@simxnet](https://github.com/simxnet)** - rust expert
+
 ---
 
 ## 📜 License

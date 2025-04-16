@@ -1,184 +1,106 @@
-import type { SKRSContext2D, Image } from '@napi-rs/canvas';
-
-import { createCanvas, loadImage } from '@napi-rs/canvas';
+import { loadImage, Canvas } from '@napi-rs/canvas';
 import { join } from 'node:path';
-import sharp from 'sharp';
 
-import type { DatumClass, RankedDTO } from '../../types/v2/RankedDTO';
-import type { PlayerDTO } from '../../types/dtos/PlayerDTO';
+import type { RankHistoryDataPoint } from '../functions/rank-utils';
+// import fetch from 'node-fetch';
 
-const CANVAS_WIDTH = 1_000;
-const CANVAS_HEIGHT = 400;
-const HORIZONTAL_PADDING = 40;
-// const VERTICAL_PADDING = 60;
-const TOP_MARGIN = 220;
-const BOTTOM_MARGIN = 40;
-const GRAPH_WIDTH = CANVAS_WIDTH - HORIZONTAL_PADDING * 2;
-const LINE_WIDTH = 5;
-const IMAGE_SIZE = 60;
-const RANK_IMAGE_SIZE = 200;
-// const DATE_FONT_SIZE = 14;
-// const DATE_COLOR = '#99aab5';
-const FONT_COLOR_WHITE = '#FFFFFF';
-const FONT_COLOR_GRAY = '#99aab5';
-const GLOW_COLOR = '#FFFFFF';
-const FONT_SIZE_LARGE = 40;
-const FONT_SIZE_SMALL = 20;
 
-let background: Image | null = null;
-
-export async function generateRankGraph(ranked: RankedDTO['data'], player: PlayerDTO) {
-    const rankHistory = ranked.history.data;
-    if (!rankHistory.length) {
-        return null;
-    }
-
-    const canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+export async function generateRankChart(data: RankHistoryDataPoint[]): Promise<Buffer> {
+    const WIDTH = 2_560;
+    const HEIGHT = 1_440;
+    const canvas = new Canvas(WIDTH, HEIGHT);
     const ctx = canvas.getContext('2d');
 
-    background ??= await loadImage(await Bun.file(join(process.cwd(), 'assets', 'rank', 'background.png')).bytes());
+    const MARGIN = {
+        top: 720,
+        right: 220,
+        bottom: 90,
+        left: 220
+    };
+    const chartWidth = WIDTH - MARGIN.left - MARGIN.right;
+    const chartHeight = HEIGHT - MARGIN.top - MARGIN.bottom;
+
+    // Procesar datos
+    const dates = data.map((d) => new Date(d.realDate));
+    const scores = data.map((d) => d.score);
+
+    // Escalas
+    const xScale = (date: Date) => {
+        const minTime = dates[0].getTime();
+        const maxTime = dates[dates.length - 1].getTime();
+        return MARGIN.left + (date.getTime() - minTime) / (maxTime - minTime) * chartWidth;
+      };
+
+      const yScale = (score: number) => {
+        const min = Math.min(...scores);
+        const max = Math.max(...scores);
+        return MARGIN.top + chartHeight - (score - min) / (max - min) * chartHeight;
+      };
+
+    // Fondo
+    const background = await loadImage(await Bun.file(join(process.cwd(), 'assets', 'rank', 'background.png')).bytes());
     ctx.drawImage(background, 0, 0);
 
-    // Get last 15 matches for the graph
-    const data = rankHistory.slice(0, 15).toReversed();
-    const rankLevels = data.map((d) => {
-        const datum = d[1];
-        return datum.value[1];
-    });
-    const minLevel = Math.min(...rankLevels);
-    const maxLevel = Math.max(...rankLevels);
-
-    const normalizeScore = (level: number) => {
-        const normalizedValue = (level - minLevel) / (maxLevel - minLevel);
-        const availableHeight = CANVAS_HEIGHT - TOP_MARGIN - BOTTOM_MARGIN;
-        const startY = CANVAS_HEIGHT - BOTTOM_MARGIN;
-        return startY - normalizedValue * availableHeight;
-    };
-
-    // Draw current rank
-    const currentRank = rankHistory[0][1] as DatumClass | null;
-    if (currentRank) {
-        ctx.fillStyle = FONT_COLOR_WHITE;
-        ctx.textAlign = 'left';
-        ctx.font = `bold ${FONT_SIZE_LARGE}px RefrigeratorDeluxeBold`;
-
-        const rankText = currentRank.value[0];
-        const rankPath = getRankPath(rankText);
-        const rankImage = await loadImage(await Bun.file(join(process.cwd(), 'assets', 'ranks', rankPath)).bytes());
-        const textWidth = ctx.measureText(rankText).width;
-        const spacing = 2;
-        const totalWidth = RANK_IMAGE_SIZE + spacing + textWidth;
-        const rankX = (CANVAS_WIDTH - totalWidth) / 2;
-        const rankY = 50;
-
-        ctx.drawImage(rankImage, rankX, rankY - 10, RANK_IMAGE_SIZE, RANK_IMAGE_SIZE);
-        ctx.fillText(rankText, rankX + RANK_IMAGE_SIZE + spacing, rankY + RANK_IMAGE_SIZE / 2);
-
-        ctx.font = `lighter ${FONT_SIZE_SMALL}px RefrigeratorDeluxeBold`;
-        ctx.fillStyle = FONT_COLOR_GRAY;
-
-        const season = Object.values(player.player.info.rank_game_season).at(-1);
-
-        if (season) {
-            const pointsText = `${season.rank_score.toFixed(0)} RS`;
-            const pointsTextWidth = ctx.measureText(pointsText).width;
-            const pointsX = rankX + RANK_IMAGE_SIZE + spacing + (textWidth - pointsTextWidth) / 2;
-            const pointsY = rankY + RANK_IMAGE_SIZE / 2 + 25;
-            ctx.fillText(pointsText, pointsX, pointsY);
+    data.forEach((point, i) => {
+        if (i === 0) {
+            return;
         }
-    }
+        ctx.strokeStyle = data[i - 1].color;
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+        ctx.moveTo(xScale(dates[i - 1]), yScale(data[i - 1].score));
+        ctx.lineTo(xScale(dates[i]), yScale(point.score));
+        ctx.stroke();
 
-    // Draw rank progression
-    for (let i = 0; i < data.length; i++) {
-        const current = data[i][1];
-        const next = data[i + 1]?.[1] as DatumClass | null;
-        const fromX = GRAPH_WIDTH / (data.length - 1) * i + HORIZONTAL_PADDING;
-        const fromY = normalizeScore(parseFloat(current.value[1].toString()));
+        ctx.fillStyle = data[i - 1].color;
+        ctx.beginPath();
+        ctx.arc(xScale(dates[i - 1]), yScale(data[i - 1].score), 8, 0, Math.PI * 2);
+        ctx.fill();
+    });
 
-        // Draw date marker
-        // const date = new Date(data[i][0] as unknown as string);
-        // drawDate(ctx, fromX, CANVAS_HEIGHT - VERTICAL_PADDING / 3, date);
+    // Último punto
+    const lastPoint = data[data.length - 1];
+    ctx.fillStyle = lastPoint.color;
+    ctx.beginPath();
+    ctx.arc(xScale(dates[dates.length - 1]), yScale(lastPoint.score), 8, 0, Math.PI * 2);
+    ctx.fill();
 
-        if (!next) {
+    let lastRank = '';
+    for (const [i, point] of data.entries()) {
+        if (point.rank === lastRank) {
             continue;
         }
 
-        const toX = GRAPH_WIDTH / (data.length - 1) * (i + 1) + HORIZONTAL_PADDING;
-        const toY = normalizeScore(parseFloat(next.value[1].toString()));
+        try {
+            const ICON_SIZE = 90; // Aumentado de 30 a 60
+            const x = xScale(dates[i]) - ICON_SIZE / 2;
+            const y = yScale(point.score) - ICON_SIZE / 2;
 
-        drawCurveLine(ctx, fromX, fromY, toX, toY, current.metadata.color);
-        await drawPointWithGlow(ctx, fromX, fromY, getRankPath(current.metadata.name));
+            ctx.drawImage(await loadRankImage(point.image), x, y, ICON_SIZE, ICON_SIZE);
+            lastRank = point.rank;
+        } catch (_) {
+            console.error('Error cargando imagen:', point.image);
+        }
     }
 
-    // Draw last point
-    const lastRank = data[data.length - 1][1];
-    await drawPointWithGlow(
-        ctx,
-        CANVAS_WIDTH - HORIZONTAL_PADDING,
-        normalizeScore(parseFloat(lastRank.value[1].toString())),
-        getRankPath(lastRank.metadata.name)
-    );
+    // Fechas
+    const uniqueDates = [...new Set(data.map((d) => d.date))];
+    const datePositions = uniqueDates.map((d) => xScale(new Date(data.find((item) => item.date === d)!.realDate)));
+
+    ctx.fillStyle = '#FFF';
+    ctx.font = '20px Arial';
+    ctx.textBaseline = 'top';
+    ctx.textAlign = 'center';
+    uniqueDates.forEach((date, i) => {
+        ctx.fillText(date, datePositions[i], HEIGHT - MARGIN.bottom + 33);
+    });
+
 
     return canvas.encode('png');
 }
 
-// Update drawDate to handle Date objects
-// function drawDate(ctx: SKRSContext2D, x: number, y: number, date: Date) {
-//     ctx.font = `lighter ${DATE_FONT_SIZE}px RefrigeratorDeluxeBold`;
-//     ctx.fillStyle = DATE_COLOR;
-//     ctx.textAlign = 'center';
-
-//     const formattedDate = date.toLocaleDateString('en-US', {
-//         month: 'short',
-//         day: 'numeric'
-//     });
-
-//     ctx.fillText(formattedDate, x, y + 10);
-// }
-// function drawDate(ctx: SKRSContext2D, x: number, y: number, timestamp: number) {
-//     ctx.font = `lighter ${DATE_FONT_SIZE}px RefrigeratorDeluxeBold`;
-//     ctx.fillStyle = DATE_COLOR;
-//     ctx.textAlign = 'center';
-
-//     const date = new Date(timestamp * 1_000);
-//     const formattedDate = date.toLocaleDateString('en-US', {
-//         month: 'short',
-//         day: 'numeric'
-//     });
-
-//     ctx.fillText(formattedDate, x, y + 10);
-// }
-
-function drawCurveLine(ctx: SKRSContext2D, fromX: number, fromY: number, toX: number, toY: number, color: string) {
-    const controlX = (fromX + toX) / 2;
-    ctx.beginPath();
-    ctx.strokeStyle = color;
-    ctx.lineWidth = LINE_WIDTH;
-    ctx.moveTo(fromX, fromY);
-    ctx.quadraticCurveTo(controlX, fromY, toX, toY);
-    ctx.stroke();
-}
-
-async function drawPointWithGlow(ctx: SKRSContext2D, x: number, y: number, url: string) {
-    ctx.shadowColor = GLOW_COLOR;
-    ctx.shadowBlur = 15;
-    await drawImage(ctx, x, y, url);
-
-    ctx.shadowBlur = 0;
-}
-
-async function drawImage(ctx: SKRSContext2D, x: number, y: number, url: string, imageSize = IMAGE_SIZE) {
-    const subImageSize = imageSize / 2;
-    const bufferImage = await Bun.file(join(process.cwd(), 'assets', 'ranks', url)).bytes();
-    const resizedImage = await sharp(bufferImage).resize(imageSize, imageSize).toBuffer();
-    const image = await loadImage(resizedImage);
-    ctx.drawImage(image, x - subImageSize, y - subImageSize, imageSize, imageSize);
-}
-
-function getRankPath(rank: string) {
-    if (rank.includes('One Above All')) {
-        return 'one_above_all.png';
-    }
-    const rankName = rank.split(' ')[0].toLowerCase();
-    return `${rankName}.png`;
+async function loadRankImage(imageUrl: string) {
+    const filename = imageUrl.split('/').pop() || 'unranked.png';
+    const buffer = await Bun.file(join(process.cwd(), 'assets', 'ranks', filename)).bytes();
+    return loadImage(buffer);
 }

@@ -1,8 +1,10 @@
 import type { CommandContext } from 'seyfert';
 
 import { createStringOption, SubCommand, LocalesT, Declare, Options } from 'seyfert';
+import { join } from 'node:path';
 
-import { generateRankGraph } from '../../utils/images/ranked';
+import { processRankHistory } from '../../utils/functions/rank-utils';
+import { generateRankChart } from '../../utils/images/ranked';
 
 const options = {
     'name-or-id': createStringOption({
@@ -42,27 +44,12 @@ export default class RankCommand extends SubCommand {
                 content: ctx.t.commands.core.rank.noRankHistory(player.player.name, player.player.team.club_team_mini_name).get()
             });
         }
+        await Bun.write(join(process.cwd(), 'xd.png'), await generateRankChart(processRankHistory(player.rank_history)));
 
-        const playerRank = await ctx.client.api.getRankedStats(player.player.name);
-        if (!playerRank) {
-            return ctx.editOrReply({
-                content: ctx.t.commands.core.rank.noRankHistory(player.player.name, player.player.team.club_team_mini_name).get()
-            });
-        }
-
-        const bufferGraph = await generateRankGraph(playerRank.data, player);
-
-        if (!bufferGraph) {
-            return ctx.editOrReply({
-                content: ctx.t.commands.core.rank.noRankHistory(player.player.name, player.player.team.club_team_mini_name).get()
-            });
-        }
-
-        return ctx.editOrReply({
-            files: [{
-                filename: 'rank.png',
-                data: bufferGraph
-            }]
-        });
+        // if (!bufferGraph) {
+        //     return ctx.editOrReply({
+        //         content: ctx.t.commands.core.rank.noRankHistory(player.player.name, player.player.team.club_team_mini_name).get()
+        //     });
+        // }
     }
 }

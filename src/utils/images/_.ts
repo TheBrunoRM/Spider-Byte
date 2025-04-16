@@ -2,7 +2,7 @@ import { loadImage } from '@napi-rs/canvas';
 import { join } from 'node:path';
 
 import { MARVELRIVALS_DOMAIN, RIVALSDB_DOMAIN } from '../env';
-import { getRank } from '../functions/rank-timeline';
+import { getRankDetails } from '../functions/rank-utils';
 
 const cdnURL = `${MARVELRIVALS_DOMAIN}/rivals`;
 
@@ -47,11 +47,11 @@ export async function loadHeroHistory(heroID: number) {
 }
 
 export async function loadRankIcon(level: number) {
-    const { imageURL } = getRank(level);
+    const { image } = getRankDetails(level);
     return loadImageFromCache(
         'rank_icon',
         level,
-        imageURL
+        image
     );
 }
 

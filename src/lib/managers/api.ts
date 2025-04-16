@@ -9,7 +9,6 @@ import type { MatchHistoryDTO } from '../../types/dtos/MatchHistoryDTO';
 import type { HeroesDTO } from '../../types/dtos/HeroesDTO';
 import type { PlayerDTO } from '../../types/dtos/PlayerDTO';
 import type { UpdateDTO } from '../../types/dtos/UpdateDTO';
-import type { RankedDTO } from '../../types/v2/RankedDTO';
 import type { HeroDTO } from '../../types/dtos/HeroDTO';
 import type { CareerDTO } from '../../types/v2/Career';
 
@@ -24,7 +23,6 @@ const isLeaderboardPlayerHero = createValidate<LeaderboardPlayerHeroDTO>();
 const isPatchNotes = createValidate<PatchNotesDTO>();
 const isFormattedPatch = createValidate<FormattedPatch>();
 const isPlayer = createValidate<PlayerDTO>();
-const isRanked = createValidate<RankedDTO>();
 const isCareer = createValidate<CareerDTO>();
 const isUpdatedPlayer = createValidate<UpdateDTO>();
 
@@ -217,18 +215,6 @@ export class Api {
 
   //   return response;
   // }
-
-  // Ranked
-  public getRankedStats(name: string) {
-    return this.fetchWithRetry({
-      domain: this.trackerApiUrl,
-      endpoint: `profile/ign/${encodeURIComponent(name)}/stats/overview/ranked`,
-      validator: isRanked,
-      cacheKey: `ranked-stats/${name}`,
-      expireTime: 5 * 60,
-      route: 'profile/ign/:id/stats/overview/ranked'
-    });
-  }
 
   // Heroes
   public getLeaderboardHero(nameOrId: string, platform: 'xbox' | 'pc' | 'ps' = 'pc') {

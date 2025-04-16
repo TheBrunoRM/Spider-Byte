@@ -18,10 +18,10 @@ async function loadImageFromCache(
     }
     const response = await fetch(fetchURL);
     if (!response.ok) {
-        const placeholdersPath = join(process.cwd(), 'assets', 'placeholders', `${id}.png`);
-        const placeholdersFile = Bun.file(placeholdersPath);
+        const placeholderPath = join(process.cwd(), 'assets', 'placeholders', `${cacheDir}.png`);
+        const placeholdersFile = Bun.file(placeholderPath);
         if (await placeholdersFile.exists()) {
-            return loadImage(placeholdersPath);
+            return loadImage(placeholderPath);
         }
         throw new Error(`Failed to fetch ${fetchURL}`);
     }

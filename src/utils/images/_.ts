@@ -1,4 +1,6 @@
-import { loadImage } from '@napi-rs/canvas';
+import type { Image } from '@napi-rs/canvas';
+
+import { type SKRSContext2D, loadImage } from '@napi-rs/canvas';
 import { join } from 'node:path';
 
 import { MARVELRIVALS_DOMAIN, RIVALSDB_DOMAIN } from '../env';
@@ -69,4 +71,16 @@ export async function loadHeroSquare(hero_id: number) {
         hero_id,
         `${RIVALSDB_DOMAIN}/images/heroes/${hero_id}/base/square.png`
     );
+}
+
+export function drawCircularImage(ctx: SKRSContext2D, image: Image, x: number, y: number, width: number, height: number, radius = Math.min(width, height) / 2) {
+    ctx.save();
+    ctx.beginPath();
+    const centerX = x + width / 2;
+    const centerY = y + height / 2;
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.clip();
+    ctx.drawImage(image, x, y, width, height);
+    ctx.restore();
 }

@@ -28,14 +28,20 @@ export async function generateRankChart(data: RankHistoryDataPoint[]): Promise<B
     const xScale = (date: Date) => {
         const minTime = dates[0].getTime();
         const maxTime = dates[dates.length - 1].getTime();
+        if (data.length === 1 || maxTime === minTime) {
+            return MARGIN.left + chartWidth / 2; // Center the point
+        }
         return MARGIN.left + (date.getTime() - minTime) / (maxTime - minTime) * chartWidth;
-      };
+    };
 
-      const yScale = (score: number) => {
+    const yScale = (score: number) => {
         const min = Math.min(...scores);
         const max = Math.max(...scores);
+        if (data.length === 1 || max === min) {
+            return MARGIN.top + chartHeight / 2; // Center the point
+        }
         return MARGIN.top + chartHeight - (score - min) / (max - min) * chartHeight;
-      };
+    };
 
     // Fondo
     const background = await loadImage(await Bun.file(join(process.cwd(), 'assets', 'rank', 'background.png')).bytes());

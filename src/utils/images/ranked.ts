@@ -58,9 +58,9 @@ export async function generateRankChart(user: PlayerDTO, data: RankHistoryDataPo
     ctx.fillText(user.player.name, 487, 107 + playerNameMetrics.emHeightAscent);
     if (user.player.team.club_team_id) {
         ctx.fillStyle = '#737373';
-        const clubTeamID = `#${user.player.team.club_team_mini_name}`;
-        const teamIdMetrics = ctx.measureText(clubTeamID);
-        ctx.fillText(clubTeamID, playerNameMetrics.width + teamIdMetrics.width + 160, 107 + teamIdMetrics.emHeightAscent);
+        const clubTeamName = `#${user.player.team.club_team_mini_name}`;
+        const teamIdMetrics = ctx.measureText(clubTeamName);
+        ctx.fillText(clubTeamName, playerNameMetrics.width + teamIdMetrics.width + 300, 107 + teamIdMetrics.emHeightAscent);
     }
 
     ctx.font = '900 30px RefrigeratorDeluxeBold';

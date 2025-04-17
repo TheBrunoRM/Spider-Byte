@@ -63,13 +63,13 @@ export async function generateRankChart(user: PlayerDTO, data: RankHistoryDataPo
         ctx.fillText(clubTeamName, playerNameMetrics.width + teamIdMetrics.width + 300, 107 + teamIdMetrics.emHeightAscent);
     }
 
-    ctx.font = '900 30px RefrigeratorDeluxeBold';
+    ctx.font = '900 40px RefrigeratorDeluxeBold';
     const playerLevel = user.player.level.toString();
     const levelMetrics = ctx.measureText(playerLevel);
     ctx.fillStyle = 'black';
-    ctx.fillText(playerLevel, 249 + levelMetrics.width / 2, 289 + levelMetrics.emHeightAscent);
+    ctx.fillText(playerLevel, 253 + levelMetrics.width / 2, 293 + levelMetrics.emHeightAscent);
 
-    ctx.font = '900 30px RefrigeratorDeluxeBold';
+    ctx.font = '900 40px RefrigeratorDeluxeBold';
     ctx.fillStyle = '#737373';
     const uid = user.player.uid.toString();
     const idMetris = ctx.measureText(uid);

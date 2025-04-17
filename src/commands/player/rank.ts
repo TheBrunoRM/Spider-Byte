@@ -1,6 +1,6 @@
 import type { CommandContext } from 'seyfert';
 
-import { createStringOption, AttachmentBuilder, SubCommand, LocalesT, Declare, Options } from 'seyfert';
+import { createStringOption, createNumberOption, AttachmentBuilder, SubCommand, LocalesT, Declare, Options } from 'seyfert';
 
 import { processRankHistory } from '../../utils/functions/rank-utils';
 import { generateRankChart } from '../../utils/images/ranked';
@@ -11,6 +11,22 @@ const options = {
         locales: {
             description: 'commands.commonOptions.nameOrId'
         }
+    }),
+    season: createNumberOption({
+        description: 'Season',
+        choices: [{
+            name: 'S0: Doom\'s rise',
+            value: 0
+        }, {
+            name: 'S1: Eternal Night Falls',
+            value: 1
+        }, {
+            name: 'S1.5: Eternal Night Falls',
+            value: 1.5
+        }, {
+            name: 'S2: Hellfire Gala',
+            value: 2
+        }] as const
     })
 };
 
@@ -31,7 +47,9 @@ export default class RankCommand extends SubCommand {
             });
         }
 
-        const player = await ctx.client.api.getPlayer(nameOrId);
+        const player = await ctx.client.api.getPlayer(nameOrId, {
+            season: ctx.options.season
+        });
         if (!player) {
             return ctx.editOrReply({
                 content: ctx.t.commands.commonErrors.playerNotFound.get()

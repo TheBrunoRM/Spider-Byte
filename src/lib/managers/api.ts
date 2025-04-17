@@ -130,7 +130,7 @@ export class Api {
       domain: this.marvelRivalsApiUrlV2,
       endpoint: `player/${encodeURIComponent(userNameOrId)}/match-history`,
       validator: isMatchHistory,
-      cacheKey: `match-history/${userNameOrId}/${Object.entries(options).map((kv) => `${kv[0]}${kv[1] || ''}`).join('_')}`,
+      cacheKey: `match-history/${userNameOrId}/${Object.entries(options).filter((kv) => kv.at(1) !== undefined).map((kv) => `${kv[0]}${kv[1]}`).join('_')}`,
       expireTime: 5 * 60,
       route: 'match-history/:id',
       query: options
@@ -158,26 +158,32 @@ export class Api {
     });
   }
 
-  public async getPlayer(nameOrId: string) {
+  public async getPlayer(nameOrId: string, options: Parameters<typeof this.fetchPlayer>[1]) {
     if (/^\d+$/.exec(nameOrId)) {
-      return this.fetchPlayer(nameOrId);
+      return this.fetchPlayer(nameOrId, options);
     }
 
     const playerFound = await this.searchPlayer(nameOrId);
     if (!playerFound) {
       return playerFound;
     }
-    return this.fetchPlayer(playerFound.uid);
+    return this.fetchPlayer(playerFound.uid, options);
   }
 
-  fetchPlayer(id: string) {
+  fetchPlayer(id: string, options: {
+    season?: 1.5 | 0 | 1 | 2;
+  } = {}) {
+    options = MergeOptions({
+      season: 2
+    }, options);
     return this.fetchWithRetry({
       domain: this.marvelRivalsApiUrlV1,
       endpoint: `player/${id}`,
       validator: isPlayer,
-      cacheKey: `player/${id}`,
+      cacheKey: `player/${id}/${Object.entries(options).filter((kv) => kv.at(1) !== undefined).map((kv) => `${kv[0]}${kv[1]}`).join('_')}`,
       expireTime: 5 * 60,
-      route: 'player/:id'
+      route: 'player/:id',
+      query: options
     });
   }
 

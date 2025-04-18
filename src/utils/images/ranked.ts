@@ -72,8 +72,8 @@ export async function generateRankChart(user: PlayerDTO, data: RankHistoryDataPo
     ctx.font = '900 40px RefrigeratorDeluxeBold';
     ctx.fillStyle = '#737373';
     const uid = user.player.uid.toString();
-    const idMetris = ctx.measureText(uid);
-    ctx.fillText(uid, 730, 224 + idMetris.emHeightAscent);
+    const idMetrics = ctx.measureText(uid);
+    ctx.fillText(uid, 730, 224 + idMetrics.emHeightAscent);
 
     const actualRankImage = await loadRankImage(lastPoint.image);
     ctx.drawImage(actualRankImage, 294, 420, 300, 300);
@@ -115,16 +115,34 @@ export async function generateRankChart(user: PlayerDTO, data: RankHistoryDataPo
     let lastRank = '';
     for (let i = 0; i < data.length; i++) {
         const point = data[i];
-        if (point.rank === lastRank) {
-            continue;
+        if (point.rank !== lastRank) {
+            try {
+                const rankImage = await loadRankImage(point.image);
+                const ICON_SIZE = 80;
+                const TIER_FONT_SIZE = 32;
+                const ICON_OFFSET = 10;
+
+                const x = xScale(dates[i]) - ICON_SIZE / 2;
+                const y = yScale(point.score) - ICON_SIZE - ICON_OFFSET;
+
+                ctx.drawImage(rankImage, x, y, ICON_SIZE, ICON_SIZE);
+
+                ctx.font = `bold ${TIER_FONT_SIZE}px Arial`;
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'middle';
+
+                ctx.fillStyle = point.color;
+                ctx.fillText(
+                    point.tier,
+                    x + ICON_SIZE,
+                    y + ICON_SIZE / 2
+                );
+
+                lastRank = point.rank;
+            } catch (error) {
+                console.error('Error loading rank image:', point.image);
+            }
         }
-
-        const ICON_SIZE = 120;
-        const x = xScale(dates[i]) - ICON_SIZE / 2;
-        const y = yScale(point.score) - ICON_SIZE / 2;
-
-        ctx.drawImage(await loadRankImage(point.image), x, y, ICON_SIZE, ICON_SIZE);
-        lastRank = point.rank;
     }
 
     ctx.fillStyle = '#FFF';

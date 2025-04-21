@@ -4,12 +4,12 @@
   "type": "module",
   "devDependencies": {
     "@marcrock22/eslint": "github:marcrock22/eslintcf",
-    "@types/bun": "^1.2.8",
-    "eslint": "^9.24.0",
+    "@types/bun": "^1.2.10",
+    "eslint": "^9.25.0",
     "rimraf": "^6.0.1",
     "ts-patch": "^3.3.0",
-    "typescript-eslint": "^8.29.0",
-    "typia": "^8.2.0"
+    "typescript-eslint": "^8.30.1",
+    "typia": "^9.1.1"
   },
   "peerDependencies": {
     "typescript": "~5.8.3"
@@ -26,8 +26,7 @@
     "prisma": "^6.6.0",
     "satori": "^0.12.2",
     "satori-html": "^0.3.2",
-    "seyfert": "^2.2.1-dev-14284346795.0",
-    "sharp": "^0.34.0"
+    "seyfert": "^3.0.0"
   },
   "scripts": {
     "start": "bun run build && bun --env-file=.env ./dist/index.ts",

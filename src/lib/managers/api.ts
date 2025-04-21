@@ -66,6 +66,29 @@ export class Api {
     return this.apiKeys[i];
   }
 
+  // Utils
+
+  async getRankHistory(userId: string, season: 1.5 | 0 | 1 | 2 = 2) {
+    const history: MatchHistoryDTO['match_history'] = [];
+    let data: MatchHistoryDTO | null;
+    let page = 0;
+    do {
+      data = await this.getMatchHistory(userId, {
+        page,
+        season,
+        game_mode: 2 // ranked
+      });
+      if (data?.match_history.length) {
+        history.push(...data.match_history);
+      }
+      if (data) {
+        page++;
+      }
+    } while (data?.pagination.has_more);
+
+    return history;
+  }
+
   // Patch Notes
   public getPatchNotesById(id: string) {
     return this.fetchWithRetry({
@@ -158,7 +181,7 @@ export class Api {
     });
   }
 
-  public async getPlayer(nameOrId: string, options: Parameters<typeof this.fetchPlayer>[1]) {
+  public async getPlayer(nameOrId: string, options?: Parameters<typeof this.fetchPlayer>[1]) {
     if (/^\d+$/.exec(nameOrId)) {
       return this.fetchPlayer(nameOrId, options);
     }
@@ -421,7 +444,7 @@ export class Api {
           //
         } else {
           bucket.remaining = Number(xRatelimitRemaining);
-          bucket.limit = Number(xRatelimitLimit);
+          bucket.limit = Number(xRatelimitLimit) - 1;
           bucket.resetAfter = Number(xRatelimitReset) * 1e3 - new Date().getTime();
         }
       }

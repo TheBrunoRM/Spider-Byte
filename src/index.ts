@@ -30,7 +30,6 @@ const client = new Client({
                     ];
                 }
 
-
                 client.logger.error(
                     ctx.author.id,
                     ctx.author.username,

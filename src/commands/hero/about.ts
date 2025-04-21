@@ -25,8 +25,8 @@ import type {
 
 import { parseNameForRivalSkins } from '../../utils/functions/skins';
 import { capitalize } from '../../utils/functions/capitalize';
+import { STICKY_CDN_DOMAIN } from '../../utils/env';
 import { Role } from '../../types/dtos/HeroesDTO';
-import { RIVALSDB_DOMAIN } from '../../utils/env';
 
 const colorPerRole = {
     [Role.Duelist]: '#FF4500',
@@ -109,15 +109,15 @@ export default class About extends SubCommand {
             colorPerRole[capitalize(hero.role) as Role] as ColorResolvable
         );
         const heroNameParsed = parseNameForRivalSkins(hero.name);
-        baseEmbed.setThumbnail(`${RIVALSDB_DOMAIN}/images/heroes/${hero.id}/base/square.png`);
+        baseEmbed.setThumbnail(`${STICKY_CDN_DOMAIN}/heroes/transformations/${hero.id}/0.png`);
         baseEmbed.setAuthor({
             name: `${hero.real_name} (${heroNameParsed})`,
             iconUrl:
-                `${RIVALSDB_DOMAIN}/images/heroes/${hero.id}/kill-icons/killicon-2.png`
+                `${STICKY_CDN_DOMAIN}/heroes/kill_icons/${hero.id}/2.png`
         });
         baseEmbed.setDescription(hero.bio)
             .setImage(
-                `${RIVALSDB_DOMAIN}/images/heroes/${hero.id}/story-images/hero-story.png`
+                `${STICKY_CDN_DOMAIN}/heroes/history/${hero.id}.png`
             );
         baseEmbed.setFooter({
             text: capitalize(hero.role)

@@ -1,12 +1,21 @@
+import type { MakeRequired } from 'seyfert/lib/common';
+
 import { loadImage, Canvas } from '@napi-rs/canvas';
 import { join } from 'node:path';
 
-import type { RankHistoryDataPoint } from '../functions/rank-utils';
+import type { ScoreInfo } from '../../types/dtos/MatchHistoryDTO';
 import type { PlayerDTO } from '../../types/dtos/PlayerDTO';
 
-import { drawCircularImage, loadUserIcon } from './_';
+import { drawCircularImage, loadRankIcon, loadUserIcon } from './_';
+import { getRankDetails } from '../functions/rank-utils';
 
-export async function generateRankChart(user: PlayerDTO, data: RankHistoryDataPoint[]): Promise<Buffer> {
+export interface ExpectedScoreInfo extends MakeRequired<ScoreInfo> {
+    match_time_stamp: number;
+    date: string;
+}
+
+export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScoreInfo[]): Promise<Buffer> {
+    scoreInfo = scoreInfo.slice(0, 15).toReversed();
     const WIDTH = 2_560;
     const HEIGHT = 1_440;
     const canvas = new Canvas(WIDTH, HEIGHT);
@@ -20,29 +29,29 @@ export async function generateRankChart(user: PlayerDTO, data: RankHistoryDataPo
     };
     const chartWidth = WIDTH - MARGIN.left - MARGIN.right;
     const chartHeight = HEIGHT - MARGIN.top - MARGIN.bottom;
-    const lastPoint = data[data.length - 1];
+    const lastPoint = scoreInfo[scoreInfo.length - 1];
 
     // Procesar datos
-    const dates = data.map((d) => new Date(d.realDate));
-    const scores = data.map((d) => d.score);
+    const dates = scoreInfo.map((d) => new Date(d.match_time_stamp));
+    const scores = scoreInfo.map((d) => d.new_score);
 
     // Escalas
+    const minTime = dates[0].getTime();
+    const maxTime = dates[dates.length - 1].getTime();
     const xScale = (date: Date) => {
-        const minTime = dates[0].getTime();
-        const maxTime = dates[dates.length - 1].getTime();
-        if (data.length === 1 || maxTime === minTime) {
+        if (scoreInfo.length === 1 || maxTime === minTime) {
             return MARGIN.left + chartWidth / 2; // Center the point
         }
         return MARGIN.left + (date.getTime() - minTime) / (maxTime - minTime) * chartWidth;
     };
 
+    const minScore = Math.min(...scores);
+    const maxScore = Math.max(...scores);
     const yScale = (score: number) => {
-        const min = Math.min(...scores);
-        const max = Math.max(...scores);
-        if (data.length === 1 || max === min) {
+        if (scoreInfo.length === 1 || maxScore === minScore) {
             return MARGIN.top + chartHeight / 2; // Center the point
         }
-        return MARGIN.top + chartHeight - (score - min) / (max - min) * chartHeight;
+        return MARGIN.top + chartHeight - (score - minScore) / (maxScore - minScore) * chartHeight;
     };
 
     const background = await loadImage(await Bun.file(join(process.cwd(), 'assets', 'rank', 'background.png')).bytes());
@@ -75,73 +84,73 @@ export async function generateRankChart(user: PlayerDTO, data: RankHistoryDataPo
     const idMetrics = ctx.measureText(uid);
     ctx.fillText(uid, 730, 224 + idMetrics.emHeightAscent);
 
-    const actualRankImage = await loadRankImage(lastPoint.image);
+    const actualRankImage = await loadRankIcon(lastPoint.new_level);
     ctx.drawImage(actualRankImage, 294, 420, 300, 300);
 
     ctx.font = '900 40px RefrigeratorDeluxeBold';
     ctx.fillStyle = 'white';
-    const rankText = `${lastPoint.rank} ${lastPoint.tier}`;
+    const { rank: lastPointRank, tier: lastPointTier, color: lastPointColor } = getRankDetails(lastPoint.new_level);
+    const rankText = `${lastPointRank} ${lastPointTier}`;
     const rankTextMetrics = ctx.measureText(rankText);
     ctx.fillText(rankText, 594, 514 + rankTextMetrics.emHeightAscent);
 
     ctx.font = '900 30px RefrigeratorDeluxeBold';
     ctx.fillStyle = '#737373';
-    const scoreText = `${lastPoint.score.toLocaleString().split('.')[0]} RS`;
+    const scoreText = `${lastPoint.new_score.toLocaleString().split('.')[0]} RS`;
     const scoreTextMetrics = ctx.measureText(scoreText);
     ctx.fillText(scoreText, 594, 577 + scoreTextMetrics.emHeightAscent);
 
-    data.forEach((point, i) => {
+    scoreInfo.forEach((point, i) => {
         if (i === 0) {
             return;
         }
-        ctx.strokeStyle = data[i - 1].color;
+        const { color } = getRankDetails(scoreInfo[i - 1].new_level);
+        ctx.strokeStyle = color;
         ctx.lineWidth = 8;
         ctx.beginPath();
-        ctx.moveTo(xScale(dates[i - 1]), yScale(data[i - 1].score));
-        ctx.lineTo(xScale(dates[i]), yScale(point.score));
+        ctx.moveTo(xScale(dates[i - 1]), yScale(scoreInfo[i - 1].new_score));
+        ctx.lineTo(xScale(dates[i]), yScale(point.new_score));
         ctx.stroke();
 
-        ctx.fillStyle = data[i - 1].color;
+        ctx.fillStyle = color;
         ctx.beginPath();
-        ctx.arc(xScale(dates[i - 1]), yScale(data[i - 1].score), 12, 0, Math.PI * 2);
+        ctx.arc(xScale(dates[i - 1]), yScale(scoreInfo[i - 1].new_score), 12, 0, Math.PI * 2);
         ctx.fill();
     });
 
-    ctx.fillStyle = lastPoint.color;
+    ctx.fillStyle = lastPointColor;
     ctx.beginPath();
-    ctx.arc(xScale(dates[dates.length - 1]), yScale(lastPoint.score), 8, 0, Math.PI * 2);
+    ctx.arc(xScale(dates[dates.length - 1]), yScale(lastPoint.new_score), 8, 0, Math.PI * 2);
     ctx.fill();
 
     let lastRank = '';
-    for (let i = 0; i < data.length; i++) {
-        const point = data[i];
-        if (point.rank !== lastRank) {
-            try {
-                const rankImage = await loadRankImage(point.image);
-                const ICON_SIZE = 80;
-                const TIER_FONT_SIZE = 32;
-                const ICON_OFFSET = 10;
+    for (let i = 0; i < scoreInfo.length; i++) {
+        const point = scoreInfo[i];
+        const { color, tier, rank } = getRankDetails(point.new_level);
+        if (rank !== lastRank) {
+            const rankImage = await loadRankIcon(point.new_level);
+            const ICON_SIZE = 80;
+            const TIER_FONT_SIZE = 32;
+            const ICON_OFFSET = 10;
 
-                const x = xScale(dates[i]) - ICON_SIZE / 2;
-                const y = yScale(point.score) - ICON_SIZE - ICON_OFFSET;
+            const x = xScale(dates[i]) - ICON_SIZE / 2;
+            const y = yScale(point.new_score) - ICON_SIZE - ICON_OFFSET;
 
-                ctx.drawImage(rankImage, x, y, ICON_SIZE, ICON_SIZE);
+            ctx.drawImage(rankImage, x, y, ICON_SIZE, ICON_SIZE);
 
-                ctx.font = `bold ${TIER_FONT_SIZE}px Arial`;
-                ctx.textAlign = 'left';
-                ctx.textBaseline = 'middle';
+            ctx.font = `bold ${TIER_FONT_SIZE}px Arial`;
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
 
-                ctx.fillStyle = point.color;
-                ctx.fillText(
-                    point.tier,
-                    x + ICON_SIZE,
-                    y + ICON_SIZE / 2
-                );
 
-                lastRank = point.rank;
-            } catch (error) {
-                console.error('Error loading rank image:', point.image);
-            }
+            ctx.fillStyle = color;
+            ctx.fillText(
+                tier,
+                x + ICON_SIZE,
+                y + ICON_SIZE / 2
+            );
+
+            lastRank = rank;
         }
     }
 
@@ -150,17 +159,20 @@ export async function generateRankChart(user: PlayerDTO, data: RankHistoryDataPo
     ctx.textBaseline = 'top';
     ctx.textAlign = 'center';
 
-    for (const date of [...new Set(data.map((d) => d.date))]) {
-        const x = xScale(new Date(data.find((item) => item.date === date)!.realDate));
+    for (const date of [...new Set(scoreInfo.map((d) => d.date))]) {
+        const x = xScale(new Date(scoreInfo.find((item) => item.date === date)!.match_time_stamp));
         ctx.fillText(date, x, HEIGHT - MARGIN.bottom + 60);
     }
-
 
     return canvas.encode('png');
 }
 
-async function loadRankImage(imageUrl: string) {
-    const filename = imageUrl.split('/').pop() || 'unranked.png';
-    const buffer = await Bun.file(join(process.cwd(), 'assets', 'ranks', filename)).bytes();
-    return loadImage(buffer);
-}
+// async function loadRankImage(imageUrl: string) {
+//     try {
+//         const filename = imageUrl.split('/').pop() || 'unranked.png';
+//         const buffer = await Bun.file(join(process.cwd(), 'assets', 'ranks', filename)).bytes();
+//         return await loadImage(buffer);
+//     } catch {
+//         return loadImage(await Bun.file(join(process.cwd(), 'assets', 'ranks', 'unranked.png')).bytes());
+//     }
+// }

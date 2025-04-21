@@ -176,7 +176,7 @@ export function getRankDetails(level: number): RankDetails {
         rank: rank.name,
         tier: tierNumber,
         color: RANK_COLORS[rankIndex],
-        image: `${MARVELRIVALS_DOMAIN}rivals/ranked/${rankedImages[rankIndex]}`
+        image: `${MARVELRIVALS_DOMAIN}/rivals/ranked/${rankedImages[rankIndex]}`
     };
 }
 

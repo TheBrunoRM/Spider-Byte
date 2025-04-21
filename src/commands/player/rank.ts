@@ -1,9 +1,9 @@
 import type { CommandContext } from 'seyfert';
 
 import { createStringOption, createNumberOption, AttachmentBuilder, SubCommand, LocalesT, Declare, Options } from 'seyfert';
+import { createIs } from 'typia';
 
-import { processRankHistory } from '../../utils/functions/rank-utils';
-import { generateRankChart } from '../../utils/images/ranked';
+import { type ExpectedScoreInfo, generateRankChart } from '../../utils/images/ranked';
 
 const options = {
     'name-or-id': createStringOption({
@@ -29,6 +29,8 @@ const options = {
         }] as const
     })
 };
+
+const isExpectedScoreInfo = createIs<ExpectedScoreInfo>();
 
 @Declare({
     name: 'rank',
@@ -61,7 +63,29 @@ export default class RankCommand extends SubCommand {
                 content: ctx.t.commands.core.rank.noRankHistory(player.player.name, player.player.team.club_team_mini_name).get()
             });
         }
-        const bufferGraph = await generateRankChart(player, processRankHistory(player.rank_history));
+
+        const matchHistory = await ctx.client.api.getRankHistory(player.uid.toString(), ctx.options.season);
+
+        const scoreInfo: ExpectedScoreInfo[] = [];
+
+        for (const i of matchHistory) {
+            const date = new Date(i.match_time_stamp * 1e3);
+            const data = {
+                add_score: i.match_player.score_info.add_score,
+                level: i.match_player.score_info.level,
+                match_time_stamp: i.match_time_stamp * 1e3,
+                new_level: i.match_player.score_info.new_level,
+                new_score: i.match_player.score_info.new_score,
+                date: `${date.getMonth() + 1} ${date.getDay()}`
+            };
+            if (data.add_score !== 0 && isExpectedScoreInfo(data)) {
+                scoreInfo.push(data);
+            }
+        }
+
+        // const filtered = matchHistory.filter((match): match is ExpectedMatch => match.score_info?.level !== undefined && match.score_info.new_level !== undefined && match.score_info.add_score !== undefined && match.score_info.new_score !== undefined);
+
+        const bufferGraph = await generateRankChart(player, scoreInfo);
 
         return ctx.editOrReply({
             files: [

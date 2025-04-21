@@ -3,10 +3,8 @@ import type { Image } from '@napi-rs/canvas';
 import { type SKRSContext2D, loadImage } from '@napi-rs/canvas';
 import { join } from 'node:path';
 
-import { MARVELRIVALS_DOMAIN, RIVALSDB_DOMAIN } from '../env';
+import { MARVELRIVALS_DOMAIN, STICKY_CDN_DOMAIN } from '../env';
 import { getRankDetails } from '../functions/rank-utils';
-
-const cdnURL = `${MARVELRIVALS_DOMAIN}/rivals`;
 
 async function loadImageFromCache(
     cacheDir: string,
@@ -44,7 +42,7 @@ export async function loadHeroHistory(heroID: number) {
     return loadImageFromCache(
         'hero_history',
         heroID,
-        `${RIVALSDB_DOMAIN}/images/heroes/${heroID}/story-images/hero-story.png`
+        `${STICKY_CDN_DOMAIN}/heroes/history/${heroID}.png`
     );
 }
 
@@ -57,19 +55,11 @@ export async function loadRankIcon(level: number) {
     );
 }
 
-export async function loadHeroThumbnail(thumbnail: string) {
-    return loadImageFromCache(
-        'hero_thumbnail',
-        thumbnail,
-        `${cdnURL}/${thumbnail}`
-    );
-}
-
 export async function loadHeroSquare(hero_id: number) {
     return loadImageFromCache(
         'hero_square',
         hero_id,
-        `${RIVALSDB_DOMAIN}/images/heroes/${hero_id}/base/square.png`
+        `${STICKY_CDN_DOMAIN}/heroes/transformations/${hero_id}/0.png`
     );
 }
 

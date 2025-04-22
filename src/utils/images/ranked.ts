@@ -27,7 +27,7 @@ const seasons = [{
     value: 2
 }] as const;
 
-function getSeasonName(season: number): string {
+function getSeasonName(season: undefined | number): string {
     if (!season) {
         return seasons[seasons.length - 1].name;
     }
@@ -35,7 +35,7 @@ function getSeasonName(season: number): string {
     return seasonData.name;
 }
 
-export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScoreInfo[], season: number): Promise<Buffer> {
+export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScoreInfo[], season?: number): Promise<Buffer> {
     scoreInfo = scoreInfo.toReversed();
     const WIDTH = 2_560;
     const HEIGHT = 1_440;
@@ -55,24 +55,18 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
     // Process data
     const dates = scoreInfo.map((d) => new Date(d.match_time_stamp));
     const scores = scoreInfo.map((d) => d.new_score);
-
-    // Scale functions
-    const minY = 0;
-    const maxY = dates.length;
-    const xScale = (index: number) => {
-        if (scoreInfo.length === 1 || maxY === minY) {
-            return MARGIN.left + chartWidth / 2;
-        }
-        return MARGIN.left + (index - minY) / (maxY - minY) * chartWidth;
-    };
-
+    // const minY = 0;
+    const maxY = Math.max(1, dates.length - 1);
+    const xScale = (index: number) => MARGIN.left + index / maxY * chartWidth;
     const minScore = Math.min(...scores);
     const maxScore = Math.max(...scores);
+    const scoreRange = maxScore - minScore;
     const yScale = (score: number) => {
-        if (scoreInfo.length === 1 || maxScore === minScore) {
-            return MARGIN.top + chartHeight / 2;
+        if (scoreRange === 0) {
+            const buffer = chartHeight * 0.25;
+            return MARGIN.top + buffer + (chartHeight - buffer * 2) / 2;
         }
-        return MARGIN.top + chartHeight - (score - minScore) / (maxScore - minScore) * chartHeight;
+        return MARGIN.top + chartHeight - (score - minScore) / scoreRange * chartHeight;
     };
 
     // Draw background
@@ -85,14 +79,60 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
     ctx.textAlign = 'right';
     const chartTitle = 'Ranked Score Chart';
     const titleMetrics = ctx.measureText(chartTitle);
-    ctx.fillText(chartTitle, 2_400, 107 + titleMetrics.emHeightAscent);
+    ctx.fillText(chartTitle, 2_416, 110 + titleMetrics.emHeightAscent);
 
     // Season subtitle
     ctx.font = '900 40px RefrigeratorDeluxeBold';
     ctx.fillStyle = '#737373';
     const seasonTitle = `at ${getSeasonName(season)}`;
     const seasonMetrics = ctx.measureText(seasonTitle);
-    ctx.fillText(seasonTitle, 2_400, 107 + titleMetrics.emHeightAscent + seasonMetrics.emHeightAscent + 10);
+    ctx.fillText(seasonTitle, 2_416, 110 + titleMetrics.emHeightAscent + seasonMetrics.emHeightAscent + 10);
+
+    // Add trend statistics
+    const initialScore = scoreInfo[0].new_score;
+    const finalScore = lastPoint.new_score;
+    const scoreDiff = finalScore - initialScore;
+    const scoreDiffText = scoreDiff >= 0
+        ? `+${Math.round(scoreDiff)}`
+        : `${Math.round(scoreDiff)}`;
+    const trendText = `Score trend: ${scoreDiffText} points`;
+
+    ctx.font = '900 40px RefrigeratorDeluxeBold';
+    ctx.fillStyle = scoreDiff >= 0
+        ? '#4CAF50'
+        : '#F44336';
+    ctx.textAlign = 'right';
+    ctx.fillText(trendText, 2_416, 110 + titleMetrics.emHeightAscent + seasonMetrics.emHeightAscent + 65);
+
+    // Calculate win/loss stats
+    const totalMatches = scoreInfo.length - 1;
+    let wins = 0;
+    let losses = 0;
+
+    for (let i = 1; i < scoreInfo.length; i++) {
+        const matchScoreDiff = scoreInfo[i].new_score - scoreInfo[i - 1].new_score;
+        if (matchScoreDiff > 0) {
+            wins++;
+        } else if (matchScoreDiff < 0) {
+            losses++;
+        }
+    }
+
+    // Display match statistics
+    const matchStatsText = `Matches: ${totalMatches} (${wins}W / ${losses}L)`;
+    const winRate = totalMatches > 0
+        ? Math.round(wins / totalMatches * 100)
+        : 0;
+    const winRateText = `Win rate: ${winRate}%`;
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillText(matchStatsText, 2_416, 110 + titleMetrics.emHeightAscent + seasonMetrics.emHeightAscent + 120);
+
+    ctx.fillStyle = winRate >= 50
+        ? '#4CAF50'
+        : '#F44336';
+    ctx.fillText(winRateText, 2_416, 110 + titleMetrics.emHeightAscent + seasonMetrics.emHeightAscent + 175);
+
     ctx.textAlign = 'left';
 
     // Player info section
@@ -105,14 +145,14 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
     ctx.font = '900 70px RefrigeratorDeluxeBold';
     ctx.fillStyle = 'white';
     const playerNameMetrics = ctx.measureText(user.player.name);
-    ctx.fillText(user.player.name, 487, 107 + playerNameMetrics.emHeightAscent);
+    ctx.fillText(user.player.name, 487, 110 + playerNameMetrics.emHeightAscent);
 
     // Team name if exists
     if (user.player.team.club_team_id) {
         ctx.fillStyle = '#737373';
         const clubTeamName = `#${user.player.team.club_team_mini_name}`;
         const teamIdMetrics = ctx.measureText(clubTeamName);
-        ctx.fillText(clubTeamName, playerNameMetrics.width + teamIdMetrics.width + 330, 107 + teamIdMetrics.emHeightAscent);
+        ctx.fillText(clubTeamName, playerNameMetrics.width + teamIdMetrics.width + 330, 110 + teamIdMetrics.emHeightAscent);
     }
 
     // Player UID
@@ -120,7 +160,7 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
     ctx.fillStyle = '#737373';
     const uid = `Player UID: ${user.player.uid}`;
     const idMetrics = ctx.measureText(uid);
-    ctx.fillText(uid, 487, 107 + playerNameMetrics.emHeightAscent + idMetrics.emHeightAscent + 10);
+    ctx.fillText(uid, 487, 110 + playerNameMetrics.emHeightAscent + idMetrics.emHeightAscent + 10);
 
     // Player level
     ctx.font = '900 40px RefrigeratorDeluxeBold';
@@ -184,13 +224,15 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
         ctx.beginPath();
         ctx.arc(xScale(i - 1), yScale(scoreInfo[i - 1].new_score), 8, 0, Math.PI * 2);
         ctx.fill();
-    });
 
-    // Final point
-    ctx.fillStyle = lastPointColor;
-    ctx.beginPath();
-    ctx.arc(xScale(maxY - 1), yScale(lastPoint.new_score), 8, 0, Math.PI * 2);
-    ctx.fill();
+        // Draw the last point in the loop
+        if (i === scoreInfo.length - 1) {
+            ctx.fillStyle = lastPointColor;
+            ctx.beginPath();
+            ctx.arc(xScale(i), yScale(point.new_score), 8, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    });
 
     // Draw rank icons at rank changes
     let lastRank = '';

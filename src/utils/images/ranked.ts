@@ -24,7 +24,7 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
         top: 720,
         right: 170,
         bottom: 120,
-        left: 260,
+        left: 260
     };
     const chartWidth = WIDTH - MARGIN.left - MARGIN.right;
     const chartHeight = HEIGHT - MARGIN.top - MARGIN.bottom;
@@ -124,8 +124,8 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
 
         // Add gradient below line
         const gradient = ctx.createLinearGradient(0, yScale(Math.max(scoreInfo[i - 1].new_score, point.new_score)), 0, MARGIN.top + chartHeight);
-        gradient.addColorStop(0, color + 'CC'); // Semi-transparent color
-        gradient.addColorStop(1, color + '00'); // Fully transparent
+        gradient.addColorStop(0, `${color}CC`); // Semi-transparent color
+        gradient.addColorStop(1, `${color}00`); // Fully transparent
 
         // Create area below the line segment
         ctx.beginPath();
@@ -192,7 +192,7 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
 
             ctx.drawImage(rankImage, x, y, ICON_SIZE, ICON_SIZE);
 
-            ctx.font = `bold ${TIER_FONT_SIZE}px Arial`;
+            ctx.font = `bold ${TIER_FONT_SIZE}px RefrigeratorDeluxeBold`;
             ctx.textAlign = 'left';
             ctx.textBaseline = 'middle';
 
@@ -214,7 +214,7 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#FFF';
-    ctx.font = 'bold 24px Arial';
+    ctx.font = 'bold 24px RefrigeratorDeluxeBold';
 
     for (let i = 0; i <= NUM_Y_TICKS; i++) {
         const score = minScore + (maxScore - minScore) * (i / NUM_Y_TICKS);
@@ -241,7 +241,7 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
     // ctx.translate(MARGIN.left - 140, MARGIN.top + chartHeight / 2);
     // ctx.rotate(-Math.PI / 2);
     // ctx.textAlign = 'center';
-    // ctx.font = 'bold 28px Arial';
+    // ctx.font = 'bold 28px RefrigeratorDeluxeBold';
     // ctx.fillText('Score (RS)', 0, 0);
     // ctx.restore();
 

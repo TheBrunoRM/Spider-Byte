@@ -146,7 +146,7 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
 
             ctx.drawImage(rankImage, x, y, ICON_SIZE, ICON_SIZE);
 
-            ctx.font = `bold ${TIER_FONT_SIZE}px Arial`;
+            ctx.font = `bold ${TIER_FONT_SIZE}px RefrigeratorDeluxeBold`;
             ctx.textAlign = 'left';
             ctx.textBaseline = 'middle';
 
@@ -163,7 +163,7 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
     }
 
     ctx.fillStyle = '#FFF';
-    ctx.font = '20px Arial';
+    ctx.font = '20px RefrigeratorDeluxeBold';
     ctx.textBaseline = 'top';
     ctx.textAlign = 'center';
 

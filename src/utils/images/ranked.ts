@@ -22,9 +22,9 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
 
     const MARGIN = {
         top: 720,
-        right: 200,
+        right: 170,
         bottom: 120,
-        left: 220
+        left: 260,
     };
     const chartWidth = WIDTH - MARGIN.left - MARGIN.right;
     const chartHeight = HEIGHT - MARGIN.top - MARGIN.bottom;
@@ -77,7 +77,7 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
         ctx.fillStyle = '#737373';
         const clubTeamName = `#${user.player.team.club_team_mini_name}`;
         const teamIdMetrics = ctx.measureText(clubTeamName);
-        ctx.fillText(clubTeamName, playerNameMetrics.width + teamIdMetrics.width + 300, 107 + teamIdMetrics.emHeightAscent);
+        ctx.fillText(clubTeamName, playerNameMetrics.width + teamIdMetrics.width + 330, 107 + teamIdMetrics.emHeightAscent);
     }
 
     ctx.font = '900 40px RefrigeratorDeluxeBold';
@@ -104,7 +104,7 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
 
     ctx.font = '900 30px RefrigeratorDeluxeBold';
     ctx.fillStyle = '#737373';
-    const scoreText = `${lastPoint.new_score.toLocaleString().split('.')[0]} RS`;
+    const scoreText = `${lastPoint.new_score.toString().split('.')[0]} RS`;
     const scoreTextMetrics = ctx.measureText(scoreText);
     ctx.fillText(scoreText, 594, 577 + scoreTextMetrics.emHeightAscent);
 
@@ -113,6 +113,8 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
             return;
         }
         const { color } = getRankDetails(scoreInfo[i - 1].new_level);
+
+        // Draw line segment
         ctx.strokeStyle = color;
         ctx.lineWidth = 8;
         ctx.beginPath();
@@ -120,12 +122,30 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
         ctx.lineTo(xScale(i), yScale(point.new_score));
         ctx.stroke();
 
+        // Add gradient below line
+        const gradient = ctx.createLinearGradient(0, yScale(Math.max(scoreInfo[i - 1].new_score, point.new_score)), 0, MARGIN.top + chartHeight);
+        gradient.addColorStop(0, color + 'CC'); // Semi-transparent color
+        gradient.addColorStop(1, color + '00'); // Fully transparent
+
+        // Create area below the line segment
+        ctx.beginPath();
+        ctx.moveTo(xScale(i - 1), yScale(scoreInfo[i - 1].new_score));
+        ctx.lineTo(xScale(i), yScale(point.new_score));
+        ctx.lineTo(xScale(i), MARGIN.top + chartHeight); // Bottom right corner
+        ctx.lineTo(xScale(i - 1), MARGIN.top + chartHeight); // Bottom left corner
+        ctx.closePath();
+
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        // Draw circle for the point
         ctx.fillStyle = color;
         ctx.beginPath();
-        ctx.arc(xScale(i - 1), yScale(scoreInfo[i - 1].new_score), 12, 0, Math.PI * 2);
+        ctx.arc(xScale(i - 1), yScale(scoreInfo[i - 1].new_score), 8, 0, Math.PI * 2);
         ctx.fill();
     });
 
+    // Draw the final point
     ctx.fillStyle = lastPointColor;
     ctx.beginPath();
     ctx.arc(xScale(maxY - 1), yScale(lastPoint.new_score), 8, 0, Math.PI * 2);
@@ -134,7 +154,7 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
     let lastRank = '';
     for (let i = 0; i < scoreInfo.length; i++) {
         const point = scoreInfo[i];
-        const { color, tier, rank } = getRankDetails(point.new_level);
+        const { tier, rank } = getRankDetails(point.new_level);
         if (rank !== lastRank) {
             const rankImage = await loadRankIcon(point.new_level);
             const ICON_SIZE = 80;
@@ -151,7 +171,7 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
             ctx.textBaseline = 'middle';
 
 
-            ctx.fillStyle = color;
+            ctx.fillStyle = 'white';
             ctx.fillText(
                 tier,
                 x + ICON_SIZE,
@@ -160,6 +180,29 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
 
             lastRank = rank;
         }
+        // Draw the LAST point rank icon
+        if (i === scoreInfo.length - 1) {
+            const rankImage = await loadRankIcon(point.new_level);
+            const ICON_SIZE = 80;
+            const TIER_FONT_SIZE = 32;
+            const ICON_OFFSET = 10;
+
+            const x = xScale(i) - ICON_SIZE / 2;
+            const y = yScale(point.new_score) - ICON_SIZE - ICON_OFFSET;
+
+            ctx.drawImage(rankImage, x, y, ICON_SIZE, ICON_SIZE);
+
+            ctx.font = `bold ${TIER_FONT_SIZE}px Arial`;
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+
+            ctx.fillStyle = 'white';
+            ctx.fillText(
+                tier,
+                x + ICON_SIZE,
+                y + ICON_SIZE / 2
+            );
+        }
     }
 
     ctx.fillStyle = '#FFF';
@@ -167,15 +210,40 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
     ctx.textBaseline = 'top';
     ctx.textAlign = 'center';
 
+    const NUM_Y_TICKS = 5;
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#FFF';
+    ctx.font = 'bold 24px Arial';
+
+    for (let i = 0; i <= NUM_Y_TICKS; i++) {
+        const score = minScore + (maxScore - minScore) * (i / NUM_Y_TICKS);
+        const y = yScale(score);
+
+        // Draw tick mark
+        ctx.beginPath();
+        ctx.moveTo(MARGIN.left - 30, y);
+        ctx.lineTo(MARGIN.left - 20, y);
+        ctx.strokeStyle = '#FFF';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Draw score text - increase spacing from margin
+        ctx.fillText(
+            Math.round(score).toString().split('.')[0],
+            MARGIN.left - 40,
+            y
+        );
+    }
+
+    // Y-axis label - move further left to prevent overlap
+    // ctx.save();
+    // ctx.translate(MARGIN.left - 140, MARGIN.top + chartHeight / 2);
+    // ctx.rotate(-Math.PI / 2);
+    // ctx.textAlign = 'center';
+    // ctx.font = 'bold 28px Arial';
+    // ctx.fillText('Score (RS)', 0, 0);
+    // ctx.restore();
+
     return canvas.encode('png');
 }
-
-// async function loadRankImage(imageUrl: string) {
-//     try {
-//         const filename = imageUrl.split('/').pop() || 'unranked.png';
-//         const buffer = await Bun.file(join(process.cwd(), 'assets', 'ranks', filename)).bytes();
-//         return await loadImage(buffer);
-//     } catch {
-//         return loadImage(await Bun.file(join(process.cwd(), 'assets', 'ranks', 'unranked.png')).bytes());
-//     }
-// }

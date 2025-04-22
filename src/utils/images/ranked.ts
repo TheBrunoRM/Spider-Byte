@@ -27,11 +27,11 @@ const seasons = [{
     value: 2
 }] as const;
 
-function getSeasonName(season: undefined | number): string {
-    if (!season) {
+function getSeasonName(season?: number): string {
+    if (season === undefined) {
         return seasons[seasons.length - 1].name;
     }
-    const seasonData = seasons.find((s) => s.value === season)!;
+    const seasonData = seasons.find((s) => s.value === season) ?? seasons[seasons.length - 1];
     return seasonData.name;
 }
 

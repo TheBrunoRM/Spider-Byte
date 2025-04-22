@@ -11,11 +11,10 @@ import { getRankDetails } from '../functions/rank-utils';
 
 export interface ExpectedScoreInfo extends MakeRequired<ScoreInfo> {
     match_time_stamp: number;
-    date: string;
 }
 
 export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScoreInfo[]): Promise<Buffer> {
-    scoreInfo = scoreInfo.slice(0, 15).toReversed();
+    scoreInfo = scoreInfo.toReversed();
     const WIDTH = 2_560;
     const HEIGHT = 1_440;
     const canvas = new Canvas(WIDTH, HEIGHT);
@@ -23,7 +22,7 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
 
     const MARGIN = {
         top: 720,
-        right: 220,
+        right: 200,
         bottom: 120,
         left: 220
     };
@@ -36,14 +35,23 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
     const scores = scoreInfo.map((d) => d.new_score);
 
     // Escalas
-    const minTime = dates[0].getTime();
-    const maxTime = dates[dates.length - 1].getTime();
-    const xScale = (date: Date) => {
-        if (scoreInfo.length === 1 || maxTime === minTime) {
+    const minY = 0;
+    const maxY = dates.length;
+    const xScale = (index: number) => {
+        if (scoreInfo.length === 1 || maxY === minY) {
             return MARGIN.left + chartWidth / 2; // Center the point
         }
-        return MARGIN.left + (date.getTime() - minTime) / (maxTime - minTime) * chartWidth;
+        return MARGIN.left + (index - minY) / (maxY - minY) * chartWidth;
     };
+    // // Escalas
+    // const minTime = dates[0].getTime();
+    // const maxTime = dates[dates.length - 1].getTime();
+    // const xScale = (date: Date) => {
+    //     if (scoreInfo.length === 1 || maxTime === minTime) {
+    //         return MARGIN.left + chartWidth / 2; // Center the point
+    //     }
+    //     return MARGIN.left + (date.getTime() - minTime) / (maxTime - minTime) * chartWidth;
+    // };
 
     const minScore = Math.min(...scores);
     const maxScore = Math.max(...scores);
@@ -108,19 +116,19 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
         ctx.strokeStyle = color;
         ctx.lineWidth = 8;
         ctx.beginPath();
-        ctx.moveTo(xScale(dates[i - 1]), yScale(scoreInfo[i - 1].new_score));
-        ctx.lineTo(xScale(dates[i]), yScale(point.new_score));
+        ctx.moveTo(xScale(i - 1), yScale(scoreInfo[i - 1].new_score));
+        ctx.lineTo(xScale(i), yScale(point.new_score));
         ctx.stroke();
 
         ctx.fillStyle = color;
         ctx.beginPath();
-        ctx.arc(xScale(dates[i - 1]), yScale(scoreInfo[i - 1].new_score), 12, 0, Math.PI * 2);
+        ctx.arc(xScale(i - 1), yScale(scoreInfo[i - 1].new_score), 12, 0, Math.PI * 2);
         ctx.fill();
     });
 
     ctx.fillStyle = lastPointColor;
     ctx.beginPath();
-    ctx.arc(xScale(dates[dates.length - 1]), yScale(lastPoint.new_score), 8, 0, Math.PI * 2);
+    ctx.arc(xScale(maxY - 1), yScale(lastPoint.new_score), 8, 0, Math.PI * 2);
     ctx.fill();
 
     let lastRank = '';
@@ -133,7 +141,7 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
             const TIER_FONT_SIZE = 32;
             const ICON_OFFSET = 10;
 
-            const x = xScale(dates[i]) - ICON_SIZE / 2;
+            const x = xScale(i) - ICON_SIZE / 2;
             const y = yScale(point.new_score) - ICON_SIZE - ICON_OFFSET;
 
             ctx.drawImage(rankImage, x, y, ICON_SIZE, ICON_SIZE);
@@ -158,11 +166,6 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
     ctx.font = '20px Arial';
     ctx.textBaseline = 'top';
     ctx.textAlign = 'center';
-
-    for (const date of [...new Set(scoreInfo.map((d) => d.date))]) {
-        const x = xScale(new Date(scoreInfo.find((item) => item.date === date)!.match_time_stamp));
-        ctx.fillText(date, x, HEIGHT - MARGIN.bottom + 60);
-    }
 
     return canvas.encode('png');
 }

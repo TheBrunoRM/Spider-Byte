@@ -83,9 +83,7 @@ export default class RankCommand extends SubCommand {
             }
         }
 
-        // const filtered = matchHistory.filter((match): match is ExpectedMatch => match.score_info?.level !== undefined && match.score_info.new_level !== undefined && match.score_info.add_score !== undefined && match.score_info.new_score !== undefined);
-
-        const bufferGraph = await generateRankChart(player, scoreInfo, ctx.options.season!);
+        const bufferGraph = await generateRankChart(player, scoreInfo, ctx.options.season);
 
         return ctx.editOrReply({
             files: [

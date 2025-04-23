@@ -27,7 +27,7 @@ const seasons = [{
     value: 2
 }] as const;
 
-function getSeasonName(season?: number): string {
+function getSeasonName(season?: number): typeof seasons[number]['name'] {
     if (season === undefined) {
         return seasons[seasons.length - 1].name;
     }
@@ -43,13 +43,13 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
     const ctx = canvas.getContext('2d');
 
     const MARGIN = {
-        top: 294,
+        top: 330,
         right: 63,
         bottom: 60,
-        left: 160
+        left: 130
     };
-    const chartWidth = 1_324;
-    const chartHeight = 390;
+    const chartWidth = 1_400;
+    const chartHeight = 360;
     const lastPoint = scoreInfo[scoreInfo.length - 1];
 
     // Process data
@@ -257,7 +257,7 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
             ctx.textAlign = 'left';
             ctx.textBaseline = 'middle';
             ctx.fillStyle = 'white';
-            ctx.fillText(tier, x + ICON_SIZE, y + ICON_SIZE / 2);
+            ctx.fillText(tier, x - ICON_SIZE / 8, y + 5);
 
             lastRank = rank;
             lastTier = tier;
@@ -278,7 +278,7 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
             ctx.textAlign = 'left';
             ctx.textBaseline = 'middle';
             ctx.fillStyle = 'white';
-            ctx.fillText(tier, x + ICON_SIZE, y + ICON_SIZE / 2);
+            ctx.fillText(tier, x - ICON_SIZE / 8, y + 5);
         }
     }
 

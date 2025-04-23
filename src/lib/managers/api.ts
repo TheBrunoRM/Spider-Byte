@@ -4,26 +4,24 @@ import { Bucket } from 'seyfert/lib/api/bucket';
 
 import type { LeaderboardPlayerHeroDTO } from '../../types/dtos/LeaderboardPlayerHeroDTO';
 import type { FormattedPatch, PatchNotesDTO } from '../../types/dtos/PatchNotesDTO';
-import type { FindedPlayerDTO } from '../../types/dtos/FindedPlayerDTO';
 import type { MatchHistoryDTO } from '../../types/dtos/MatchHistoryDTO';
+import type { FoundPlayerDTO } from '../../types/dtos/FoundPlayerDTO';
 import type { HeroesDTO } from '../../types/dtos/HeroesDTO';
 import type { PlayerDTO } from '../../types/dtos/PlayerDTO';
 import type { UpdateDTO } from '../../types/dtos/UpdateDTO';
 import type { HeroDTO } from '../../types/dtos/HeroDTO';
-import type { CareerDTO } from '../../types/v2/Career';
 
-import { MARVELRIVALS_DOMAIN, TRACKER_DOMAIN } from '../../utils/env';
+import { MARVELRIVALS_DOMAIN } from '../../utils/env';
 import { isProduction } from '../constants';
 
 const isHeroes = createValidate<HeroesDTO[]>();
 const isHero = createValidate<HeroDTO>();
-const isFindedPlayer = createValidate<FindedPlayerDTO>();
+const isFindedPlayer = createValidate<FoundPlayerDTO>();
 const isMatchHistory = createValidate<MatchHistoryDTO>();
 const isLeaderboardPlayerHero = createValidate<LeaderboardPlayerHeroDTO>();
 const isPatchNotes = createValidate<PatchNotesDTO>();
 const isFormattedPatch = createValidate<FormattedPatch>();
 const isPlayer = createValidate<PlayerDTO>();
-const isCareer = createValidate<CareerDTO>();
 const isUpdatedPlayer = createValidate<UpdateDTO>();
 
 
@@ -38,10 +36,6 @@ export class Api {
   });
 
   // Then modify the fetchJson method to use caching
-  private readonly baseTrackerUrl = TRACKER_DOMAIN;
-
-  private readonly trackerApiUrl: string = `${this.baseTrackerUrl}/api/v2/marvel-rivals/standard`;
-
   private readonly baseMarvelRivalsUrl: string = MARVELRIVALS_DOMAIN;
 
   private readonly marvelRivalsApiUrlV2: string = `${this.baseMarvelRivalsUrl}/api/v2`;
@@ -109,25 +103,6 @@ export class Api {
       cacheKey: 'patch-notes',
       expireTime: 60 * 60,
       route: 'patch-notes'
-    });
-  }
-
-  // Career
-  public async getCareer(id: string, { mode, season }: {
-    mode: 'all';
-    season: 1 | 2 | 3;
-  }) {
-    return this.fetchWithRetry({
-      domain: this.trackerApiUrl,
-      endpoint: `profile/ign/${id}/segments/career`,
-      validator: isCareer,
-      query: {
-        mode,
-        season: season.toString()
-      },
-      cacheKey: `career/${id}/${mode}/${season}`,
-      expireTime: 5 * 60,
-      route: 'profiles/ign/:id/segments/career'
     });
   }
 
@@ -294,7 +269,7 @@ export class Api {
     route
   }: {
     endpoint: string;
-    domain: Api['marvelRivalsApiUrlV1' | 'marvelRivalsApiUrlV2' | 'trackerApiUrl'];
+    domain: Api['marvelRivalsApiUrlV1' | 'marvelRivalsApiUrlV2'];
     route: string;
     validator: (data: unknown) => IValidation<T>;
     cacheKey?: string;
@@ -404,7 +379,7 @@ export class Api {
   // }
 
   private async fetchApi({ domain, endpoint, query, route }: {
-    domain: Api['marvelRivalsApiUrlV1' | 'marvelRivalsApiUrlV2' | 'trackerApiUrl'];
+    domain: Api['marvelRivalsApiUrlV1' | 'marvelRivalsApiUrlV2'];
     endpoint: string;
     query?: URLSearchParams;
     route: string;

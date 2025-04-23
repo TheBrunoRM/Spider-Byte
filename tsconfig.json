@@ -20,7 +20,6 @@
     "noEmit": true,
     "strictNullChecks": true,
     "alwaysStrict": true,
-    "assumeChangesOnlyAffectDirectDependencies": true,
     "noImplicitAny": true,
     "plugins": [
       {

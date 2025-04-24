@@ -9,6 +9,8 @@ const options = {
         description: 'The username to view match history for.',
         required: true,
         async value({ context, value }, ok: OKFunction<string>, fail) {
+            await context.deferReply();
+
             const data = await context.client.api.searchPlayer(value);
             if (!data) {
                 fail(context.t.commands.commonErrors.playerNotFound.get()); return;
@@ -70,8 +72,6 @@ const options = {
 @Options(options)
 export default class History extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
-        await ctx.deferReply();
-
         const history = await ctx.client.api.getMatchHistory(ctx.options.username, {
             game_mode: ctx.options.game_mode,
             page: ctx.options.page,

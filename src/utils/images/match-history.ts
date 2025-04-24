@@ -120,7 +120,7 @@ export async function createMatchHistoryImage(user: PlayerDTO, history: MatchHis
         const rankNameX = WIDTH - RIGHT_MARGIN;
         const rankIconX = rankNameX - rankNameWidth - RANK_ICON_SIZE;
 
-        const rankIcon = await loadRankIcon(user.rank_history[0].level_progression.to);
+        const rankIcon = await loadRankIcon(lastRankedGame.match_player.score_info.new_level ?? 0);
         ctx.drawImage(rankIcon, rankIconX, 60, RANK_ICON_SIZE, RANK_ICON_SIZE);
 
         ctx.fillStyle = 'white';

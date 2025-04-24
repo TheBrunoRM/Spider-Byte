@@ -2,7 +2,7 @@ import type { commands as English } from '../en-US/commands.ts';
 
 const commands = {
     others: {
-        noVoted: 'Considera votar por nosotros en top.gg para obtener más funciones. [Haz clic](https://top.gg/bot/1337677960546881587/vote).'
+        noVoted: 'Considera votar por nosotros en top.gg para obtener más funciones. [Haz clic aquí](https://top.gg/bot/1337677960546881587/vote).'
     },
     commonErrors: {
         playerNotFound: ':warning: Jugador no encontrado. Proporciona un nombre o ID válido e intenta de nuevo.',

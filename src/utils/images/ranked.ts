@@ -73,7 +73,7 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
     ctx.drawImage(background, 0, 0, WIDTH, HEIGHT);
 
     // Chart title in top right
-    ctx.font = '900 40px RefrigeratorDeluxeBold';
+    ctx.font = '900 40px InterBold';
     ctx.fillStyle = 'white';
     ctx.textAlign = 'right';
     const chartTitle = 'Ranked Score Chart';
@@ -81,7 +81,7 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
     ctx.fillText(chartTitle, WIDTH - 60, 70 + titleMetrics.emHeightAscent);
 
     // Season subtitle
-    ctx.font = '900 24px RefrigeratorDeluxeBold';
+    ctx.font = '900 24px InterSemiBold';
     ctx.fillStyle = '#737373';
     ctx.textAlign = 'left';
     const seasonTitle = getSeasonName(season);
@@ -97,7 +97,7 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
         : `${Math.round(scoreDiff)}`;
     const trendText = `Score trend: ${scoreDiffText} points`;
 
-    ctx.font = '700 22px RefrigeratorDeluxeBold';
+    ctx.font = '700 22px InterSemiBold';
     ctx.fillStyle = scoreDiff >= 0
         ? '#4CAF50'
         : '#F44336';
@@ -142,32 +142,32 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
     ctx.drawImage(levelBackground, 95, 180, 80, 30);
 
     // Player name
-    ctx.font = '900 34px RefrigeratorDeluxeBold';
+    ctx.font = '900 34px InterBold';
     ctx.fillStyle = 'white';
     const playerNameMetrics = ctx.measureText(user.player.name);
-    ctx.fillText(user.player.name, 217, 106 + playerNameMetrics.emHeightAscent);
+    ctx.fillText(user.player.name, 220, 106 + playerNameMetrics.emHeightAscent);
 
     // Team name if exists
     if (user.player.team.club_team_id) {
         ctx.fillStyle = '#737373';
         const clubTeamName = `#${user.player.team.club_team_mini_name}`;
         const teamIdMetrics = ctx.measureText(clubTeamName);
-        ctx.fillText(clubTeamName, 217 + playerNameMetrics.width + 10, 106 + teamIdMetrics.emHeightAscent);
+        ctx.fillText(clubTeamName, 220 + playerNameMetrics.width + 10, 106 + teamIdMetrics.emHeightAscent);
     }
 
     // Player UID
-    ctx.font = '900 20px RefrigeratorDeluxeBold';
+    ctx.font = '900 20px InterBold';
     ctx.fillStyle = '#737373';
     const uid = `Player UID: ${user.player.uid}`;
     const idMetrics = ctx.measureText(uid);
     ctx.fillText(uid, 217, 106 + playerNameMetrics.emHeightAscent + idMetrics.emHeightAscent + 10);
 
     // Player level
-    ctx.font = '900 22px RefrigeratorDeluxeBold';
+    ctx.font = '900 22px InterBold';
     const playerLevel = user.player.level.toString();
     const levelMetrics = ctx.measureText(playerLevel);
     ctx.fillStyle = 'black';
-    ctx.fillText(playerLevel, 113 + levelMetrics.width / 2, 184 + levelMetrics.emHeightAscent);
+    ctx.fillText(playerLevel, 105 + levelMetrics.width / 2, 184 + levelMetrics.emHeightAscent);
 
     // Current rank info
     const rankSize = 150;
@@ -176,7 +176,7 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
 
     // Rank text next to the icon
     const { rank: lastPointRank, tier: lastPointTier, color: lastPointColor } = getRankDetails(lastPoint.new_level);
-    ctx.font = '900 40px RefrigeratorDeluxeBold';
+    ctx.font = '900 40px InterBold';
     ctx.fillStyle = 'white';
     ctx.textAlign = 'left';
     const rankText = `${lastPointRank} ${lastPointTier}`;
@@ -184,7 +184,7 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
     ctx.fillText(rankText, 810, 100 + rankTextMetrics.emHeightAscent);
     // Current score
     ctx.fillStyle = '#737373';
-    ctx.font = '900 24px RefrigeratorDeluxeBold';
+    ctx.font = '900 24px InterBold';
     ctx.textAlign = 'left';
     const scoreText = `${lastPoint.new_score.toString().split('.')[0]} RS`;
     const scoreTextMetrics = ctx.measureText(scoreText);
@@ -253,7 +253,7 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
             const y = yScale(point.new_score) - ICON_SIZE - ICON_OFFSET;
 
             ctx.drawImage(rankImage, x, y, ICON_SIZE, ICON_SIZE);
-            ctx.font = `bold ${TIER_FONT_SIZE}px RefrigeratorDeluxeBold`;
+            ctx.font = `bold ${TIER_FONT_SIZE}px InterBold`;
             ctx.textAlign = 'left';
             ctx.textBaseline = 'middle';
             ctx.fillStyle = 'white';
@@ -274,7 +274,7 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
             const y = yScale(point.new_score) - ICON_SIZE - ICON_OFFSET;
 
             ctx.drawImage(rankImage, x, y, ICON_SIZE, ICON_SIZE);
-            ctx.font = `bold ${TIER_FONT_SIZE}px RefrigeratorDeluxeBold`;
+            ctx.font = `bold ${TIER_FONT_SIZE}px InterBold`;
             ctx.textAlign = 'left';
             ctx.textBaseline = 'middle';
             ctx.fillStyle = 'white';
@@ -287,7 +287,7 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#FFF';
-    ctx.font = 'bold 16px RefrigeratorDeluxeBold';
+    ctx.font = 'bold 16px InterSemiBold';
 
     for (let i = 0; i <= NUM_Y_TICKS; i++) {
         const score = minScore + (maxScore - minScore) * (i / NUM_Y_TICKS);
@@ -311,7 +311,7 @@ export async function generateRankChart(user: PlayerDTO, scoreInfo: ExpectedScor
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
     ctx.fillStyle = '#FFF';
-    ctx.font = 'bold 14px RefrigeratorDeluxeBold';
+    ctx.font = 'bold 14px InterSemiBold';
 
     let lastMonth = -1;
     let lastDay = -1;

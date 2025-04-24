@@ -13,7 +13,10 @@ import { WEBHOOK_TOKEN, TOPGG_TOKEN, WEBHOOK_ID, API_KEY } from './utils/env';
 import { middlewares } from './middlewares';
 import { Api } from './lib/managers/api';
 // Register fonts
-GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'RefrigeratorDeluxe.otf'), 'RefrigeratorDeluxe');
+GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'Inter', 'Inter_28pt-Regular.ttf'), 'InterRegular');
+GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'Inter', 'Inter_28pt-Black.ttf'), 'InterBlack');
+GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'Inter', 'Inter_28pt-SemiBold.ttf'), 'InterSemiBold');
+GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'Inter', 'Inter_28pt-Bold.ttf'), 'InterBold');
 GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'RefrigeratorDeluxeBold.otf'), 'RefrigeratorDeluxeBold');
 GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'leaderboard.ttf'), 'leaderboard');
 

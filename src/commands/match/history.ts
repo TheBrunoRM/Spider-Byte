@@ -2,7 +2,7 @@ import type { CommandContext, OKFunction } from 'seyfert';
 
 import { createIntegerOption, createStringOption, createNumberOption, SubCommand, LocalesT, Declare, Options } from 'seyfert';
 
-import { STICKY_API_DOMAIN } from '../../utils/env';
+import { createMatchHistoryImage } from '../../utils/images/match-history';
 
 const options = {
     username: createStringOption({
@@ -72,28 +72,28 @@ const options = {
 @Options(options)
 export default class History extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
+        const player = await ctx.client.api.getPlayer(ctx.options.username);
+        if (!player) {
+            return ctx.editOrReply({
+                content: ctx.t.commands.commonErrors.playerNotFound.get()
+            });
+        }
         const history = await ctx.client.api.getMatchHistory(ctx.options.username, {
             game_mode: ctx.options.game_mode,
             page: ctx.options.page,
             season: ctx.options.season,
             skip: ctx.options.skip
         });
+
         if (!history?.match_history.length) {
             return ctx.editOrReply({
                 content: ctx.t.commands.match.history.noHistory(ctx.options.username).get()
             });
         }
 
-        const image = await (await fetch(`${STICKY_API_DOMAIN}/match-history`, {
-            body: JSON.stringify(history.match_history),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            method: 'POST'
-        })).arrayBuffer();
+        const image = await createMatchHistoryImage(player, history, ctx.options.season, ctx.options.game_mode);
 
         return ctx.editOrReply({
-            content: ctx.t.commands.match.history.name.get(),
             files: [{
                 filename: 'history.png',
                 data: image

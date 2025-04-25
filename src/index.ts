@@ -167,6 +167,8 @@ client.topgg = new TopGGAPI(TOPGG_TOKEN);
 
 await client.api.getHeroes();
 
+await client.api.getAllMaps();
+
 await client.start();
 
 await client.uploadCommands({

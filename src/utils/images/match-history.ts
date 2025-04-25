@@ -9,7 +9,7 @@ import type { PlayerDTO } from '../../types/dtos/PlayerDTO';
 import { drawCircularImage, loadHeroSquare, loadRankIcon, loadUserIcon } from './_';
 import { getRankDetails } from '../functions/rank-utils';
 import { getMapById } from '../functions/maps';
-import { MARVELRIVALS_DOMAIN } from '../env';
+import { STICKY_CDN_DOMAIN } from '../env';
 
 const seasons = [{
     name: 'S0: Doom\'s rise',
@@ -233,51 +233,47 @@ export async function createMatchHistoryImage(t: CommandContext['t'], user: Play
 
         ctx.restore();
 
-        try {
-            ctx.save();
+        ctx.save();
 
-            ctx.beginPath();
-            ctx.moveTo(MARGIN.left + MATCH_RECT_WIDTH - GRADIENT_WIDTH, rectY);
-            ctx.lineTo(MARGIN.left + MATCH_RECT_WIDTH - MATCH_RECT_RADIUS, rectY);
-            ctx.arcTo(MARGIN.left + MATCH_RECT_WIDTH, rectY, MARGIN.left + MATCH_RECT_WIDTH, rectY + MATCH_RECT_RADIUS, MATCH_RECT_RADIUS);
-            ctx.lineTo(MARGIN.left + MATCH_RECT_WIDTH, rectY + MATCH_RECT_HEIGHT - MATCH_RECT_RADIUS);
-            ctx.arcTo(MARGIN.left + MATCH_RECT_WIDTH, rectY + MATCH_RECT_HEIGHT, MARGIN.left + MATCH_RECT_WIDTH - MATCH_RECT_RADIUS, rectY + MATCH_RECT_HEIGHT, MATCH_RECT_RADIUS);
-            ctx.lineTo(MARGIN.left + MATCH_RECT_WIDTH - GRADIENT_WIDTH, rectY + MATCH_RECT_HEIGHT);
-            ctx.closePath();
-            ctx.clip();
+        ctx.beginPath();
+        ctx.moveTo(MARGIN.left + MATCH_RECT_WIDTH - GRADIENT_WIDTH, rectY);
+        ctx.lineTo(MARGIN.left + MATCH_RECT_WIDTH - MATCH_RECT_RADIUS, rectY);
+        ctx.arcTo(MARGIN.left + MATCH_RECT_WIDTH, rectY, MARGIN.left + MATCH_RECT_WIDTH, rectY + MATCH_RECT_RADIUS, MATCH_RECT_RADIUS);
+        ctx.lineTo(MARGIN.left + MATCH_RECT_WIDTH, rectY + MATCH_RECT_HEIGHT - MATCH_RECT_RADIUS);
+        ctx.arcTo(MARGIN.left + MATCH_RECT_WIDTH, rectY + MATCH_RECT_HEIGHT, MARGIN.left + MATCH_RECT_WIDTH - MATCH_RECT_RADIUS, rectY + MATCH_RECT_HEIGHT, MATCH_RECT_RADIUS);
+        ctx.lineTo(MARGIN.left + MATCH_RECT_WIDTH - GRADIENT_WIDTH, rectY + MATCH_RECT_HEIGHT);
+        ctx.closePath();
+        ctx.clip();
 
-            const mapUrl = `${MARVELRIVALS_DOMAIN}/rivals/maps/large/map_${match.match_map_id}.png`;
-            const mapImage = await loadImage(mapUrl).catch(() => null);
+        const mapUrl = `${STICKY_CDN_DOMAIN}/maps/${match.match_map_id}/large.png`;
+        const mapImage = await loadImage(mapUrl).catch(() => null);
 
-            if (mapImage) {
-                const aspectRatio = mapImage.width / mapImage.height;
-                const height = MATCH_RECT_HEIGHT;
-                const width = height * aspectRatio;
-                const xPos = MARGIN.left + MATCH_RECT_WIDTH - width;
+        if (mapImage) {
+            const aspectRatio = mapImage.width / mapImage.height;
+            const height = MATCH_RECT_HEIGHT;
+            const width = height * aspectRatio;
+            const xPos = MARGIN.left + MATCH_RECT_WIDTH - width;
 
-                ctx.drawImage(mapImage, xPos, rectY, width, height);
+            ctx.drawImage(mapImage, xPos, rectY, width, height);
 
-                const imageGradient = ctx.createLinearGradient(
-                    MARGIN.left + MATCH_RECT_WIDTH - GRADIENT_WIDTH, 0, MARGIN.left + MATCH_RECT_WIDTH - GRADIENT_WIDTH / 4, 0
-                );
+            const imageGradient = ctx.createLinearGradient(
+                MARGIN.left + MATCH_RECT_WIDTH - GRADIENT_WIDTH, 0, MARGIN.left + MATCH_RECT_WIDTH - GRADIENT_WIDTH / 4, 0
+            );
 
-                imageGradient.addColorStop(0, 'rgba(27, 29, 35, 0.95)');
-                imageGradient.addColorStop(0.2, 'rgba(27, 29, 35, 0.85)');
-                imageGradient.addColorStop(0.4, 'rgba(27, 29, 35, 0.7)');
-                imageGradient.addColorStop(0.6, 'rgba(27, 29, 35, 0.5)');
-                imageGradient.addColorStop(0.8, 'rgba(27, 29, 35, 0.25)');
-                imageGradient.addColorStop(0.9, 'rgba(27, 29, 35, 0.1)');
-                imageGradient.addColorStop(1, 'rgba(27, 29, 35, 0)');
+            imageGradient.addColorStop(0, 'rgba(27, 29, 35, 0.95)');
+            imageGradient.addColorStop(0.2, 'rgba(27, 29, 35, 0.85)');
+            imageGradient.addColorStop(0.4, 'rgba(27, 29, 35, 0.7)');
+            imageGradient.addColorStop(0.6, 'rgba(27, 29, 35, 0.5)');
+            imageGradient.addColorStop(0.8, 'rgba(27, 29, 35, 0.25)');
+            imageGradient.addColorStop(0.9, 'rgba(27, 29, 35, 0.1)');
+            imageGradient.addColorStop(1, 'rgba(27, 29, 35, 0)');
 
-                ctx.fillStyle = imageGradient;
-                ctx.fillRect(MARGIN.left + MATCH_RECT_WIDTH - GRADIENT_WIDTH, rectY, GRADIENT_WIDTH, MATCH_RECT_HEIGHT);
-            }
-
-            ctx.restore();
-        } catch (error) {
-            console.error(`Failed to load map image for match ${match.match_uid}:`, error);
-            ctx.restore();
+            ctx.fillStyle = imageGradient;
+            ctx.fillRect(MARGIN.left + MATCH_RECT_WIDTH - GRADIENT_WIDTH, rectY, GRADIENT_WIDTH, MATCH_RECT_HEIGHT);
         }
+
+        ctx.restore();
+
 
         const TEXT_VERTICAL_SPACING = 24;
         const centerY = rectY + MATCH_RECT_HEIGHT / 2;
@@ -305,51 +301,46 @@ export async function createMatchHistoryImage(t: CommandContext['t'], user: Play
         const mapName = getMapById(match.match_map_id)?.name ?? 'Unknown Map';
         ctx.fillText(mapName, MARGIN.left + STATUS_TEXT_MARGIN, centerY + TEXT_VERTICAL_SPACING * 1.15);
 
-        try {
-            const hero = match.match_player.player_hero;
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, @typescript-eslint/prefer-optional-chain
-            if (hero && hero.hero_id) {
-                const HERO_ICON_SIZE = 80;
-                const HERO_ICON_MARGIN_LEFT = 300;
-                const HERO_BORDER_RADIUS = 15;
+        const hero = match.match_player.player_hero;
+        if (hero.hero_id) {
+            const HERO_ICON_SIZE = 80;
+            const HERO_ICON_MARGIN_LEFT = 300;
+            const HERO_BORDER_RADIUS = 15;
 
-                const heroIcon = await loadHeroSquare(hero.hero_id);
+            const heroIcon = await loadHeroSquare(hero.hero_id);
 
-                ctx.save();
+            ctx.save();
 
-                ctx.beginPath();
-                ctx.moveTo(MARGIN.left + HERO_ICON_MARGIN_LEFT + HERO_BORDER_RADIUS, centerY - HERO_ICON_SIZE / 2);
-                ctx.lineTo(MARGIN.left + HERO_ICON_MARGIN_LEFT + HERO_ICON_SIZE - HERO_BORDER_RADIUS, centerY - HERO_ICON_SIZE / 2);
-                ctx.arcTo(
-                    MARGIN.left + HERO_ICON_MARGIN_LEFT + HERO_ICON_SIZE, centerY - HERO_ICON_SIZE / 2, MARGIN.left + HERO_ICON_MARGIN_LEFT + HERO_ICON_SIZE, centerY - HERO_ICON_SIZE / 2 + HERO_BORDER_RADIUS, HERO_BORDER_RADIUS
-                );
-                ctx.lineTo(MARGIN.left + HERO_ICON_MARGIN_LEFT + HERO_ICON_SIZE, centerY + HERO_ICON_SIZE / 2 - HERO_BORDER_RADIUS);
-                ctx.arcTo(
-                    MARGIN.left + HERO_ICON_MARGIN_LEFT + HERO_ICON_SIZE, centerY + HERO_ICON_SIZE / 2, MARGIN.left + HERO_ICON_MARGIN_LEFT + HERO_ICON_SIZE - HERO_BORDER_RADIUS, centerY + HERO_ICON_SIZE / 2, HERO_BORDER_RADIUS
-                );
-                ctx.lineTo(MARGIN.left + HERO_ICON_MARGIN_LEFT + HERO_BORDER_RADIUS, centerY + HERO_ICON_SIZE / 2);
-                ctx.arcTo(
-                    MARGIN.left + HERO_ICON_MARGIN_LEFT, centerY + HERO_ICON_SIZE / 2, MARGIN.left + HERO_ICON_MARGIN_LEFT, centerY + HERO_ICON_SIZE / 2 - HERO_BORDER_RADIUS, HERO_BORDER_RADIUS
-                );
-                ctx.lineTo(MARGIN.left + HERO_ICON_MARGIN_LEFT, centerY - HERO_ICON_SIZE / 2 + HERO_BORDER_RADIUS);
-                ctx.arcTo(
-                    MARGIN.left + HERO_ICON_MARGIN_LEFT, centerY - HERO_ICON_SIZE / 2, MARGIN.left + HERO_ICON_MARGIN_LEFT + HERO_BORDER_RADIUS, centerY - HERO_ICON_SIZE / 2, HERO_BORDER_RADIUS
-                );
-                ctx.closePath();
-                ctx.clip();
+            ctx.beginPath();
+            ctx.moveTo(MARGIN.left + HERO_ICON_MARGIN_LEFT + HERO_BORDER_RADIUS, centerY - HERO_ICON_SIZE / 2);
+            ctx.lineTo(MARGIN.left + HERO_ICON_MARGIN_LEFT + HERO_ICON_SIZE - HERO_BORDER_RADIUS, centerY - HERO_ICON_SIZE / 2);
+            ctx.arcTo(
+                MARGIN.left + HERO_ICON_MARGIN_LEFT + HERO_ICON_SIZE, centerY - HERO_ICON_SIZE / 2, MARGIN.left + HERO_ICON_MARGIN_LEFT + HERO_ICON_SIZE, centerY - HERO_ICON_SIZE / 2 + HERO_BORDER_RADIUS, HERO_BORDER_RADIUS
+            );
+            ctx.lineTo(MARGIN.left + HERO_ICON_MARGIN_LEFT + HERO_ICON_SIZE, centerY + HERO_ICON_SIZE / 2 - HERO_BORDER_RADIUS);
+            ctx.arcTo(
+                MARGIN.left + HERO_ICON_MARGIN_LEFT + HERO_ICON_SIZE, centerY + HERO_ICON_SIZE / 2, MARGIN.left + HERO_ICON_MARGIN_LEFT + HERO_ICON_SIZE - HERO_BORDER_RADIUS, centerY + HERO_ICON_SIZE / 2, HERO_BORDER_RADIUS
+            );
+            ctx.lineTo(MARGIN.left + HERO_ICON_MARGIN_LEFT + HERO_BORDER_RADIUS, centerY + HERO_ICON_SIZE / 2);
+            ctx.arcTo(
+                MARGIN.left + HERO_ICON_MARGIN_LEFT, centerY + HERO_ICON_SIZE / 2, MARGIN.left + HERO_ICON_MARGIN_LEFT, centerY + HERO_ICON_SIZE / 2 - HERO_BORDER_RADIUS, HERO_BORDER_RADIUS
+            );
+            ctx.lineTo(MARGIN.left + HERO_ICON_MARGIN_LEFT, centerY - HERO_ICON_SIZE / 2 + HERO_BORDER_RADIUS);
+            ctx.arcTo(
+                MARGIN.left + HERO_ICON_MARGIN_LEFT, centerY - HERO_ICON_SIZE / 2, MARGIN.left + HERO_ICON_MARGIN_LEFT + HERO_BORDER_RADIUS, centerY - HERO_ICON_SIZE / 2, HERO_BORDER_RADIUS
+            );
+            ctx.closePath();
+            ctx.clip();
 
-                ctx.drawImage(
-                    heroIcon,
-                    MARGIN.left + HERO_ICON_MARGIN_LEFT,
-                    centerY - HERO_ICON_SIZE / 2,
-                    HERO_ICON_SIZE,
-                    HERO_ICON_SIZE
-                );
+            ctx.drawImage(
+                heroIcon,
+                MARGIN.left + HERO_ICON_MARGIN_LEFT,
+                centerY - HERO_ICON_SIZE / 2,
+                HERO_ICON_SIZE,
+                HERO_ICON_SIZE
+            );
 
-                ctx.restore();
-            }
-        } catch (error) {
-            console.error(`Failed to load hero icon for match ${match.match_uid}:`, error);
+            ctx.restore();
         }
 
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, @typescript-eslint/prefer-optional-chain
@@ -363,105 +354,100 @@ export async function createMatchHistoryImage(t: CommandContext['t'], user: Play
             const RANK_DISPLAY_WIDTH = 200;
             const NEW_RANK_ICON_SIZE = 50;
 
-            try {
-                const { rank: newRank, tier: newTier, color: newColor } = getRankDetails(match.match_player.score_info.new_level ?? 0);
-                const rankIconPerMatch = await loadRankIcon(match.match_player.score_info.new_level ?? 0);
+            const { rank: newRank, tier: newTier, color: newColor } = getRankDetails(match.match_player.score_info.new_level ?? 0);
+            const rankIconPerMatch = await loadRankIcon(match.match_player.score_info.new_level ?? 0);
 
-                ctx.drawImage(
-                    rankIconPerMatch,
-                    centerX - RANK_DISPLAY_WIDTH / 2,
-                    centerY - NEW_RANK_ICON_SIZE / 2,
-                    NEW_RANK_ICON_SIZE,
-                    NEW_RANK_ICON_SIZE
+            ctx.drawImage(
+                rankIconPerMatch,
+                centerX - RANK_DISPLAY_WIDTH / 2,
+                centerY - NEW_RANK_ICON_SIZE / 2,
+                NEW_RANK_ICON_SIZE,
+                NEW_RANK_ICON_SIZE
+            );
+
+            ctx.font = 'bold 22px InterBlack';
+            ctx.fillStyle = newColor;
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+
+            const rankTitle = `${newRank} ${newTier}`;
+            const rankTitleWidth = ctx.measureText(rankTitle).width;
+
+            ctx.fillText(
+                rankTitle,
+                centerX - RANK_DISPLAY_WIDTH / 2 + NEW_RANK_ICON_SIZE + 10,
+                centerY - NEW_RANK_ICON_SIZE / 3
+            );
+
+            ctx.font = 'bold 18px InterBlack';
+            ctx.fillStyle = 'white';
+            ctx.textBaseline = 'bottom';
+            const formattedScore = Math.floor(newScore).toLocaleString();
+            ctx.fillText(
+                formattedScore,
+                centerX - RANK_DISPLAY_WIDTH / 2 + NEW_RANK_ICON_SIZE + 10,
+                centerY + NEW_RANK_ICON_SIZE / 3 + 5
+            );
+
+            ctx.font = '18px InterBlack';
+            ctx.fillStyle = '#A6A6A6';
+            ctx.textBaseline = 'bottom';
+            const scoreWidth = ctx.measureText(formattedScore).width;
+            ctx.fillText(
+                'RS',
+                centerX - RANK_DISPLAY_WIDTH / 2 + NEW_RANK_ICON_SIZE + 10 + scoreWidth + 5,
+                centerY + NEW_RANK_ICON_SIZE / 3 + 5
+            );
+
+            const rsWidth = ctx.measureText('RS').width;
+
+            if (addScore !== 0) {
+                const pointsChangeText = isPositive
+                    ? `+${Math.round(addScore)}`
+                    : `${Math.round(addScore)}`;
+                const pointsChangeMetrics = ctx.measureText(pointsChangeText);
+                const pointsChangeWidth = pointsChangeMetrics.width + 16;
+                const pointsChangeHeight = 24;
+                const pointsChangeRadius = 4;
+
+                const basePointsX = centerX - RANK_DISPLAY_WIDTH / 2 + NEW_RANK_ICON_SIZE + 10;
+                const rankTitleEndX = basePointsX + Math.max(rankTitleWidth, scoreWidth + rsWidth + 15);
+
+                const pointsChangeX = rankTitleEndX + 15;
+                const pointsChangeY = centerY + 5;
+
+                ctx.beginPath();
+                ctx.roundRect(
+                    pointsChangeX,
+                    pointsChangeY - pointsChangeHeight / 2,
+                    pointsChangeWidth,
+                    pointsChangeHeight,
+                    pointsChangeRadius
                 );
 
-                ctx.font = 'bold 22px InterBlack';
-                ctx.fillStyle = newColor;
-                ctx.textAlign = 'left';
-                ctx.textBaseline = 'top';
+                ctx.fillStyle = isPositive
+                    ? '#2ED573'
+                    : '#F34555';
 
-                const rankTitle = `${newRank} ${newTier}`;
-                const rankTitleWidth = ctx.measureText(rankTitle).width;
-
-                ctx.fillText(
-                    rankTitle,
-                    centerX - RANK_DISPLAY_WIDTH / 2 + NEW_RANK_ICON_SIZE + 10,
-                    centerY - NEW_RANK_ICON_SIZE / 3
-                );
-
-                ctx.font = 'bold 18px InterBlack';
-                ctx.fillStyle = 'white';
-                ctx.textBaseline = 'bottom';
-                const formattedScore = Math.floor(newScore).toLocaleString();
-                ctx.fillText(
-                    formattedScore,
-                    centerX - RANK_DISPLAY_WIDTH / 2 + NEW_RANK_ICON_SIZE + 10,
-                    centerY + NEW_RANK_ICON_SIZE / 3 + 5
-                );
-
-                ctx.font = '18px InterBlack';
-                ctx.fillStyle = '#A6A6A6';
-                ctx.textBaseline = 'bottom';
-                const scoreWidth = ctx.measureText(formattedScore).width;
-                ctx.fillText(
-                    'RS',
-                    centerX - RANK_DISPLAY_WIDTH / 2 + NEW_RANK_ICON_SIZE + 10 + scoreWidth + 5,
-                    centerY + NEW_RANK_ICON_SIZE / 3 + 5
-                );
-
-                const rsWidth = ctx.measureText('RS').width;
-
-                if (addScore !== 0) {
-                    const pointsChangeText = isPositive
-                        ? `+${Math.round(addScore)}`
-                        : `${Math.round(addScore)}`;
-                    const pointsChangeMetrics = ctx.measureText(pointsChangeText);
-                    const pointsChangeWidth = pointsChangeMetrics.width + 16;
-                    const pointsChangeHeight = 24;
-                    const pointsChangeRadius = 4;
-
-                    const basePointsX = centerX - RANK_DISPLAY_WIDTH / 2 + NEW_RANK_ICON_SIZE + 10;
-                    const rankTitleEndX = basePointsX + Math.max(rankTitleWidth, scoreWidth + rsWidth + 15);
-
-                    const pointsChangeX = rankTitleEndX + 15;
-                    const pointsChangeY = centerY + 5;
-
-                    ctx.beginPath();
-                    ctx.roundRect(
-                        pointsChangeX,
-                        pointsChangeY - pointsChangeHeight / 2,
-                        pointsChangeWidth,
-                        pointsChangeHeight,
-                        pointsChangeRadius
-                    );
-
-                    ctx.fillStyle = isPositive
-                        ? '#2ED573'
-                        : '#F34555';
-
-                    if (addScore === 0) {
-                        ctx.fillStyle = '#FFBE0B';
-                    }
-
-                    ctx.fill();
-
-                    ctx.font = 'bold 16px InterSemiBold';
-                    ctx.fillStyle = 'white';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText(pointsChangeText, pointsChangeX + pointsChangeWidth / 2, pointsChangeY);
-
-                    if (isDisconnected) {
-                        ctx.font = 'bold 13px InterSemiBold';
-                        ctx.fillStyle = '#737373';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'top';
-                        ctx.fillText('(Disconnect)', pointsChangeX + pointsChangeWidth / 2, pointsChangeY + pointsChangeHeight / 2 + 5);
-                    }
+                if (addScore === 0) {
+                    ctx.fillStyle = '#FFBE0B';
                 }
-            } catch (_) {
-                console.error(_);
-                console.error('Failed to render rank display');
+
+                ctx.fill();
+
+                ctx.font = 'bold 16px InterSemiBold';
+                ctx.fillStyle = 'white';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(pointsChangeText, pointsChangeX + pointsChangeWidth / 2, pointsChangeY);
+
+                if (isDisconnected) {
+                    ctx.font = 'bold 13px InterSemiBold';
+                    ctx.fillStyle = '#737373';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'top';
+                    ctx.fillText('(Disconnect)', pointsChangeX + pointsChangeWidth / 2, pointsChangeY + pointsChangeHeight / 2 + 5);
+                }
             }
         }
 

@@ -10,20 +10,21 @@ import type { HeroesDTO } from '../../types/dtos/HeroesDTO';
 import type { PlayerDTO } from '../../types/dtos/PlayerDTO';
 import type { UpdateDTO } from '../../types/dtos/UpdateDTO';
 import type { HeroDTO } from '../../types/dtos/HeroDTO';
+import type { MapsDTO } from '../../types/dtos/MapsDTO';
 
 import { MARVELRIVALS_DOMAIN } from '../../utils/env';
 import { isProduction } from '../constants';
 
-const isHeroes = createValidate<HeroesDTO[]>();
-const isHero = createValidate<HeroDTO>();
-const isFindedPlayer = createValidate<FoundPlayerDTO>();
-const isMatchHistory = createValidate<MatchHistoryDTO>();
-const isLeaderboardPlayerHero = createValidate<LeaderboardPlayerHeroDTO>();
-const isPatchNotes = createValidate<PatchNotesDTO>();
-const isFormattedPatch = createValidate<FormattedPatch>();
-const isPlayer = createValidate<PlayerDTO>();
-const isUpdatedPlayer = createValidate<UpdateDTO>();
-
+const validateHeroes = createValidate<HeroesDTO[]>();
+const validateHero = createValidate<HeroDTO>();
+const validateFoundPlayer = createValidate<FoundPlayerDTO>();
+const validateMatchHistory = createValidate<MatchHistoryDTO>();
+const validateLeaderboardPlayerHero = createValidate<LeaderboardPlayerHeroDTO>();
+const validatePatchNotes = createValidate<PatchNotesDTO>();
+const validateFormattedPatch = createValidate<FormattedPatch>();
+const validatePlayer = createValidate<PlayerDTO>();
+const validateUpdatedPlayer = createValidate<UpdateDTO>();
+const validateMaps = createValidate<MapsDTO>();
 
 export class Api {
   ratelimits = new Map<string, Bucket>();
@@ -83,15 +84,43 @@ export class Api {
     return history;
   }
 
+  // Maps
+  public getMaps(page: number) {
+    return this.fetchWithRetry({
+      domain: this.marvelRivalsApiUrlV1,
+      endpoint: 'maps',
+      validator: validateMaps,
+      cacheKey: 'maps',
+      expireTime: 24 * 60 * 60,
+      route: 'maps',
+      query: {
+        page
+      }
+    });
+  }
+
+  public async getAllMaps() {
+    const maps: MapsDTO['maps'] = [];
+    let data: MapsDTO | null;
+    let page = 1;
+    do {
+      data = await this.getMaps(page++);
+      if (data) {
+        maps.push(...data.maps);
+      }
+    } while (data?.total_maps === 10);
+    return maps;
+  }
+
   // Patch Notes
   public getPatchNotesById(id: string) {
     return this.fetchWithRetry({
       domain: this.marvelRivalsApiUrlV1,
       endpoint: `patch-note/${id}`,
-      validator: isFormattedPatch,
-      cacheKey: `patch-notes/${id}`,
+      validator: validateFormattedPatch,
+      cacheKey: `patch-note/${id}`,
       expireTime: 60 * 60,
-      route: 'patch-notes/:id'
+      route: 'patch-note/:id'
     });
   }
 
@@ -99,7 +128,7 @@ export class Api {
     return this.fetchWithRetry({
       domain: this.marvelRivalsApiUrlV1,
       endpoint: 'patch-notes',
-      validator: isPatchNotes,
+      validator: validatePatchNotes,
       cacheKey: 'patch-notes',
       expireTime: 60 * 60,
       route: 'patch-notes'
@@ -127,8 +156,8 @@ export class Api {
     return this.fetchWithRetry({
       domain: this.marvelRivalsApiUrlV2,
       endpoint: `player/${encodeURIComponent(userNameOrId)}/match-history`,
-      validator: isMatchHistory,
-      cacheKey: `match-history/${userNameOrId}/${Object.entries(options).filter((kv) => kv.at(1) !== undefined).map((kv) => `${kv[0]}${kv[1]}`).join('_')}`,
+      validator: validateMatchHistory,
+      cacheKey: `match-history/${userNameOrId}`,
       expireTime: 5 * 60,
       route: 'match-history/:id',
       query: options
@@ -140,7 +169,7 @@ export class Api {
     return this.fetchWithRetry({
       domain: this.marvelRivalsApiUrlV1,
       endpoint: `player/${id}/update`,
-      validator: isUpdatedPlayer,
+      validator: validateUpdatedPlayer,
       route: 'player/:id/update'
     });
   }
@@ -149,7 +178,7 @@ export class Api {
     return this.fetchWithRetry({
       domain: this.marvelRivalsApiUrlV1,
       endpoint: `find-player/${encodeURIComponent(username)}`,
-      validator: isFindedPlayer,
+      validator: validateFoundPlayer,
       cacheKey: `find-player/${username}`,
       expireTime: 30 * 60,
       route: 'find-player/:id'
@@ -177,8 +206,8 @@ export class Api {
     return this.fetchWithRetry({
       domain: this.marvelRivalsApiUrlV1,
       endpoint: `player/${id}`,
-      validator: isPlayer,
-      cacheKey: `player/${id}/${Object.entries(options).filter((kv) => kv.at(1) !== undefined).map((kv) => `${kv[0]}${kv[1]}`).join('_')}`,
+      validator: validatePlayer,
+      cacheKey: `player/${id}`,
       expireTime: 5 * 60,
       route: 'player/:id',
       query: options
@@ -225,7 +254,7 @@ export class Api {
     return this.fetchWithRetry({
       domain: this.marvelRivalsApiUrlV1,
       endpoint: `heroes/leaderboard/${nameOrId}`,
-      validator: isLeaderboardPlayerHero,
+      validator: validateLeaderboardPlayerHero,
       cacheKey: `leaderboard-hero/${nameOrId}/${platform}`,
       query: {
         platform
@@ -239,7 +268,7 @@ export class Api {
     const heroes = await this.fetchWithRetry({
       domain: this.marvelRivalsApiUrlV1,
       endpoint: 'heroes',
-      validator: isHeroes,
+      validator: validateHeroes,
       cacheKey: 'heroes',
       expireTime: 24 * 60 * 60,
       route: 'heroes'
@@ -251,7 +280,7 @@ export class Api {
     return this.fetchWithRetry({
       domain: this.marvelRivalsApiUrlV1,
       endpoint: `heroes/hero/${nameOrId}`,
-      validator: isHero,
+      validator: validateHero,
       cacheKey: `hero/${nameOrId}`,
       expireTime: 24 * 60 * 60,
       route: 'heroes/hero/:id'
@@ -278,6 +307,9 @@ export class Api {
     expireTime?: number;
   }): Promise<null | T> {
     if (cacheKey) {
+      cacheKey = `${cacheKey}${query
+        ? Object.entries(query).filter((kv): kv is [string, string | number] => kv.at(1) !== undefined).map((kv) => `${kv[0]}${kv[1]}`).join('_')
+        : ''}`;
       const cachedData = await this.redisClient.GET(cacheKey);
       if (cachedData) {
         if (cachedData === 'null') {

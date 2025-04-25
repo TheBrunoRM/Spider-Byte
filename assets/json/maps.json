@@ -1,5 +1,5 @@
 {
-    "total_maps": 34,
+    "total_maps": 38,
     "maps": [
         {
             "id": 1032,
@@ -404,7 +404,6 @@
             "id": 1246,
             "name": "Ninomaru",
             "full_name": "Ninomaru - Tokyo 2099",
-            "description": "Take a journey above Tokyo 2099 into the Web of Life and Destiny! To patch up the temporal rift, the Master Weaver is working around the clock to spin his magic while also suspending an entire network of islands aloft, far above from the urban hustle. As a lover of time, he's preserved many more classic Japanese elements, from zen gardens to his own sacred tenshu, where he protects a personal sliver of the Web of Life and Destiny itself. It seems that weaving the Multiverse back together is difficult for one spider, so let's get Spider-Zero back in action!",
             "location": "Tokyo 2099",
             "game_mode": "Conquest",
             "is_competitve": false,
@@ -675,6 +674,86 @@
                 "/rivals/maps/map_1217.png",
                 "/rivals/maps/medium/map_1217.png",
                 "/rivals/maps/large/map_1217.png"
+            ]
+        },
+        {
+            "id": 1302,
+            "name": "Birnin T'Challa",
+            "full_name": "Intergalactic Empire of Wakanda: Birnin T’Challa",
+            "location": "Intergalactic Empire of Wakanda",
+            "description": "From a single Vibranium meteorite, Wakanda rose to greatness. Now, at the heart of the galaxy, they’ve uncovered the homeland of that very mound. But no matter how far it's technology advances, Wakanda's strength will always be its people. Wakanda Forever!",
+            "game_mode": "Clone Rumble",
+            "is_competitve": false,
+            "sub_map": {
+                "id": 1108,
+                "name": null,
+                "thumbnail": null
+            },
+            "video": "https://youtu.be/Kkt5tBHyzI8",
+            "images": [
+                "/rivals/maps/map_1302.png",
+                "/rivals/maps/medium/map_1302.png",
+                "/rivals/maps/large/map_1302.png"
+            ]
+        },
+        {
+            "id": 1304,
+            "name": "",
+            "full_name": "",
+            "location": "Hellfire Gala",
+            "description": "The 2099 Hellfire Gala is underway, and Emma Frost is dazzling in her finery, expertly mingling with the crowd. With guests being properly entertained and the Mutants’ guards down, the timing is perfect for Ultron to crash this invite-only event! It’s up to the Quiet Council to get these unruly invaders under control, and their guests safe.\n\nMove with grace and precision across the Gala to stop the imminent infection being spread by Ultron and his robots.\n\nCan you keep your cool and elegance in the face of disaster?",
+            "game_mode": "Domination",
+            "is_competitve": false,
+            "sub_map": {
+                "id": 0,
+                "name": null,
+                "thumbnail": null
+            },
+            "video": "",
+            "images": [
+                "/rivals/maps/map_1304.png",
+                "/rivals/maps/medium/map_1304.png",
+                "/rivals/maps/large/map_1304.png"
+            ]
+        },
+        {
+            "id": 1309,
+            "name": "Krakoa",
+            "full_name": "Hellfire Gala: Krakoa",
+            "location": "Hellfire Gala",
+            "description": "The 2099 Hellfire Gala is underway, and Emma Frost is dazzling in her finery, expertly mingling with the crowd. With guests being properly entertained and the Mutants’ guards down, the timing is perfect for Ultron to crash this invite-only event! It’s up to the Quiet Council to get these unruly invaders under control, and their guests safe.\n\nMove with grace and precision across the Gala to stop the imminent infection being spread by Ultron and his robots.\n\nCan you keep your cool and elegance in the face of disaster?",
+            "game_mode": "Domination",
+            "is_competitve": false,
+            "sub_map": {
+                "id": 0,
+                "name": null,
+                "thumbnail": null
+            },
+            "video": "https://youtu.be/xIo0RxLYkQU",
+            "images": [
+                "/rivals/maps/map_1309.png",
+                "/rivals/maps/medium/map_1309.png",
+                "/rivals/maps/large/map_1309.png"
+            ]
+        },
+        {
+            "id": 1310,
+            "name": "Krakoa",
+            "full_name": "Hellfire Gala: Krakoa",
+            "location": "Hellfire Gala",
+            "description": "The 2099 Hellfire Gala is underway, and Emma Frost is dazzling in her finery, expertly mingling with the crowd. With guests being properly entertained and the Mutants’ guards down, the timing is perfect for Ultron to crash this invite-only event! It’s up to the Quiet Council to get these unruly invaders under control, and their guests safe.\n\nMove with grace and precision across the Gala to stop the imminent infection being spread by Ultron and his robots.\n\nCan you keep your cool and elegance in the face of disaster?",
+            "game_mode": "Domination",
+            "is_competitve": true,
+            "sub_map": {
+                "id": 0,
+                "name": null,
+                "thumbnail": null
+            },
+            "video": "https://youtu.be/xIo0RxLYkQU",
+            "images": [
+                "/rivals/maps/map_1310.png",
+                "/rivals/maps/medium/map_1310.png",
+                "/rivals/maps/large/map_1310.png"
             ]
         }
     ]

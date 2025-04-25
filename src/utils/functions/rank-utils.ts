@@ -1,6 +1,6 @@
 import type { RankGameSeason, RankHistory } from '../../types/dtos/PlayerDTO';
 
-import { MARVELRIVALS_DOMAIN } from '../env';
+import { STICKY_CDN_DOMAIN } from '../env';
 
 export interface RankTier {
     name: string;
@@ -176,7 +176,7 @@ export function getRankDetails(level: number): RankDetails {
         rank: rank.name,
         tier: tierNumber,
         color: RANK_COLORS[rankIndex],
-        image: `${MARVELRIVALS_DOMAIN}/rivals/ranked/${rankedImages[rankIndex]}`
+        image: `${STICKY_CDN_DOMAIN}/ranks/${rankedImages[rankIndex]}`
     };
 }
 

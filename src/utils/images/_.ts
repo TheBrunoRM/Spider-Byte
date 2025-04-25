@@ -47,10 +47,10 @@ export async function loadHeroHistory(heroID: number) {
 }
 
 export async function loadRankIcon(level: number) {
-    const { image } = getRankDetails(level);
+    const { image, rank } = getRankDetails(level);
     return loadImageFromCache(
         'rank_icon',
-        level,
+        rank,
         image
     );
 }

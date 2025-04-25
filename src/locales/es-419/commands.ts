@@ -128,6 +128,20 @@ const commands = {
             description: 'Muestra el historial de partidas de un jugador.',
             noHistory: (playerName) => `:warning: **${playerName}** no tiene historial de partidas.`
         }
+    },
+    account: {
+        link: {
+            name: 'link',
+            description: 'Vincula tu cuenta del juego a tu cuenta de Discord.',
+            alreadyLinked: ':warning: Ya tienes una cuenta vinculada. Utiliza `/account unlink` para desvincularla primero.',
+            success: (playerName: string, uid: number) => `:white_check_mark: Se ha vinculado correctamente **${playerName}** (${uid}) a tu cuenta de Discord.`
+        },
+        unlink: {
+            name: 'unlink',
+            description: 'Desvincula tu cuenta del juego de tu cuenta de Discord.',
+            notLinked: ':warning: No tienes una cuenta vinculada. Usa `/account link` para vincularla primero.',
+            success: (uid: string) => `:white_check_mark: Se ha desvinculado correctamente la cuenta con UID **${uid}** de tu cuenta de Discord.`
+        }
     }
 } satisfies typeof English;
 

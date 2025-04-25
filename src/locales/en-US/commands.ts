@@ -126,5 +126,19 @@ export const commands = {
             description: 'View match history for a specific player.',
             noHistory: (playerName: string) => `:warning: No match history found for **${playerName}**.`
         }
+    },
+    account: {
+        link: {
+            name: 'link',
+            description: 'Link your game account to your Discord account.',
+            alreadyLinked: ':warning: You already have a linked account. Use `/account unlink` to unlink it first.',
+            success: (playerName: string, uid: number) => `:white_check_mark: Successfully linked **${playerName}** (${uid}) to your Discord account.`
+        },
+        unlink: {
+            name: 'unlink',
+            description: 'Unlink your game account from your Discord account.',
+            notLinked: ':warning: You don\'t have a linked account. Use `/account link` to link it first.',
+            success: (uid: string) => `:white_check_mark: Successfully unlinked account with UID **${uid}** from your Discord account.`
+        }
     }
 };

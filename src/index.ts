@@ -139,7 +139,12 @@ client.setServices({
         },
         default: 'en-US'
     },
-    middlewares
+    middlewares,
+    cache: {
+        disabledCache: {
+            messages: true
+        }
+    }
 });
 
 client.langs.filter = (path) => basename(path) === '_.ts';

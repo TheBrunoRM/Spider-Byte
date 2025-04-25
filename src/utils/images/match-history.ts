@@ -1,3 +1,5 @@
+import type { CommandContext } from 'seyfert';
+
 import { loadImage, Canvas } from '@napi-rs/canvas';
 import { join } from 'node:path';
 
@@ -62,7 +64,7 @@ function getGameModeName(gameMode?: number): typeof gameModes[number]['name'] {
 const WIDTH = 1_495;
 const HEIGHT = 958;
 
-export async function createMatchHistoryImage(user: PlayerDTO, history: MatchHistoryDTO, season?: number, gameMode?: number): Promise<Buffer> {
+export async function createMatchHistoryImage(t: CommandContext['t'], user: PlayerDTO, history: MatchHistoryDTO, season?: number, gameMode?: number): Promise<Buffer> {
     const canvas = new Canvas(WIDTH, HEIGHT);
     const ctx = canvas.getContext('2d');
 
@@ -288,7 +290,7 @@ export async function createMatchHistoryImage(user: PlayerDTO, history: MatchHis
         ctx.fillText(gameModeText, MARGIN.left + STATUS_TEXT_MARGIN, centerY);
 
         const gameDate = new Date(match.match_time_stamp * 1_000);
-        const formattedDate = `${gameDate.getDate().toString().padStart(2, '0')}/${(gameDate.getMonth() + 1).toString().padStart(2, '0')}/${gameDate.getFullYear()}`;
+        const formattedDate = t.common.date(gameDate.getDate().toString().padStart(2, '0'), (gameDate.getMonth() + 1).toString().padStart(2, '0'), gameDate.getFullYear()).get();
         ctx.font = '20px InterSemiBold';
         ctx.fillStyle = '#A6A6A6';
         ctx.textAlign = 'left';

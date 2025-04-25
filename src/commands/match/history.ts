@@ -91,7 +91,7 @@ export default class History extends SubCommand {
             });
         }
 
-        const image = await createMatchHistoryImage(player, history, ctx.options.season, ctx.options.game_mode);
+        const image = await createMatchHistoryImage(ctx.t, player, history, ctx.options.season, ctx.options.game_mode);
 
         return ctx.editOrReply({
             files: [{

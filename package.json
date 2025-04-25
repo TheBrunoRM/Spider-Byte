@@ -5,10 +5,10 @@
   "devDependencies": {
     "@marcrock22/eslint": "github:marcrock22/eslintcf",
     "@types/bun": "^1.2.10",
-    "eslint": "^9.25.0",
+    "eslint": "^9.25.1",
     "rimraf": "^6.0.1",
     "ts-patch": "^3.3.0",
-    "typescript-eslint": "^8.30.1",
+    "typescript-eslint": "^8.31.0",
     "typia": "^9.1.1"
   },
   "peerDependencies": {

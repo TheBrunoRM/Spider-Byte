@@ -42,7 +42,11 @@ export default class RankCommand extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
         await ctx.deferReply();
 
-        const nameOrId = ctx.options['name-or-id'];
+        const nameOrId = ctx.options['name-or-id'] || (await ctx.client.prisma.user.findFirst({
+            where: {
+                userID: ctx.author.id
+            }
+        }))?.rivalsUUID;
         if (!nameOrId) {
             return ctx.editOrReply({
                 content: ctx.t.commands.commonErrors.noNameOrId.get()

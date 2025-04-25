@@ -19,7 +19,7 @@ const options = {
             const input = interaction.getInput();
             const maps = mapsJson.maps;
 
-            const uniqueMaps = new Map();
+            const uniqueMaps = new Map<string, number>();
 
             if (input.length) {
                 const matches = didYouMean(

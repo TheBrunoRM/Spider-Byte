@@ -10,8 +10,6 @@ const options = {
         description: 'The player name or ID to view match history for.',
         required: true,
         async value({ context, value }, ok: OKFunction<string>, fail) {
-            await context.deferReply();
-
             const data = await context.client.api.searchPlayer(value);
             if (!data) {
                 fail(context.t.commands.commonErrors.playerNotFound.get()); return;
@@ -103,5 +101,9 @@ export default class History extends SubCommand {
             },
             pageSize: 5
         });
+    }
+
+    onBeforeOptions(ctx: CommandContext) {
+        return ctx.deferReply();
     }
 }

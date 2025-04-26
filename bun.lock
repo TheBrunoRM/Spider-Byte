@@ -12,10 +12,10 @@
         "cheerio": "^1.0.0",
         "didyoumean2": "^7.0.4",
         "domhandler": "^5.0.3",
+        "seyfert": "https://pkg.pr.new/tiramisulabs/seyfert@96e257d",
         "prisma": "^6.6.0",
         "satori": "^0.12.2",
         "satori-html": "^0.3.2",
-        "seyfert": "^3.0.1-dev-14682613353.0",
       },
       "devDependencies": {
         "@marcrock22/eslint": "github:marcrock22/eslintcf",
@@ -590,7 +590,7 @@
 
     "setprototypeof": ["setprototypeof@1.2.0", "", {}, "sha512-E5LDX7Wrp85Kil5bhZv46j8jOeboKq5JMmYM3gVGdGH8xFpPWXUMsNrlODCrkoxMEeNi/XZIwuRvY4XNwYMJpw=="],
 
-    "seyfert": ["seyfert@3.0.1-dev-14682613353.0", "", {}, "sha512-VooWyMmlmyb80hz3sA7K3vYJ7TUO2Mt0bcii7kSJMc+swb4Q5P3Mu52Dz4IsgtHIiUnugdp7q71bQj17y0I7AQ=="],
+    "seyfert": ["seyfert@https://pkg.pr.new/tiramisulabs/seyfert@96e257d", {}],
 
     "shebang-command": ["shebang-command@2.0.0", "", { "dependencies": { "shebang-regex": "^3.0.0" } }, "sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA=="],
 

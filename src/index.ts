@@ -180,7 +180,6 @@ await client.uploadCommands({
     cachePath: join(process.cwd(), 'cache', 'seyfert_commands.json')
 });
 
-
 declare module 'seyfert' {
     interface RegisteredMiddlewares
         extends ParseMiddlewares<typeof middlewares> { }

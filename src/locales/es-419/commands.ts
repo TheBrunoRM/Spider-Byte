@@ -124,7 +124,7 @@ const commands = {
     },
     match: {
         history: {
-            name: 'historial',
+            name: 'history',
             description: 'Muestra el historial de partidas de un jugador.',
             noHistory: (playerName) => `:warning: **${playerName}** no tiene historial de partidas.`
         }

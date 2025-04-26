@@ -5,7 +5,8 @@ const options = {
         description: 'Enter the player name or ID to identify the player.',
         locales: {
             description: 'commands.commonOptions.nameOrId'
-        }
+        },
+        required: true
     })
 };
 

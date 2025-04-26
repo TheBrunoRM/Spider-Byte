@@ -14,7 +14,7 @@ const options = {
 
 @Declare({
     name: 'uid',
-    description: 'View a timeline graph of a player\'s rank history.'
+    description: 'Get the player UID by the player name.'
 })
 @Options(options)
 export default class RankCommand extends SubCommand {
@@ -31,7 +31,7 @@ export default class RankCommand extends SubCommand {
         }
 
         await ctx.editOrReply({
-            content: `${result.name} ${result.uid}`
+            content: `**${result.name}** (${result.uid})`
         });
     }
 }

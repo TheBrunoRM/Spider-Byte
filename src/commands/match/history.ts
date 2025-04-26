@@ -8,7 +8,6 @@ import { callbackPaginator } from '../../utils/paginator';
 const options = {
     'name-or-id': createStringOption({
         description: 'The player name or ID to view match history for.',
-        required: true,
         async value({ context, value }, ok: OKFunction<string>, fail) {
             const data = await context.client.api.searchPlayer(value);
             if (!data) {
@@ -71,13 +70,25 @@ const options = {
 @Options(options)
 export default class History extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
-        const player = await ctx.client.api.getPlayer(ctx.options['name-or-id']);
+        const nameOrId = ctx.options['name-or-id'] || (await ctx.client.prisma.user.findFirst({
+            where: {
+                userID: ctx.author.id
+            }
+        }))?.rivalsUUID;
+        if (!nameOrId) {
+            return ctx.editOrReply({
+                content: ctx.t.commands.commonErrors.noNameOrId.get()
+            });
+        }
+
+        const player = await ctx.client.api.getPlayer(nameOrId);
+
         if (!player) {
             return ctx.editOrReply({
                 content: ctx.t.commands.commonErrors.playerNotFound.get()
             });
         }
-        const history = await ctx.client.api.getAllHistory(ctx.options['name-or-id'], {
+        const history = await ctx.client.api.getAllHistory(player.uid.toString(), {
             game_mode: ctx.options.game_mode,
             page: ctx.options.page,
             season: ctx.options.season,
@@ -86,7 +97,7 @@ export default class History extends SubCommand {
 
         if (!history.length) {
             return ctx.editOrReply({
-                content: ctx.t.commands.match.history.noHistory(ctx.options['name-or-id']).get()
+                content: ctx.t.commands.match.history.noHistory(player.name).get()
             });
         }
 

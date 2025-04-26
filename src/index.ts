@@ -1,7 +1,6 @@
 import { type ParseMiddlewares, type ParseLocales, type ParseClient, type UsingClient, Formatter, Client } from 'seyfert';
 import { PresenceUpdateStatus, ActivityType, MessageFlags } from 'seyfert/lib/types';
 import { basename, join, sep } from 'node:path';
-import { PrismaClient } from '@prisma/client';
 import { Api as TopGGAPI } from '@top-gg/sdk';
 import { GlobalFonts } from '@napi-rs/canvas';
 import { createClient } from '@redis/client';
@@ -10,6 +9,7 @@ import { AttachmentBuilder } from 'seyfert';
 import type { Ratelimit } from './middlewares/cooldown';
 
 import { WEBHOOK_TOKEN, TOPGG_TOKEN, WEBHOOK_ID, API_KEY } from './utils/env';
+import { PrismaClient } from '../prisma/client';
 import { middlewares } from './middlewares';
 import { Api } from './lib/managers/api';
 // Register fonts

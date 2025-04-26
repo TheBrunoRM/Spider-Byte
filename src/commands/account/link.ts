@@ -27,14 +27,6 @@ export default class LinkCommand extends SubCommand {
             });
         }
 
-        const player = await ctx.client.api.getPlayer(nameOrId);
-
-        if (!player) {
-            return ctx.editOrReply({
-                content: ctx.t.commands.commonErrors.playerNotFound.get()
-            });
-        }
-
         const alreadyLinked = await ctx.client.prisma.user.findFirst({
             where: {
                 userID: ctx.author.id
@@ -45,6 +37,15 @@ export default class LinkCommand extends SubCommand {
                 content: ctx.t.commands.account.link.alreadyLinked.get()
             });
         }
+
+        const player = await ctx.client.api.getPlayer(nameOrId);
+
+        if (!player) {
+            return ctx.editOrReply({
+                content: ctx.t.commands.commonErrors.playerNotFound.get()
+            });
+        }
+
 
         await ctx.client.prisma.user.create({
             data: {

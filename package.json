@@ -26,12 +26,12 @@
     "prisma": "^6.6.0",
     "satori": "^0.12.2",
     "satori-html": "^0.3.2",
-    "seyfert": "^3.0.0"
+    "seyfert": "^3.0.1-dev-14682613353.0"
   },
   "scripts": {
     "start": "bun run build && bun --env-file=.env ./dist/index.ts",
     "prepare": "ts-patch install",
     "build": "bunx rimraf dist && typia generate --input src --output dist --project tsconfig.json",
-    "production": "bun run build && bun --env-file=.env ./dist/index.ts production"
+    "production": "bunx prisma generate && bun run build && bun --env-file=.env ./dist/index.ts production"
   }
 }

@@ -3,10 +3,11 @@ import type { CommandContext, OKFunction } from 'seyfert';
 import { createIntegerOption, createStringOption, createNumberOption, SubCommand, LocalesT, Declare, Options } from 'seyfert';
 
 import { createMatchHistoryImage } from '../../utils/images/match-history';
+import { callbackPaginator } from '../../utils/paginator';
 
 const options = {
-    username: createStringOption({
-        description: 'The username to view match history for.',
+    'name-or-id': createStringOption({
+        description: 'The player name or ID to view match history for.',
         required: true,
         async value({ context, value }, ok: OKFunction<string>, fail) {
             await context.deferReply();
@@ -72,32 +73,35 @@ const options = {
 @Options(options)
 export default class History extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
-        const player = await ctx.client.api.getPlayer(ctx.options.username);
+        const player = await ctx.client.api.getPlayer(ctx.options['name-or-id']);
         if (!player) {
             return ctx.editOrReply({
                 content: ctx.t.commands.commonErrors.playerNotFound.get()
             });
         }
-        const history = await ctx.client.api.getMatchHistory(ctx.options.username, {
+        const history = await ctx.client.api.getAllHistory(ctx.options['name-or-id'], {
             game_mode: ctx.options.game_mode,
             page: ctx.options.page,
             season: ctx.options.season,
             skip: ctx.options.skip
         });
 
-        if (!history?.match_history.length) {
+        if (!history.length) {
             return ctx.editOrReply({
-                content: ctx.t.commands.match.history.noHistory(ctx.options.username).get()
+                content: ctx.t.commands.match.history.noHistory(ctx.options['name-or-id']).get()
             });
         }
 
-        const image = await createMatchHistoryImage(ctx.t, player, history, ctx.options.season, ctx.options.game_mode);
-
-        return ctx.editOrReply({
-            files: [{
-                filename: 'history.png',
-                data: image
-            }]
+        await callbackPaginator(ctx, history, {
+            async callback(chunk) {
+                return {
+                    files: [{
+                        filename: 'history.png',
+                        data: await createMatchHistoryImage(ctx.t, player, chunk, ctx.options.season, ctx.options.game_mode)
+                    }]
+                };
+            },
+            pageSize: 5
         });
     }
 }

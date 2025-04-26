@@ -80,13 +80,6 @@ export default class Ping extends SubCommand {
             });
         }
 
-        await ctx.editOrReply({
-            files: [{
-                filename: 'leaderboard.png',
-                data: await generateLeaderboard(leaderboard.players, 0)
-            }]
-        });
-
         await callbackPaginator(ctx, leaderboard.players, {
             async callback(chunk, pageIndex) {
                 return {

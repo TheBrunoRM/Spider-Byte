@@ -64,7 +64,7 @@ function getGameModeName(gameMode?: number): typeof gameModes[number]['name'] {
 const WIDTH = 1_495;
 const HEIGHT = 958;
 
-export async function createMatchHistoryImage(t: CommandContext['t'], user: PlayerDTO, history: MatchHistoryDTO, season?: number, gameMode?: number): Promise<Buffer> {
+export async function createMatchHistoryImage(t: CommandContext['t'], user: PlayerDTO, matchHistory: MatchHistoryDTO['match_history'], season?: number, gameMode?: number): Promise<Buffer> {
     const canvas = new Canvas(WIDTH, HEIGHT);
     const ctx = canvas.getContext('2d');
 
@@ -106,8 +106,8 @@ export async function createMatchHistoryImage(t: CommandContext['t'], user: Play
     const playerUID = user.player.uid;
     ctx.fillText(`Player UID: ${playerUID}`, 220, 100 + 40 + 20 / 2);
 
-    if (user.player.rank.rank !== 'Invalid level' && history.match_history.filter((m) => m.game_mode_id === 2).length > 0) {
-        const rankedGames = history.match_history.filter((m) => m.game_mode_id === 2);
+    if (user.player.rank.rank !== 'Invalid level' && matchHistory.filter((m) => m.game_mode_id === 2).length > 0) {
+        const rankedGames = matchHistory.filter((m) => m.game_mode_id === 2);
         const lastRankedGame = rankedGames[0];
         const RANK_ICON_SIZE = 150;
         const RIGHT_MARGIN = 60;
@@ -166,7 +166,7 @@ export async function createMatchHistoryImage(t: CommandContext['t'], user: Play
     const GRADIENT_WIDTH = 220;
     const STATUS_TEXT_MARGIN = 30;
 
-    const matchesToDisplay = history.match_history.slice(0, 5);
+    const matchesToDisplay = matchHistory.slice(0, 5);
 
     for (let i = 0; i < matchesToDisplay.length; i++) {
         const match = matchesToDisplay[i];

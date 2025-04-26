@@ -1,10 +1,10 @@
 
 export interface MapsDTO {
     readonly total_maps: number;
-    readonly maps: Map[];
+    readonly maps: MapDTO[];
 }
 
-export interface Map {
+export interface MapDTO {
     readonly id: number;
     readonly name: string;
     readonly full_name: string;

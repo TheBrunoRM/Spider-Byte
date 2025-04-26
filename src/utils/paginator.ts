@@ -15,10 +15,13 @@ export async function callbackPaginator<T>(ctx: CommandContext, data: T[], optio
         },
         pageSize: 10
     }) {
-    options.idle ??= 60e3;
-
     const chunks = DynamicBucket.chunk(data, options.pageSize);
+    await ctx.editOrReply({
+        ...await options.callback(chunks[0], 0),
+        components: [createButtonRow(chunks, 0)]
+    }, true);
 
+    options.idle ??= 60e3;
     let pageIndex = 0;
     const message = await ctx.editOrReply({
         components: [createButtonRow(chunks, pageIndex)]

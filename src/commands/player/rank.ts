@@ -1,6 +1,6 @@
 import type { CommandContext } from 'seyfert';
 
-import { createStringOption, createNumberOption, AttachmentBuilder, SubCommand, LocalesT, Declare, Options } from 'seyfert';
+import { createIntegerOption, createStringOption, createNumberOption, AttachmentBuilder, SubCommand, LocalesT, Declare, Options } from 'seyfert';
 import { createIs } from 'typia';
 
 import { type ExpectedScoreInfo, generateRankChart } from '../../utils/images/ranked';
@@ -27,6 +27,9 @@ const options = {
             name: 'S2: Hellfire Gala',
             value: 2
         }] as const
+    }),
+    limit: createIntegerOption({
+        description: 'The number of matches to display in the graph.'
     })
 };
 
@@ -68,7 +71,7 @@ export default class RankCommand extends SubCommand {
             });
         }
 
-        const matchHistory = await ctx.client.api.getRankHistory(player.uid.toString(), ctx.options.season);
+        const matchHistory = await ctx.client.api.getRankHistory(player.uid.toString(), ctx.options.season, ctx.options.limit);
 
         const scoreInfo: ExpectedScoreInfo[] = [];
 

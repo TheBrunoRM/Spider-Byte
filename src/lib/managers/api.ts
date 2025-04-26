@@ -3,14 +3,15 @@ import { type IValidation, createValidate } from 'typia';
 import { Bucket } from 'seyfert/lib/api/bucket';
 
 import type { LeaderboardPlayerHeroDTO } from '../../types/dtos/LeaderboardPlayerHeroDTO';
+import type { MatchHistoryDTO, MatchHistory } from '../../types/dtos/MatchHistoryDTO';
 import type { FormattedPatch, PatchNotesDTO } from '../../types/dtos/PatchNotesDTO';
-import type { MatchHistoryDTO } from '../../types/dtos/MatchHistoryDTO';
 import type { FoundPlayerDTO } from '../../types/dtos/FoundPlayerDTO';
 import type { HeroesDTO } from '../../types/dtos/HeroesDTO';
 import type { PlayerDTO } from '../../types/dtos/PlayerDTO';
 import type { UpdateDTO } from '../../types/dtos/UpdateDTO';
 import type { HeroDTO } from '../../types/dtos/HeroDTO';
 import type { MapsDTO } from '../../types/dtos/MapsDTO';
+import type { MapDTO } from '../../types/dtos/MapsDTO';
 
 import { MARVELRIVALS_DOMAIN } from '../../utils/env';
 import { isProduction } from '../constants';
@@ -62,9 +63,8 @@ export class Api {
   }
 
   // Utils
-
-  async getRankHistory(userId: string, season: 1.5 | 0 | 1 | 2 = 2) {
-    const history: MatchHistoryDTO['match_history'] = [];
+  async getRankHistory(userId: string, season: 1.5 | 0 | 1 | 2 = 2, limit = Infinity) {
+    const history: MatchHistory[] = [];
     let data: MatchHistoryDTO | null;
     let page = 0;
     do {
@@ -72,6 +72,30 @@ export class Api {
         page,
         season,
         game_mode: 2 // ranked
+      });
+      if (data?.match_history.length) {
+        history.push(...data.match_history);
+      }
+      if (data) {
+        page++;
+      }
+    } while (data?.pagination.has_more && history.length < limit);
+
+    return limit === Infinity
+      ? history
+      : history.slice(0, limit);
+  }
+
+  async getAllHistory(userId: string, options?: Omit<NonNullable<Parameters<typeof this['getMatchHistory']>[1]>, 'limit'>) {
+    const history: MatchHistory[] = [];
+    let data: MatchHistoryDTO | null;
+    let page = options?.page
+      ? options.page - 1
+      : 0;
+    do {
+      data = await this.getMatchHistory(userId, {
+        ...options,
+        page
       });
       if (data?.match_history.length) {
         history.push(...data.match_history);
@@ -100,7 +124,7 @@ export class Api {
   }
 
   public async getAllMaps() {
-    const maps: MapsDTO['maps'] = [];
+    const maps: MapDTO[] = [];
     let data: MapsDTO | null;
     let page = 1;
     do {
@@ -119,20 +143,36 @@ export class Api {
       endpoint: `patch-note/${id}`,
       validator: validateFormattedPatch,
       cacheKey: `patch-note/${id}`,
-      expireTime: 60 * 60,
+      expireTime: 24 * 60 * 60,
       route: 'patch-note/:id'
     });
   }
 
-  public getPatchNotes() {
+  public getPatchNotes(page = 1) {
     return this.fetchWithRetry({
       domain: this.marvelRivalsApiUrlV1,
       endpoint: 'patch-notes',
       validator: validatePatchNotes,
       cacheKey: 'patch-notes',
-      expireTime: 60 * 60,
+      expireTime: 24 * 60 * 60,
+      query: {
+        page
+      },
       route: 'patch-notes'
     });
+  }
+
+  public async getAllPatchNotes() {
+    let data: PatchNotesDTO | null;
+    let page = 1;
+    const patchNotes: FormattedPatch[] = [];
+    do {
+      data = await this.getPatchNotes(page++);
+      if (data) {
+        patchNotes.push(...data.formatted_patches);
+      }
+    } while (data?.formatted_patches.length === data?.total_patches);
+    return patchNotes;
   }
 
   // Matches

@@ -71,7 +71,6 @@ const options = {
 @Options(options)
 export default class Ping extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
-        await ctx.deferReply();
 
         const leaderboard = await ctx.client.api.getLeaderboardHero(ctx.options.hero, ctx.options.platform);
         if (!leaderboard) {
@@ -91,5 +90,9 @@ export default class Ping extends SubCommand {
             },
             pageSize: 9
         });
+    }
+
+    onBeforeOptions(ctx: CommandContext) {
+        return ctx.deferReply();
     }
 }

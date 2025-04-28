@@ -241,6 +241,10 @@ export default class About extends SubCommand {
         });
     }
 
+    onBeforeOptions(ctx: CommandContext) {
+        return ctx.deferReply();
+    }
+
     generateRows(clicked: 'hero' | 'lore') {
         const row = new ActionRow<StringSelectMenu | Button>();
 

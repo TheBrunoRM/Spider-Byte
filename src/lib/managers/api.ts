@@ -132,7 +132,7 @@ export class Api {
       if (data) {
         maps.push(...data.maps);
       }
-    } while (data?.total_maps === 10);
+    } while (data?.maps.length);
     return maps;
   }
 

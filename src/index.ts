@@ -157,10 +157,10 @@ client.langs.onFile = (locale, { path, file }) => file.default
     : false;
 
 
-client.redis = await createClient()
-    .on('error', (err) => {
-        client.logger.error('Redis Client Error', err);
-    }).connect();
+client.redis = createClient();
+await client.redis.on('error', (err) => {
+    client.logger.error('Redis Client Error', err);
+}).connect();
 
 client.prisma = new PrismaClient();
 

@@ -4,11 +4,11 @@
   "type": "module",
   "devDependencies": {
     "@marcrock22/eslint": "github:marcrock22/eslintcf",
-    "@types/bun": "^1.2.10",
+    "@types/bun": "^1.2.11",
     "eslint": "^9.25.1",
     "rimraf": "^6.0.1",
     "ts-patch": "^3.3.0",
-    "typescript-eslint": "^8.31.0",
+    "typescript-eslint": "^8.31.1",
     "typia": "^9.1.1"
   },
   "peerDependencies": {
@@ -16,17 +16,17 @@
   },
   "dependencies": {
     "@napi-rs/canvas": "^0.1.69",
-    "@prisma/client": "^6.6.0",
-    "@redis/client": "^1.6.0",
+    "@prisma/client": "^6.7.0",
+    "@redis/client": "^5.0.0",
     "@resvg/resvg-js": "^2.6.2",
     "@top-gg/sdk": "^3.1.6",
     "cheerio": "^1.0.0",
     "didyoumean2": "^7.0.4",
     "domhandler": "^5.0.3",
-    "prisma": "^6.6.0",
+    "prisma": "^6.7.0",
     "satori": "^0.12.2",
     "satori-html": "^0.3.2",
-    "seyfert": "https://pkg.pr.new/tiramisulabs/seyfert@96e257d"
+    "seyfert": "^3.1.2"
   },
   "scripts": {
     "start": "bun run build && bun --env-file=.env ./dist/index.ts",

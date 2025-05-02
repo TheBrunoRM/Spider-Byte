@@ -34,7 +34,6 @@ export default class RankCommand extends SubCommand {
             });
         }
 
-        // Split content into chunks for pagination
         const chunks: string[] = [];
         let currentChunk = '';
 

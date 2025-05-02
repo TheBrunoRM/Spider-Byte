@@ -1,4 +1,5 @@
 import type { CommandContext } from 'seyfert';
+import type { Image } from '@napi-rs/canvas';
 
 import { loadImage, Canvas } from '@napi-rs/canvas';
 import { join } from 'node:path';
@@ -63,17 +64,19 @@ function getGameModeName(gameMode?: number): typeof gameModes[number]['name'] {
 
 const WIDTH = 1_495;
 const HEIGHT = 958;
+let background: Image | null = null;
+let levelBackground: Image | null = null;
 
 export async function createMatchHistoryImage(t: CommandContext['t'], user: PlayerDTO, matchHistory: MatchHistoryDTO['match_history'], season?: number, gameMode?: number): Promise<Buffer> {
     const canvas = new Canvas(WIDTH, HEIGHT);
     const ctx = canvas.getContext('2d');
 
-    const background = await loadImage(await Bun.file(join(process.cwd(), 'assets', 'match-history', 'background.png')).bytes());
+    background ??= await loadImage(await Bun.file(join(process.cwd(), 'assets', 'match-history', 'background.png')).bytes());
     ctx.drawImage(background, 0, 0, WIDTH, HEIGHT);
 
     const playerIcon = await loadUserIcon(user.player.icon.player_icon_id);
     drawCircularImage(ctx, playerIcon, 60, 60, 150, 150);
-    const levelBackground = await loadImage(join(process.cwd(), 'assets', 'profile', 'level_bg.png'));
+    levelBackground ??= await loadImage(join(process.cwd(), 'assets', 'profile', 'level_bg.png'));
     ctx.drawImage(levelBackground, 95, 180, 80, 30);
 
     ctx.font = '22px InterBlack';
@@ -260,12 +263,11 @@ export async function createMatchHistoryImage(t: CommandContext['t'], user: Play
                 MARGIN.left + MATCH_RECT_WIDTH - GRADIENT_WIDTH, 0, MARGIN.left + MATCH_RECT_WIDTH - GRADIENT_WIDTH / 4, 0
             );
 
-            imageGradient.addColorStop(0, 'rgba(27, 29, 35, 0.95)');
-            imageGradient.addColorStop(0.2, 'rgba(27, 29, 35, 0.85)');
-            imageGradient.addColorStop(0.4, 'rgba(27, 29, 35, 0.7)');
-            imageGradient.addColorStop(0.6, 'rgba(27, 29, 35, 0.5)');
-            imageGradient.addColorStop(0.8, 'rgba(27, 29, 35, 0.25)');
-            imageGradient.addColorStop(0.9, 'rgba(27, 29, 35, 0.1)');
+            imageGradient.addColorStop(0, 'rgba(27, 29, 35, 1)');
+            imageGradient.addColorStop(0.2, 'rgba(27, 29, 35, 0.90)');
+            imageGradient.addColorStop(0.5, 'rgba(27, 29, 35, 0.75)');
+            imageGradient.addColorStop(0.7, 'rgba(27, 29, 35, 0.50)');
+            imageGradient.addColorStop(0.9, 'rgba(27, 29, 35, 0.25)');
             imageGradient.addColorStop(1, 'rgba(27, 29, 35, 0)');
 
             ctx.fillStyle = imageGradient;
@@ -343,8 +345,7 @@ export async function createMatchHistoryImage(t: CommandContext['t'], user: Play
             ctx.restore();
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, @typescript-eslint/prefer-optional-chain
-        if (match.game_mode_id === 2 && match.match_player.score_info && match.match_player.score_info.add_score !== null) {
+        if (match.game_mode_id === 2 && match.match_player.score_info.add_score !== null) {
             const addScore = match.match_player.score_info.add_score;
             const newScore = match.match_player.score_info.new_score ?? 0;
             const isPositive = addScore > 0;

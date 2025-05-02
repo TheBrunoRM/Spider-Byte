@@ -10,10 +10,6 @@ const options = {
         locales: {
             description: 'commands.game.map.options.name'
         },
-        // choices: mapsJson.maps.slice(0, 25).map((map) => ({
-        //     name: map.full_name,
-        //     value: map.id.toString()
-        // })),
         required: true,
         async autocomplete(interaction) {
             const input = interaction.getInput();

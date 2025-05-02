@@ -151,7 +151,6 @@ const patchNotesCache = new LimitedCollection<string, PatchNotes>({
 export async function scrapePatchNotes(): Promise<PatchNotes | null> {
     const CACHE_KEY = 'latest_patch';
 
-    // Check cache first
     if (patchNotesCache.has(CACHE_KEY)) {
         return patchNotesCache.get(CACHE_KEY)!;
     }

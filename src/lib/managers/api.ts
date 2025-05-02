@@ -37,7 +37,6 @@ export class Api {
       : LogLevels.Debug
   });
 
-  // Then modify the fetchJson method to use caching
   private readonly baseMarvelRivalsUrl: string = MARVELRIVALS_DOMAIN;
 
   private readonly marvelRivalsApiUrlV2: string = `${this.baseMarvelRivalsUrl}/api/v2`;
@@ -254,41 +253,6 @@ export class Api {
     });
   }
 
-  // async fetchPlayer(id: string): Promise<PlayerDTO | undefined | APIError> {
-  //   if (await this.redisClient.EXISTS(`player/${id}`)) {
-  //     const user = await this.redisClient.GET(`player/${id}`);
-  //     if (!user || user === 'null') {
-  //       return undefined;
-  //     }
-  //     return JSON.parse(user) as PlayerDTO | APIError;
-  //   }
-
-  //   const url = `${this.trackerApiUrl}/profile/ign/${encodeURIComponent(id)}`;
-  //   const response = await this.fetchJson<PlayerDTO>(url);
-
-  //   await this.redisClient.SET(`player/${id}`, JSON.stringify(response), {
-  //     EX: 15 * 60
-  //   });
-
-  //   if (!response) {
-  //     return undefined;
-  //   }
-
-  //   // validamos que response no sea un APIError
-  //   if ('errors' in response) {
-  //     return response;
-  //   }
-
-  //   // Validate response with typia
-  //   const validation = isPlayer(response);
-  //   if (!validation.success) {
-  //     console.error('Invalid API response:', validation.errors);
-  //     return undefined;
-  //   }
-
-  //   return response;
-  // }
-
   // Heroes
   public getLeaderboardHero(nameOrId: string, platform: 'xbox' | 'pc' | 'ps' = 'pc') {
     return this.fetchWithRetry({
@@ -414,41 +378,6 @@ export class Api {
     }
     return check.data;
   }
-
-  // private async fetchJson<T>(url: string): Promise<APIError | null | T> {
-  //   try {
-  //     const response = await fetch(url, {
-  //       headers: {
-  //         'User-Agent': 'Chrome/121',
-  //         Accept: 'application/json',
-  //         'Accept-Language': 'es-AR,en;q=0.9',
-  //         'Accept-Encoding': 'gzip, deflate, br',
-  //         Connection: 'keep-alive',
-  //         'Cache-Control': 'no-cache',
-  //         Pragma: 'no-cache',
-  //         DNT: '1',
-  //         'Upgrade-Insecure-Requests': '1'
-  //       },
-  //       credentials: 'omit',
-  //       referrerPolicy: 'strict-origin-when-cross-origin',
-  //       mode: 'cors'
-  //     });
-
-  //     if (response.status === 400) {
-  //       return await response.json() as APIError;
-  //     }
-
-  //     if (!response.ok) {
-  //       throw new Error(await response.text());
-  //     }
-
-  //     const jsonData = await response.json();
-
-  //     return jsonData as T;
-  //   } catch (error) {
-  //     throw new Error(`Failed to fetch JSON: ${String(error)}`);
-  //   }
-  // }
 
   private async fetchApi({ domain, endpoint, query, route }: {
     domain: Api['marvelRivalsApiUrlV1' | 'marvelRivalsApiUrlV2'];

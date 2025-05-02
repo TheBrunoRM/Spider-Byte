@@ -177,11 +177,7 @@ export default class About extends SubCommand {
             async (interaction) => {
                 await interaction.deferReply(MessageFlags.Ephemeral);
                 await interaction.editOrReply({
-                    files: [
-                        new AttachmentBuilder()
-                            .setName('video.mp4')
-                            .setFile('url', `${STICKY_CDN_DOMAIN}/Content/Marvel/Movies_HeroSkill/Windows/En-US/${hero.id}/${hero.id}0010/${hero.id}_Combo_High.mp4`)
-                    ],
+                    content: `${STICKY_CDN_DOMAIN}/Content/Marvel/Movies_HeroSkill/Windows/En-US/${hero.id}/${hero.id}0010/${hero.id}_Combo_High.mp4`,
                     flags: MessageFlags.Ephemeral
                 });
             }

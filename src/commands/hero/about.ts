@@ -103,7 +103,13 @@ const options = {
 export default class About extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
         const hero = ctx.options.name;
-        const heroMoreInfo = (await ctx.client.api.getHero(String(hero.id)))!;
+        const heroMoreInfo = await ctx.client.api.getHero(String(hero.id));
+
+        if (!heroMoreInfo) {
+            return ctx.editOrReply({
+                content: ctx.t.commands.hero.about.notFound(Formatter.inlineCode(hero.name)).get()
+            });
+        }
 
         const baseEmbed = new Embed().setColor(
             colorPerRole[capitalize(hero.role) as Role] as ColorResolvable
@@ -166,6 +172,21 @@ export default class About extends SubCommand {
             })
         );
 
+        collector.run<ButtonInteraction>(
+            'combo',
+            async (interaction) => {
+                await interaction.deferReply(MessageFlags.Ephemeral);
+                await interaction.editOrReply({
+                    files: [
+                        new AttachmentBuilder()
+                            .setName('video.mp4')
+                            .setFile('url', `${STICKY_CDN_DOMAIN}/Content/Marvel/Movies_HeroSkill/Windows/En-US/${hero.id}/${hero.id}0010/${hero.id}_Combo_High.mp4`)
+                    ],
+                    flags: MessageFlags.Ephemeral
+                });
+            }
+        );
+
         collector.run<ButtonInteraction>('abilities', async (interaction) => interaction.update({
             embeds: [interaction.message.embeds[0]],
             components: hero.abilities
@@ -180,7 +201,7 @@ export default class About extends SubCommand {
                 files: [
                     new AttachmentBuilder()
                         .setName('video.mp4')
-                        .setFile('url', `https://marvel-rivals.atlasforge.gg/videos/abilities/${hero.id}/${hero.id}0010/${abilityID}_High.webm`)
+                        .setFile('url', `${STICKY_CDN_DOMAIN}/Content/Marvel/Movies_HeroSkill/Windows/En-US/${hero.id}/${hero.id}0010/${abilityID}_High.mp4`)
                 ],
                 flags: MessageFlags.Ephemeral
             });
@@ -223,13 +244,9 @@ export default class About extends SubCommand {
 
             abilityEmbed
                 .setTitle(`${abilityData.name || abilityData2.name || 'Passive'} (${abilityData.type})`);
-            if (abilityData.icon) {
-                abilityEmbed.setThumbnail(
-                    abilityData.icon || abilityData2.icon
-                        ? ctx.client.api.buildImage(abilityData.icon || abilityData2.icon!)
-                        : undefined
-                );
-            }
+            abilityEmbed.setThumbnail(
+                `${STICKY_CDN_DOMAIN}/Content/Marvel_LQ/UI/Textures/Ability/${hero.id}/icon_${abilityData.id}.png`
+            );
             abilityEmbed.setDescription(description.join('\n'));
             await interaction.update({
                 embeds: [abilityEmbed],
@@ -293,7 +310,11 @@ export default class About extends SubCommand {
             new Button()
                 .setLabel('Back')
                 .setStyle(ButtonStyle.Primary)
-                .setCustomId('back')
+                .setCustomId('back'),
+            new Button()
+                .setLabel('Show combo')
+                .setStyle(ButtonStyle.Primary)
+                .setCustomId('combo')
         ];
 
         if (selectedAbility && !selectedAbility.isCollab) {

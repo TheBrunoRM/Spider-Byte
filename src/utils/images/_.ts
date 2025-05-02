@@ -3,8 +3,8 @@ import type { Image } from '@napi-rs/canvas';
 import { type SKRSContext2D, loadImage } from '@napi-rs/canvas';
 import { join } from 'node:path';
 
-import { MARVELRIVALS_DOMAIN, STICKY_CDN_DOMAIN } from '../env';
 import { getRankDetails } from '../functions/rank-utils';
+import { STICKY_CDN_DOMAIN } from '../env';
 
 async function loadImageFromCache(
     cacheDir: string,
@@ -30,15 +30,15 @@ async function loadImageFromCache(
     return loadImage(path);
 }
 
-export async function loadUserIcon(iconID: string) {
+export function loadUserIcon(iconID: string) {
     return loadImageFromCache(
         'user_icon',
         iconID,
-        `${MARVELRIVALS_DOMAIN}/rivals/players/heads/player_head_${iconID}.png`
+        `${STICKY_CDN_DOMAIN}/Content/Marvel/UI/Textures/Show/PlayerHead/img_playerhead_${iconID}.png`
     );
 }
 
-export async function loadHeroHistory(heroID: number) {
+export function loadHeroHistory(heroID: number) {
     return loadImageFromCache(
         'hero_history',
         heroID,
@@ -46,7 +46,7 @@ export async function loadHeroHistory(heroID: number) {
     );
 }
 
-export async function loadRankIcon(level: number) {
+export function loadRankIcon(level: number) {
     const { image, rank } = getRankDetails(level);
     return loadImageFromCache(
         'rank_icon',
@@ -55,7 +55,7 @@ export async function loadRankIcon(level: number) {
     );
 }
 
-export async function loadHeroSquare(hero_id: number) {
+export function loadHeroSquare(hero_id: number) {
     return loadImageFromCache(
         'hero_square',
         hero_id,

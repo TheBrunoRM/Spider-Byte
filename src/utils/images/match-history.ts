@@ -489,6 +489,18 @@ export async function createMatchHistoryImage(t: CommandContext['t'], user: Play
         ctx.font = '24px InterBlack';
         ctx.fillStyle = '#25CCE8';
         ctx.fillText(kda, kdaX, centerY + TEXT_VERTICAL_SPACING * 0.5);
+
+        if (user.uid === match.svp_uid) {
+            const url = `${STICKY_CDN_DOMAIN}/Content/L10N/EN/Marvel_LQ/UI/Textures/Settlement/img_settlement_smallsvp.png`;
+            const image = await loadImage(url);
+            ctx.drawImage(image, 500, rectY + image.height * 0.88);
+        }
+
+        if (user.uid === match.mvp_uid) {
+            const url = `${STICKY_CDN_DOMAIN}/Content/L10N/EN/Marvel_LQ/UI/Textures/Settlement/img_settlement_smallmvp.png`;
+            const image = await loadImage(url);
+            ctx.drawImage(image, 500, rectY + image.height * 0.88);
+        }
     }
 
     return canvas.encode('png');

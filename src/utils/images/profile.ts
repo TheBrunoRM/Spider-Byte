@@ -21,15 +21,45 @@ function getRankPath(rank: string) {
 
 export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[], gameMode: 'ranked' | 'casual' | 'both' = 'both') {
     let concatedHeroes: HeroesRanked[];
+    let kills: string;
+    let kdaRatio: string;
+    let wins: string;
+    let totalMvp: string;
+    let totalSvp: string;
+
     switch (gameMode) {
         case 'ranked':
             concatedHeroes = data.heroes_ranked;
+            kills = data.overall_stats.ranked.total_kills.toString();
+            kdaRatio = (
+                (data.overall_stats.ranked.total_kills + data.overall_stats.ranked.total_assists)
+                / data.overall_stats.ranked.total_deaths
+            ).toFixed(1);
+            wins = data.overall_stats.ranked.total_wins.toString();
+            totalMvp = data.overall_stats.ranked.total_mvp.toString();
+            totalSvp = data.overall_stats.ranked.total_svp.toString();
             break;
         case 'casual':
             concatedHeroes = data.heroes_unranked;
+            kills = data.overall_stats.unranked.total_kills.toString();
+            kdaRatio = (
+                (data.overall_stats.unranked.total_kills + data.overall_stats.unranked.total_assists)
+                / data.overall_stats.unranked.total_deaths
+            ).toFixed(1);
+            wins = data.overall_stats.unranked.total_wins.toString();
+            totalMvp = data.overall_stats.unranked.total_mvp.toString();
+            totalSvp = data.overall_stats.unranked.total_svp.toString();
             break;
         case 'both':
             concatedHeroes = data.heroes_ranked.concat(data.heroes_unranked);
+            kills = (data.overall_stats.ranked.total_kills + data.overall_stats.unranked.total_kills).toString();
+            kdaRatio = (
+                (data.overall_stats.ranked.total_kills + data.overall_stats.unranked.total_kills + data.overall_stats.ranked.total_assists + data.overall_stats.unranked.total_assists)
+                / (data.overall_stats.ranked.total_deaths + data.overall_stats.unranked.total_deaths)
+            ).toFixed(1);
+            wins = (data.overall_stats.ranked.total_wins + data.overall_stats.unranked.total_wins).toString();
+            totalMvp = (data.overall_stats.ranked.total_mvp + data.overall_stats.unranked.total_mvp).toString();
+            totalSvp = (data.overall_stats.ranked.total_svp + data.overall_stats.unranked.total_svp).toString();
             break;
     }
     const mostplayed = concatedHeroes.toSorted((a, b) => b.play_time - a.play_time).at(0);
@@ -104,22 +134,15 @@ export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[], g
 
     ctx.fillStyle = 'black';
     ctx.font = '900 30px RefrigeratorDeluxeBold';
-    const kills = (data.overall_stats.ranked.total_kills + data.overall_stats.unranked.total_kills).toString();
+
     const killsMetrics = ctx.measureText(kills);
     ctx.fillText(kills, 425 - killsMetrics.width / 2, 295);
 
-    const kdaRatio = (
-        (data.overall_stats.ranked.total_kills + data.overall_stats.unranked.total_kills + data.overall_stats.ranked.total_assists + data.overall_stats.unranked.total_assists)
-        / (data.overall_stats.ranked.total_deaths + data.overall_stats.unranked.total_deaths)
-    ).toFixed(1);
     const kdaRatioMetrics = ctx.measureText(kdaRatio);
     ctx.fillText(kdaRatio, 572 - kdaRatioMetrics.width / 2, 295);
 
-    const winsMetrics = ctx.measureText(data.overall_stats.total_wins.toString());
-    ctx.fillText(data.overall_stats.total_wins.toString(), 727 - winsMetrics.width / 2, 295);
-
-    const totalMvp = (data.overall_stats.ranked.total_mvp + data.overall_stats.unranked.total_mvp).toString();
-    const totalSvp = (data.overall_stats.ranked.total_svp + data.overall_stats.unranked.total_svp).toString();
+    const winsMetrics = ctx.measureText(wins);
+    ctx.fillText(wins, 727 - winsMetrics.width / 2, 295);
 
     const mvpMetrics = ctx.measureText(totalMvp);
     ctx.fillText(totalMvp, 861 - mvpMetrics.width / 2, 295);

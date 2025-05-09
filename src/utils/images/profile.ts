@@ -19,8 +19,19 @@ function getRankPath(rank: string) {
     return join(process.cwd(), 'assets', 'ranks', p);
 }
 
-export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[]) {
-    const concatedHeroes = data.heroes_ranked.concat(data.heroes_unranked);
+export async function generateProfile(data: PlayerDTO, allHeroes: HeroesDTO[], gameMode: 'ranked' | 'casual' | 'both' = 'both') {
+    let concatedHeroes: HeroesRanked[];
+    switch (gameMode) {
+        case 'ranked':
+            concatedHeroes = data.heroes_ranked;
+            break;
+        case 'casual':
+            concatedHeroes = data.heroes_unranked;
+            break;
+        case 'both':
+            concatedHeroes = data.heroes_ranked.concat(data.heroes_unranked);
+            break;
+    }
     const mostplayed = concatedHeroes.toSorted((a, b) => b.play_time - a.play_time).at(0);
     const background = await loadImage(join(process.cwd(), 'assets', 'profile', 'background.png'));
 

@@ -22,7 +22,7 @@ export default createMiddleware<undefined>(({ context, next, stop, pass }) => {
 
     const id =
         commandCooldown.type === 'channel'
-            ? context.interaction.channel.id || context.author.id // dm channel (?)
+            ? context.interaction.channel.id
             : context.author.id;
     const key = `${id}:${commmandName}`;
 

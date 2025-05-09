@@ -8,6 +8,27 @@ const options = {
     locales: {
       description: 'commands.commonOptions.nameOrId'
     }
+  }),
+  'game-mode': createStringOption({
+    description: 'Choose the game mode to display stats for.',
+    required: false,
+    choices: [
+      {
+        name: 'Ranked',
+        value: 'ranked'
+      },
+      {
+        name: 'Casual',
+        value: 'casual'
+      },
+      {
+        name: 'Both',
+        value: 'both'
+      }
+    ] as const,
+    locales: {
+      description: 'commands.commonOptions.gameMode'
+    }
   })
 };
 
@@ -40,7 +61,7 @@ export default class ProfileCommand extends SubCommand {
       });
     }
 
-    const buffer = await generateProfile(player, await ctx.client.api.getHeroes());
+    const buffer = await generateProfile(player, await ctx.client.api.getHeroes(), ctx.options['game-mode']);
     await ctx.editOrReply({
       files: [
         new AttachmentBuilder().setName('profile.png').setFile('buffer', buffer)

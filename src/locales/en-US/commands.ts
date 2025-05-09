@@ -9,7 +9,8 @@ export const commands = {
         privateProfile: ':warning: This profile is set to private in game. To change this, follow the directions shown and try again.'
     },
     commonOptions: {
-        nameOrId: 'Enter the player name to identify the player.'
+        nameOrId: 'Enter the player name to identify the player.',
+        gameMode: 'Choose the game mode to display stats for.'
     },
     middlewares: {
         cooldown: {

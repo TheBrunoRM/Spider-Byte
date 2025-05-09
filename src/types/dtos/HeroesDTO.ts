@@ -11,7 +11,7 @@ export interface HeroesDTO {
   readonly lore: string;
   readonly transformations: Transformation[];
   readonly costumes: Costume[];
-  readonly abilities: Ability[] | null;
+  readonly abilities: Ability[];
 }
 
 export interface Ability {

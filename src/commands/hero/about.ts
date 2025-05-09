@@ -185,9 +185,7 @@ export default class About extends SubCommand {
 
         collector.run<ButtonInteraction>('abilities', async (interaction) => interaction.update({
             embeds: [interaction.message.embeds[0]],
-            components: hero.abilities
-                ? this.generateActionRowSelectMenu(hero.abilities)
-                : []
+            components: this.generateActionRowSelectMenu(hero.abilities)
         }));
 
         collector.run<ButtonInteraction>(/video_[0-9]{1,}/, async (interaction) => {
@@ -204,9 +202,6 @@ export default class About extends SubCommand {
         });
 
         collector.run<SelectMenuInteraction>(/./, async (interaction) => {
-            if (!hero.abilities) {
-                return;
-            }
             const abilityId = interaction.values.at(0);
             if (!abilityId) {
                 return;

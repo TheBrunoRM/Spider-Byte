@@ -11,7 +11,8 @@ const commands = {
         privateProfile: ':warning: Este perfil está configurado como privado en el juego. Para cambiarlo, sigue las instrucciones que se muestran e intenta de nuevo.'
     },
     commonOptions: {
-        nameOrId: 'Ingresa el nombre del jugador para identificarlo.'
+        nameOrId: 'Ingresa el nombre del jugador para identificarlo.',
+        gameMode: 'Elige el modo de juego para mostrar estadísticas.'
     },
     middlewares: {
         cooldown: {

@@ -419,7 +419,7 @@ export class Api {
         ) {
           //
         } else {
-          bucket.remaining = Number(xRatelimitRemaining);
+          bucket.remaining = Number(xRatelimitRemaining) - 1;
           bucket.limit = Number(xRatelimitLimit) - 1;
           bucket.resetAfter = Number(xRatelimitReset) * 1e3 - new Date().getTime();
         }

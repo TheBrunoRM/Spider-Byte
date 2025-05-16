@@ -3,7 +3,6 @@ import didYouMean, { ReturnTypeEnums } from 'didyoumean2';
 
 import mapsJson from '../../../assets/json/maps.json';
 
-
 const options = {
     name: createStringOption({
         description: 'The name of the map',

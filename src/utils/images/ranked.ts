@@ -6,8 +6,9 @@ import { join } from 'node:path';
 import type { ScoreInfo } from '../../types/dtos/MatchHistoryDTO';
 import type { PlayerDTO } from '../../types/dtos/PlayerDTO';
 
-import { drawCircularImage, loadRankIcon, loadUserIcon } from './_';
 import { getRankDetails } from '../functions/rank-utils';
+import { loadRankIcon, loadUserIcon } from './_';
+import { drawCircularImage } from './utils';
 
 export interface ExpectedScoreInfo extends MakeRequired<ScoreInfo> {
     match_time_stamp: number;

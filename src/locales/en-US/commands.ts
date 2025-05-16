@@ -20,6 +20,11 @@ export const commands = {
             }
         }
     },
+    profile: {
+        options: {
+            imageVersion: 'Choose the image version to display stats for.'
+        }
+    },
     help: {
         name: 'help',
         description: 'Display information about available commands.',

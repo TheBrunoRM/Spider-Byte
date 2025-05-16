@@ -1,6 +1,6 @@
 import { type CommandContext, createStringOption, AttachmentBuilder, SubCommand, LocalesT, Declare, Options } from 'seyfert';
 
-import { generateProfile } from '../../utils/images/profile';
+import { generateProfileV1, generateProfileV2 } from '../../utils/images/profile';
 
 const options = {
   'name-or-id': createStringOption({
@@ -28,6 +28,22 @@ const options = {
     ] as const,
     locales: {
       description: 'commands.commonOptions.gameMode'
+    }
+  }),
+  'image-version': createStringOption({
+    description: 'Choose the image version to display stats for.',
+    choices: [
+      {
+        name: 'V1',
+        value: 'v1'
+      },
+      {
+        name: 'V2',
+        value: 'v2'
+      }
+    ] as const,
+    locales: {
+      description: 'commands.profile.options.imageVersion'
     }
   })
 };
@@ -61,7 +77,9 @@ export default class ProfileCommand extends SubCommand {
       });
     }
 
-    const buffer = await generateProfile(player, await ctx.client.api.getHeroes(), ctx.options['game-mode']);
+    const buffer = await (ctx.options['image-version'] === 'v1'
+      ? generateProfileV1
+      : generateProfileV2)(player, await ctx.client.api.getHeroes(), ctx.options['game-mode']);
     await ctx.editOrReply({
       files: [
         new AttachmentBuilder().setName('profile.png').setFile('buffer', buffer)

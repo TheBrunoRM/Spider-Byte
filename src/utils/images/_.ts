@@ -1,6 +1,4 @@
-import type { Image } from '@napi-rs/canvas';
-
-import { type SKRSContext2D, loadImage } from '@napi-rs/canvas';
+import { loadImage } from '@napi-rs/canvas';
 import { join } from 'node:path';
 
 import { getRankDetails } from '../functions/rank-utils';
@@ -18,6 +16,7 @@ async function loadImageFromCache(
     }
     const response = await fetch(fetchURL);
     if (!response.ok) {
+        console.log({ fetchURL });
         const placeholderPath = join(process.cwd(), 'assets', 'placeholders', `${cacheDir}.png`);
         const placeholdersFile = Bun.file(placeholderPath);
         if (await placeholdersFile.exists()) {
@@ -61,16 +60,4 @@ export function loadHeroSquare(hero_id: number) {
         hero_id,
         `${STICKY_CDN_DOMAIN}/heroes/transformations/${hero_id}/0.png`
     );
-}
-
-export function drawCircularImage(ctx: SKRSContext2D, image: Image, x: number, y: number, width: number, height: number, radius = Math.min(width, height) / 2) {
-    ctx.save();
-    ctx.beginPath();
-    const centerX = x + width / 2;
-    const centerY = y + height / 2;
-    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-    ctx.closePath();
-    ctx.clip();
-    ctx.drawImage(image, x, y, width, height);
-    ctx.restore();
 }

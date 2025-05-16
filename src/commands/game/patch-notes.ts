@@ -57,7 +57,6 @@ export default class RankCommand extends SubCommand {
             files: [img]
         });
 
-
         await callbackPaginator(ctx, chunks, {
             callback: (chunk) => ({
                 content: `${header}${chunk[0]}`,

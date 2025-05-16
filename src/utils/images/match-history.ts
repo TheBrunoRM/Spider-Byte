@@ -7,9 +7,10 @@ import { join } from 'node:path';
 import type { MatchHistoryDTO } from '../../types/dtos/MatchHistoryDTO';
 import type { PlayerDTO } from '../../types/dtos/PlayerDTO';
 
-import { drawCircularImage, loadHeroSquare, loadRankIcon, loadUserIcon } from './_';
+import { loadHeroSquare, loadRankIcon, loadUserIcon } from './_';
 import { getRankDetails } from '../functions/rank-utils';
 import { getMapById } from '../functions/maps';
+import { drawCircularImage } from './utils';
 import { STICKY_CDN_DOMAIN } from '../env';
 
 const seasons = [{

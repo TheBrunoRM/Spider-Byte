@@ -22,6 +22,11 @@ const commands = {
             }
         }
     },
+    profile: {
+        options: {
+            imageVersion: 'Elige la versión de imagen para mostrar estadísticas.'
+        }
+    },
     help: {
         name: 'help',
         description: 'Muestra información sobre los comandos disponibles.',

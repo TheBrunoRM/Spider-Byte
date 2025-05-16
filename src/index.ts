@@ -170,9 +170,9 @@ client.api = new Api(API_KEY, client.redis);
 
 client.topgg = new TopGGAPI(TOPGG_TOKEN);
 
-await client.api.getHeroes();
+// await client.api.getHeroes();
 
-await client.api.getAllMaps();
+// await client.api.getAllMaps();
 
 await client.start();
 

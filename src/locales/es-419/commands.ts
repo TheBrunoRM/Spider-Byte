@@ -55,7 +55,7 @@ const commands = {
     },
     ping: {
         name: 'ping',
-        content: (latency) => `Ping: ${latency}ms. Latencia actual con el servidor.`
+        content: (avglatency, shardLatency) => `Ping: ${avglatency}ms. Latencia actual con el servidor. Latencia del shard: ${shardLatency}ms.`
     },
     core: {
         compare: {

@@ -53,7 +53,7 @@ export const commands = {
     },
     ping: {
         name: 'ping',
-        content: (latency: number) => `Ping: ${latency}ms. Current server latency.`
+        content: (avglatency: number, shardLatency: number) => `Ping: ${avglatency}ms. Current server latency. Shard latency: ${shardLatency}ms.`
     },
     core: {
         compare: {

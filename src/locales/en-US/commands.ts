@@ -9,8 +9,22 @@ export const commands = {
         privateProfile: ':warning: This profile is set to private in game. To change this, follow the directions shown and try again.'
     },
     commonOptions: {
-        nameOrId: 'Enter the player name to identify the player.',
-        gameMode: 'Choose the game mode to display stats for.'
+        nameOrId: {
+            name: 'name-or-id',
+            description: 'Enter the player name to identify the player.'
+        },
+        gameMode: {
+            name: 'game-mode',
+            description: 'Choose the game mode to display stats for.'
+        },
+        season: {
+            name: 'season',
+            description: 'Choose the season to display stats for. If not specified, the latest season will be used.'
+        },
+        page: {
+            name: 'page',
+            description: 'Page number in pagination'
+        }
     },
     middlewares: {
         cooldown: {
@@ -20,16 +34,14 @@ export const commands = {
             }
         }
     },
-    profile: {
-        options: {
-            imageVersion: 'Choose the image version to display stats for.'
-        }
-    },
     help: {
         name: 'help',
         description: 'Display information about available commands.',
         options: {
-            command: 'Specific command to get help for.'
+            command: {
+                name: 'command',
+                description: 'Specific command to get help for.'
+            }
         },
         noCommandFound: ':warning: Command not found. Check the command name and try again.',
         embed: {
@@ -53,28 +65,49 @@ export const commands = {
     },
     ping: {
         name: 'ping',
+        description: 'Check the bot\'s latency',
         content: (avglatency: number, shardLatency: number) => `Ping: ${avglatency}ms. Current server latency. Shard latency: ${shardLatency}ms.`
     },
-    core: {
+    player: {
+        name: 'player',
+        description: 'View player profiles, compare stats, and track rank progression',
         compare: {
             name: 'compare',
             description: 'Compare stats of two players, including kills, wins, and MVP times.',
             samePlayer: ':warning: Same player provided twice. Use two different names or IDs.',
             options: {
-                first: 'First player name or ID to compare.',
-                second: 'Second player name or ID to compare.'
+                first: {
+                    name: 'first',
+                    description: 'First player name or ID to compare.'
+                },
+                second: {
+                    name: 'second',
+                    description: 'Second player name or ID to compare.'
+                }
             }
         },
         profile: {
             name: 'profile',
-            description: 'Get detailed stats like roles, rank, and top heroes for a player.'
+            description: 'Get detailed stats like roles, rank, and top heroes for a player.',
+            options: {
+                imageVersion: {
+                    name: 'image-version',
+                    description: 'Choose the image version to display stats for.'
+                }
+            }
         },
         rank: {
             name: 'rank',
             description: 'View a timeline graph of a player\'s rank history.',
             noRankHistory: (playerName: string, clubTeamId: string | null) => `:warning: **${playerName}${clubTeamId
                 ? `#${clubTeamId}** `
-                : '** '} has no rank history.`
+                : '** '} has no rank history.`,
+            options: {
+                limit: {
+                    name: 'limit',
+                    description: 'The number of matches to display in the graph.'
+                }
+            }
         },
         update: {
             name: 'update',
@@ -86,16 +119,25 @@ export const commands = {
             success: (playerName: string, clubTeamId: string, uid: number) => `:white_check_mark: **${playerName}${clubTeamId === ''
                 ? '** '
                 : `#${clubTeamId}** `}(${uid}) stats has been updated. Data may take up to a while to reflect.`
+        },
+        uid: {
+            name: 'uid',
+            description: 'Get the player UID by the player name.'
         }
     },
     game: {
+        name: 'game',
+        description: 'Access game maps information and latest patch notes',
         patchNotes: {
             name: 'patch-notes',
             description: 'Get the latest patch notes or patch notes for a specific ID.',
             notFound: (id: string) => `:warning: Patch notes with ID ${id} not found. Check the ID and try again.`,
             noPatchNotes: ':warning: No patch notes available at the moment.',
             options: {
-                id: 'The patch notes ID to retrieve specific updates.'
+                id: {
+                    name: 'id',
+                    description: 'The patch notes ID to retrieve specific updates.'
+                }
             }
         },
         map: {
@@ -103,17 +145,25 @@ export const commands = {
             description: 'Get detailed information about a specific map.',
             notFound: ':warning: Map not found. Check the name and try again.',
             options: {
-                name: 'The name of the map to retrieve information about.'
+                name: {
+                    name: 'name',
+                    description: 'The name of the map to retrieve information about.'
+                }
             }
         }
     },
     hero: {
+        name: 'hero',
+        description: 'Get detailed information about a specific hero.',
         about: {
             name: 'about',
             description: 'Get detailed info about a hero, including abilities and stats.',
             notFound: (heroName: string) => `:warning: Hero ${heroName} not found. Check the name and try again.`,
             options: {
-                name: 'The hero name to retrieve information about.'
+                name: {
+                    name: 'name',
+                    description: 'The hero name to retrieve information about.'
+                }
             }
         },
         leaderboard: {
@@ -121,19 +171,35 @@ export const commands = {
             description: 'View the leaderboard for a specific hero.',
             notFound: ':warning: No leaderboard found for this hero.',
             options: {
-                hero: 'The hero to get leaderboard info for.',
-                platform: 'The platform to get leaderboard info for.'
+                hero: {
+                    name: 'hero',
+                    description: 'The hero to get leaderboard info for.'
+                },
+                platform: {
+                    name: 'platform',
+                    description: 'The platform to get leaderboard info for.'
+                }
             }
         }
     },
     match: {
+        name: 'match',
+        description: 'View match details and history',
         history: {
             name: 'history',
             description: 'View match history for a specific player.',
-            noHistory: (playerName: string) => `:warning: No match history found for **${playerName}**.`
+            noHistory: (playerName: string) => `:warning: No match history found for **${playerName}**.`,
+            options: {
+                skip: {
+                    name: 'skip',
+                    description: 'Number of matches to skip'
+                }
+            }
         }
     },
     account: {
+        name: 'account',
+        description: 'Link or unlink your game account to your Discord account.',
         link: {
             name: 'link',
             description: 'Link your game account to your Discord account.',

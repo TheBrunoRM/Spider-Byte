@@ -38,7 +38,8 @@ const options = {
         },
         required: true,
         locales: {
-            description: 'commands.hero.leaderboard.options.hero'
+            name: 'commands.hero.leaderboard.options.hero.name',
+            description: 'commands.hero.leaderboard.options.hero.description'
         }
     }),
     platform: createStringOption({
@@ -58,7 +59,8 @@ const options = {
             }
         ] as const,
         locales: {
-            description: 'commands.hero.leaderboard.options.platform'
+            name: 'commands.hero.leaderboard.options.platform.name',
+            description: 'commands.hero.leaderboard.options.platform.description'
         }
     })
 };

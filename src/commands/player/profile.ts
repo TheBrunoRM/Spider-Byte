@@ -6,7 +6,8 @@ const options = {
   'name-or-id': createStringOption({
     description: 'Enter the player name or ID to identify the player.',
     locales: {
-      description: 'commands.commonOptions.nameOrId'
+      name: 'commands.commonOptions.nameOrId.name',
+      description: 'commands.commonOptions.nameOrId.description'
     }
   }),
   'game-mode': createStringOption({
@@ -27,7 +28,8 @@ const options = {
       }
     ] as const,
     locales: {
-      description: 'commands.commonOptions.gameMode'
+      name: 'commands.commonOptions.gameMode.name',
+      description: 'commands.commonOptions.gameMode.description'
     }
   }),
   'image-version': createStringOption({
@@ -43,7 +45,8 @@ const options = {
       }
     ] as const,
     locales: {
-      description: 'commands.profile.options.imageVersion'
+      name: 'commands.player.profile.options.imageVersion.name',
+      description: 'commands.player.profile.options.imageVersion.description'
     }
   })
 };
@@ -52,7 +55,7 @@ const options = {
   name: 'profile',
   description: 'Get detailed stats like roles, rank, and top heroes for a player.'
 })
-@LocalesT('commands.core.profile.name', 'commands.core.profile.description')
+@LocalesT('commands.player.profile.name', 'commands.player.profile.description')
 @Options(options)
 export default class ProfileCommand extends SubCommand {
   async run(ctx: CommandContext<typeof options>) {

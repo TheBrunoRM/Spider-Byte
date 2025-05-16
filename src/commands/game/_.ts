@@ -1,4 +1,4 @@
-import { AutoLoad, Declare, Command } from 'seyfert';
+import { AutoLoad, LocalesT, Declare, Command } from 'seyfert';
 
 @Declare({
     name: 'game',
@@ -13,4 +13,5 @@ import { AutoLoad, Declare, Command } from 'seyfert';
     }
 })
 @AutoLoad()
+@LocalesT('commands.game.name', 'commands.game.description')
 export default class GameCommand extends Command { }

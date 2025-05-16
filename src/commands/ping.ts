@@ -1,6 +1,6 @@
 import type { CommandContext } from 'seyfert';
 
-import { Command, Declare } from 'seyfert';
+import { LocalesT, Command, Declare } from 'seyfert';
 
 @Declare({
     name: 'ping',
@@ -14,6 +14,7 @@ import { Command, Declare } from 'seyfert';
         }
     }
 })
+@LocalesT('commands.ping.name', 'commands.ping.description')
 export default class Ping extends Command {
     async run(ctx: CommandContext) {
         const avgLatency = ctx.client.gateway.latency;

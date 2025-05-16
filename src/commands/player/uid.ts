@@ -1,12 +1,13 @@
 import type { CommandContext } from 'seyfert';
 
-import { createStringOption, SubCommand, Declare, Options } from 'seyfert';
+import { createStringOption, SubCommand, LocalesT, Declare, Options } from 'seyfert';
 
 const options = {
     name: createStringOption({
         description: 'Enter the player name to identify the player.',
         locales: {
-            description: 'commands.commonOptions.nameOrId'
+            name: 'commands.commonOptions.nameOrId.name',
+            description: 'commands.commonOptions.nameOrId.description'
         },
         required: true
     })
@@ -17,6 +18,7 @@ const options = {
     description: 'Get the player UID by the player name.'
 })
 @Options(options)
+@LocalesT('commands.player.uid.name', 'commands.player.uid.description')
 export default class RankCommand extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
         await ctx.deferReply();

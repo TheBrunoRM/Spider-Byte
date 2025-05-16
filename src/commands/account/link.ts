@@ -4,7 +4,8 @@ const options = {
     'name-or-id': createStringOption({
         description: 'Enter the player name or ID to identify the player.',
         locales: {
-            description: 'commands.commonOptions.nameOrId'
+            name: 'commands.commonOptions.nameOrId.name',
+            description: 'commands.commonOptions.nameOrId.description'
         },
         required: true
     })

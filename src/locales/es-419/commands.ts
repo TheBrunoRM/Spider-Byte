@@ -11,8 +11,26 @@ const commands = {
         privateProfile: ':warning: Este perfil está configurado como privado en el juego. Para cambiarlo, sigue las instrucciones que se muestran e intenta de nuevo.'
     },
     commonOptions: {
-        nameOrId: 'Ingresa el nombre del jugador para identificarlo.',
-        gameMode: 'Elige el modo de juego para mostrar estadísticas.'
+        nameOrId: {
+            name: 'nombre-o-id',
+            description:
+                'Ingresa el nombre del jugador para identificarlo.'
+        },
+        gameMode: {
+            name: 'modo-de-juego',
+            description:
+                'Elige el modo de juego para mostrar estadísticas.'
+        },
+        season: {
+            name: 'temporada',
+            description:
+                'Elige la temporada para mostrar estadísticas. Si no se especifica, se usará la última temporada.'
+        },
+        page: {
+            name: 'página',
+            description:
+                'Número de página en la paginación'
+        }
     },
     middlewares: {
         cooldown: {
@@ -22,16 +40,14 @@ const commands = {
             }
         }
     },
-    profile: {
-        options: {
-            imageVersion: 'Elige la versión de imagen para mostrar estadísticas.'
-        }
-    },
     help: {
-        name: 'help',
+        name: 'ayuda',
         description: 'Muestra información sobre los comandos disponibles.',
         options: {
-            command: 'Comando específico del cual obtener ayuda.'
+            command: {
+                name: 'comando',
+                description: 'Comando específico del cual obtener ayuda.'
+            }
         },
         noCommandFound: ':warning: Comando no encontrado. Verifica el nombre del comando e intenta de nuevo.',
         embed: {
@@ -54,32 +70,53 @@ const commands = {
         }
     },
     ping: {
-        name: 'ping',
+        name: 'latencia',
+        description: 'Verifica la latencia del bot',
         content: (avglatency, shardLatency) => `Ping: ${avglatency}ms. Latencia actual con el servidor. Latencia del shard: ${shardLatency}ms.`
     },
-    core: {
+    player: {
+        name: 'jugador',
+        description: 'Ver perfiles de jugadores, comparar estadísticas y rastrear progresión de rangos',
         compare: {
             name: 'compare',
             description: 'Compara estadísticas de dos jugadores, incluyendo asesinatos, victorias y veces como MVP.',
             samePlayer: ':warning: Se proporcionó el mismo jugador dos veces. Usa dos nombres o IDs diferentes.',
             options: {
-                first: 'Nombre o ID del primer jugador a comparar.',
-                second: 'Nombre o ID del segundo jugador a comparar.'
+                first: {
+                    name: 'primer',
+                    description: 'Nombre o ID del primer jugador a comparar.'
+                },
+                second: {
+                    name: 'segundo',
+                    description: 'Nombre o ID del segundo jugador a comparar.'
+                }
             }
         },
         profile: {
-            name: 'profile',
-            description: 'Obtén estadísticas detalladas como roles, rango y héroes principales de un jugador.'
+            name: 'perfil',
+            description: 'Ver perfiles de jugadores, comparar estadísticas y rastrear progresión de rangos',
+            options: {
+                imageVersion: {
+                    name: 'versión-de-imagen',
+                    description: 'Elige la versión de imagen para mostrar estadísticas.'
+                }
+            }
         },
         rank: {
-            name: 'rank',
+            name: 'rango',
             description: 'Muestra una gráfica de la historia de rangos de un jugador.',
             noRankHistory: (playerName, clubTeamId) => `:warning: **${playerName}${clubTeamId
                 ? `#${clubTeamId}** `
-                : '** '} no tiene historial de rangos.`
+                : '** '} no tiene historial de rangos.`,
+            options: {
+                limit: {
+                    name: 'límite',
+                    description: 'Número de partidas a mostrar en la gráfica.'
+                }
+            }
         },
         update: {
-            name: 'update',
+            name: 'actualizar',
             description: 'Actualiza las estadísticas de un jugador.',
             updatedRecently: (playerName) => `:warning: **${playerName}** ya se actualizó recientemente. Intenta de nuevo más tarde.`,
             cantUpdate: (playerName, clubTeamId, uid) => `No se puede actualizar **${playerName}${clubTeamId === ''
@@ -88,16 +125,25 @@ const commands = {
             success: (playerName, clubTeamId, uid) => `:white_check_mark: **${playerName}${clubTeamId === ''
                 ? '** '
                 : `#${clubTeamId}** `}(${uid}) estadísticas actualizadas. Los datos pueden tardar unos minutos en aparecer.`
+        },
+        uid: {
+            name: 'uid',
+            description: 'Obtén el UID del jugador por su nombre.'
         }
     },
     game: {
+        name: 'juego',
+        description: 'Muestra información sobre el juego, incluyendo mapas y notas de parches.',
         patchNotes: {
             name: 'patch-notes',
             description: 'Obtén las últimas notas de parche o para un ID específico.',
             notFound: (id) => `Notas de parche con ID ${id} no encontradas. Revisa el ID e intenta de nuevo.`,
             noPatchNotes: ':warning: No hay notas de parche disponibles en este momento.',
             options: {
-                id: 'El ID de las notas de parche para obtener actualizaciones específicas.'
+                id: {
+                    name: 'id',
+                    description: 'El ID de las notas de parche para obtener actualizaciones específicas.'
+                }
             }
         },
         map: {
@@ -105,17 +151,25 @@ const commands = {
             description: 'Obtén información detallada de un mapa específico.',
             notFound: 'Mapa no encontrado. Revisa el nombre e intenta de nuevo.',
             options: {
-                name: 'El nombre del mapa para obtener información.'
+                name: {
+                    name: 'nombre',
+                    description: 'El nombre del mapa para obtener información.'
+                }
             }
         }
     },
     hero: {
+        name: 'héroe',
+        description: 'Obtén información detallada sobre héroes, incluyendo estadísticas y habilidades.',
         about: {
             name: 'about',
             description: 'Obtén información detallada de un héroe, incluyendo habilidades y estadísticas.',
             notFound: (heroName) => `:warning: Héroe ${heroName} no encontrado. Revisa el nombre e intenta de nuevo.`,
             options: {
-                name: 'El nombre del héroe para obtener información.'
+                name: {
+                    name: 'nombre',
+                    description: 'El nombre del héroe para obtener información.'
+                }
             }
         },
         leaderboard: {
@@ -123,19 +177,35 @@ const commands = {
             description: 'Muestra la tabla de clasificación de un héroe específico.',
             notFound: ':warning: No se encontró tabla de clasificación para este héroe.',
             options: {
-                hero: 'El héroe para obtener información de clasificación.',
-                platform: 'La plataforma para obtener información de clasificación.'
+                hero: {
+                    name: 'héroe',
+                    description: 'El héroe para obtener información de clasificación.'
+                },
+                platform: {
+                    name: 'plataforma',
+                    description: 'La plataforma para obtener información de clasificación.'
+                }
             }
         }
     },
     match: {
+        name: 'partida',
+        description: 'Muestra información sobre partidas, incluyendo estadísticas y detalles de jugadores.',
         history: {
             name: 'history',
             description: 'Muestra el historial de partidas de un jugador.',
-            noHistory: (playerName) => `:warning: **${playerName}** no tiene historial de partidas.`
+            noHistory: (playerName) => `:warning: **${playerName}** no tiene historial de partidas.`,
+            options: {
+                skip: {
+                    name: 'saltar',
+                    description: 'Número de partidas a omitir en la paginación.'
+                }
+            }
         }
     },
     account: {
+        name: 'cuenta',
+        description: 'Vincula o desvincula tu cuenta del juego a tu cuenta de Discord.',
         link: {
             name: 'link',
             description: 'Vincula tu cuenta del juego a tu cuenta de Discord.',

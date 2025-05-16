@@ -119,7 +119,7 @@ const client = new Client({
     presence() {
         return {
             activities: [{
-                name: 'Gonna get sticky',
+                name: 'Gonna get sticky!',
                 type: ActivityType.Custom,
                 state: 'Gonna get sticky!'
             }],
@@ -183,8 +183,6 @@ await client.uploadCommands({
 declare module 'seyfert' {
     interface RegisteredMiddlewares
         extends ParseMiddlewares<typeof middlewares> { }
-
-    interface ExtendedRC { }
 
     interface UsingClient extends ParseClient<Client<true>> {
         api: Api;

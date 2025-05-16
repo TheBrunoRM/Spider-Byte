@@ -89,7 +89,8 @@ const options = {
         },
         required: true,
         locales: {
-            description: 'commands.hero.about.options.name'
+            name: 'commands.hero.about.options.name.name',
+            description: 'commands.hero.about.options.name.description'
         }
     })
 };

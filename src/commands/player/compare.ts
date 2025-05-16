@@ -8,13 +8,15 @@ const options = {
     'name-or-id': createStringOption({
         description: 'first player name or id to compare',
         locales: {
-            description: 'commands.core.compare.options.first'
+            name: 'commands.player.compare.options.first.name',
+            description: 'commands.player.compare.options.first.description'
         }
     }),
     'name-or-id2': createStringOption({
         description: 'second player name or id to compare',
         locales: {
-            description: 'commands.core.compare.options.second'
+            name: 'commands.player.compare.options.second.name',
+            description: 'commands.player.compare.options.second.description'
         }
     })
 };
@@ -23,7 +25,7 @@ const options = {
     name: 'compare',
     description: 'Compare stats of two players, including ranks, roles, and top heroes.'
 })
-@LocalesT('commands.core.compare.name', 'commands.core.compare.description')
+@LocalesT('commands.player.compare.name', 'commands.player.compare.description')
 @Options(options)
 export default class CompareCommand extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
@@ -33,7 +35,7 @@ export default class CompareCommand extends SubCommand {
         const secondNameOrId = ctx.options['name-or-id2'];
         if (!firstNameOrId || !secondNameOrId || firstNameOrId === secondNameOrId) {
             return ctx.editOrReply({
-                content: ctx.t.commands.core.compare.samePlayer.get()
+                content: ctx.t.commands.player.compare.samePlayer.get()
             });
         }
 
@@ -47,7 +49,7 @@ export default class CompareCommand extends SubCommand {
 
         if (playerOne.player.uid === playerTwo.player.uid) {
             return ctx.editOrReply({
-                content: ctx.t.commands.core.compare.samePlayer.get()
+                content: ctx.t.commands.player.compare.samePlayer.get()
             });
         }
 

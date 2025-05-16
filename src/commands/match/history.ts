@@ -14,6 +14,10 @@ const options = {
                 fail(context.t.commands.commonErrors.playerNotFound.get()); return;
             }
             ok(data.uid);
+        },
+        locales: {
+            name: 'commands.commonOptions.nameOrId.name',
+            description: 'commands.commonOptions.nameOrId.description'
         }
     }),
     season: createNumberOption({
@@ -30,13 +34,25 @@ const options = {
         }, {
             name: 'S2: Hellfire Gala',
             value: 2
-        }] as const
+        }] as const,
+        locales: {
+            name: 'commands.commonOptions.season.name',
+            description: 'commands.commonOptions.season.description'
+        }
     }),
     page: createIntegerOption({
-        description: 'Page number in pagination'
+        description: 'Page number in pagination',
+        locales: {
+            name: 'commands.commonOptions.page.name',
+            description: 'commands.commonOptions.page.description'
+        }
     }),
     skip: createIntegerOption({
-        description: 'Number of matches to skip'
+        description: 'Number of matches to skip',
+        locales: {
+            name: 'commands.match.history.options.skip.name',
+            description: 'commands.match.history.options.skip.description'
+        }
     }),
     game_mode: createIntegerOption({
         description: 'Game mode',
@@ -58,7 +74,11 @@ const options = {
         }, {
             name: 'Vs AI',
             value: 7
-        }] as const
+        }] as const,
+        locales: {
+            name: 'commands.commonOptions.gameMode.name',
+            description: 'commands.commonOptions.gameMode.description'
+        }
     })
 };
 

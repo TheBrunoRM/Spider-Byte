@@ -6,7 +6,8 @@ const options = {
     'name-or-id': createStringOption({
         description: 'Enter the player name or ID to identify the player.',
         locales: {
-            description: 'commands.commonOptions.nameOrId'
+            name: 'commands.commonOptions.nameOrId.name',
+            description: 'commands.commonOptions.nameOrId.description'
         }
     })
 };
@@ -21,7 +22,7 @@ const options = {
         }
     }
 })
-@LocalesT('commands.core.update.name', 'commands.core.update.description')
+@LocalesT('commands.player.update.name', 'commands.player.update.description')
 @Options(options)
 export default class UpdateCommand extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
@@ -42,7 +43,7 @@ export default class UpdateCommand extends SubCommand {
 
         if (await ctx.client.redis.EXISTS(cacheKey)) {
             return ctx.editOrReply({
-                content: ctx.t.commands.core.update.updatedRecently(
+                content: ctx.t.commands.player.update.updatedRecently(
                     nameOrId
                 ).get()
             });
@@ -58,7 +59,7 @@ export default class UpdateCommand extends SubCommand {
         const result = await ctx.client.api.updatePlayer(player.uid);
         if (!result?.success) {
             return ctx.editOrReply({
-                content: ctx.t.commands.core.update.cantUpdate(
+                content: ctx.t.commands.player.update.cantUpdate(
                     player.name,
                     player.player.team.club_team_id,
                     player.uid
@@ -71,7 +72,7 @@ export default class UpdateCommand extends SubCommand {
         });
 
         return ctx.editOrReply({
-            content: ctx.t.commands.core.update.success(
+            content: ctx.t.commands.player.update.success(
                 player.name,
                 player.player.team.club_team_id,
                 player.uid

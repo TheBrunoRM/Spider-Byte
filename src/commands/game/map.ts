@@ -7,7 +7,8 @@ const options = {
     name: createStringOption({
         description: 'The name of the map',
         locales: {
-            description: 'commands.game.map.options.name'
+            name: 'commands.game.map.options.name.name',
+            description: 'commands.game.map.options.name.description'
         },
         required: true,
         async autocomplete(interaction) {

@@ -6,7 +6,8 @@ const options = {
     command: createStringOption({
         description: 'Specific command to get help for',
         locales: {
-            description: 'commands.help.options.command'
+            name: 'commands.help.options.command.name',
+            description: 'commands.help.options.command.description'
         },
         required: false,
         autocomplete: (interaction) => {

@@ -9,7 +9,8 @@ const options = {
     'name-or-id': createStringOption({
         description: 'Enter the player name or ID to identify the player.',
         locales: {
-            description: 'commands.commonOptions.nameOrId'
+            name: 'commands.commonOptions.nameOrId.name',
+            description: 'commands.commonOptions.nameOrId.description'
         }
     }),
     season: createNumberOption({
@@ -26,10 +27,18 @@ const options = {
         }, {
             name: 'S2: Hellfire Gala',
             value: 2
-        }] as const
+        }] as const,
+        locales: {
+            name: 'commands.commonOptions.season.name',
+            description: 'commands.commonOptions.season.description'
+        }
     }),
     limit: createIntegerOption({
-        description: 'The number of matches to display in the graph.'
+        description: 'The number of matches to display in the graph.',
+        locales: {
+            name: 'commands.player.rank.options.limit.name',
+            description: 'commands.player.rank.options.limit.description'
+        }
     })
 };
 
@@ -39,7 +48,7 @@ const isExpectedScoreInfo = createIs<ExpectedScoreInfo>();
     name: 'rank',
     description: 'View a timeline graph of a player\'s rank history.'
 })
-@LocalesT('commands.core.rank.name', 'commands.core.rank.description')
+@LocalesT('commands.player.rank.name', 'commands.player.rank.description')
 @Options(options)
 export default class RankCommand extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
@@ -67,7 +76,7 @@ export default class RankCommand extends SubCommand {
 
         if (!player.rank_history.length) {
             return ctx.editOrReply({
-                content: ctx.t.commands.core.rank.noRankHistory(player.player.name, player.player.team.club_team_mini_name).get()
+                content: ctx.t.commands.player.rank.noRankHistory(player.player.name, player.player.team.club_team_mini_name).get()
             });
         }
 

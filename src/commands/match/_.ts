@@ -1,4 +1,4 @@
-import { AutoLoad, Declare, Command } from 'seyfert';
+import { AutoLoad, LocalesT, Declare, Command } from 'seyfert';
 
 @Declare({
     name: 'match',
@@ -13,4 +13,5 @@ import { AutoLoad, Declare, Command } from 'seyfert';
     }
 })
 @AutoLoad()
+@LocalesT('commands.match.name', 'commands.match.description')
 export default class MatchCommand extends Command { }

@@ -16,16 +16,16 @@ import type { MapDTO } from '../../types/dtos/MapsDTO';
 import { MARVELRIVALS_DOMAIN } from '../../utils/env';
 import { isProduction } from '../constants';
 
-// const validateHeroes = createValidate<HeroesDTO[]>();
-// const validateHero = createValidate<HeroDTO>();
-// const validateFoundPlayer = createValidate<FoundPlayerDTO>();
-// const validateMatchHistory = createValidate<MatchHistoryDTO>();
-// const validateLeaderboardPlayerHero = createValidate<LeaderboardPlayerHeroDTO>();
-// const validatePatchNotes = createValidate<PatchNotesDTO>();
-// const validateFormattedPatch = createValidate<FormattedPatch>();
-// const validatePlayer = createValidate<PlayerDTO>();
-// const validateUpdatedPlayer = createValidate<UpdateDTO>();
-// const validateMaps = createValidate<MapsDTO>();
+const validateHeroes = createValidate<HeroesDTO[]>();
+const validateHero = createValidate<HeroDTO>();
+const validateFoundPlayer = createValidate<FoundPlayerDTO>();
+const validateMatchHistory = createValidate<MatchHistoryDTO>();
+const validateLeaderboardPlayerHero = createValidate<LeaderboardPlayerHeroDTO>();
+const validatePatchNotes = createValidate<PatchNotesDTO>();
+const validateFormattedPatch = createValidate<FormattedPatch>();
+const validatePlayer = createValidate<PlayerDTO>();
+const validateUpdatedPlayer = createValidate<UpdateDTO>();
+const validateMaps = createValidate<MapsDTO>();
 
 export class Api {
   ratelimits = new Map<string, Bucket>();

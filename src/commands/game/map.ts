@@ -59,7 +59,7 @@ const options = {
                 ? result
                 : maps.slice(0, 25).map((map) => ({
                     name: map.full_name,
-                    value: map.id
+                    value: map.id.toString()
                 })));
         }
     })

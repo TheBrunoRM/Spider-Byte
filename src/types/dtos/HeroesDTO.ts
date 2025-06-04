@@ -65,11 +65,5 @@ export interface Transformation {
   readonly name: string;
   readonly icon: string;
   readonly health: string | null;
-  readonly movement_speed: MovementSpeed | null;
-}
-
-export enum MovementSpeed {
-  MovementSpeed6MS = '6 m/s',
-  The6MS = '6m/s',
-  The7MS = '7m/s'
+  readonly movement_speed: string | null;
 }

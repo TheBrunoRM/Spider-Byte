@@ -62,7 +62,7 @@ export class Api {
   }
 
   // Utils
-  async getRankHistory(userId: string, season: 1.5 | 0 | 1 | 2 = 2, limit = Infinity) {
+  async getRankHistory(userId: string, season: 1.5 | 2.5 | 0 | 1 | 2 = 2.5, limit = Infinity) {
     const history: MatchHistory[] = [];
     let data: MatchHistoryDTO | null;
     let page = 0;
@@ -176,7 +176,7 @@ export class Api {
 
   // Matches
   public getMatchHistory(userNameOrId: string, options: {
-    season?: 1.5 | 0 | 1 | 2;
+    season?: 1.5 | 2.5 | 0 | 1 | 2;
     page?: number;
     limit?: number;
     skip?: number;
@@ -184,7 +184,7 @@ export class Api {
     timestamp?: number;
   } = {}) {
     options = MergeOptions({
-      season: 2,
+      season: 2.5,
       page: 1,
       limit: 40,
       skip: 0,
@@ -237,10 +237,10 @@ export class Api {
   }
 
   fetchPlayer(id: string, options: {
-    season?: 1.5 | 0 | 1 | 2;
+    season?: 1.5 | 2.5 | 0 | 1 | 2;
   } = {}) {
     options = MergeOptions({
-      season: 2
+      season: 2.5
     }, options);
     return this.fetchWithRetry({
       domain: this.marvelRivalsApiUrlV1,

@@ -26,6 +26,9 @@ const seasons = [{
 }, {
     name: 'S2: Hellfire Gala',
     value: 2
+}, {
+    name: 'S2.5: Hellfire Gala',
+    value: 2.5
 }] as const;
 
 function getSeasonName(season?: number): typeof seasons[number]['name'] {

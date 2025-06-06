@@ -198,7 +198,7 @@ export async function generateProfileV2(data: PlayerDTO, allHeroes: HeroesDTO[],
     ctx.font = '900 23px RefrigeratorDeluxeBold';
     {
         ctx.fillStyle = '#cd773c';
-        const damageNumberText = (damage / play_time * 60).toFixed(0);
+        const damageNumberText = (damage / play_time * 60 || 0).toFixed(0);
         const damageNumberMetrics = ctx.measureText(damageNumberText);
         ctx.fillText(damageNumberText, 130 - damageNumberMetrics.width / 2, 647);
 
@@ -207,7 +207,7 @@ export async function generateProfileV2(data: PlayerDTO, allHeroes: HeroesDTO[],
     }
     {
         ctx.fillStyle = '#80b1b4';
-        const damageTakenNumberText = (damage_taken / play_time * 60).toFixed(0);
+        const damageTakenNumberText = (damage_taken / play_time * 60 || 0).toFixed(0);
         const damageTakenNumberMetrics = ctx.measureText(damageTakenNumberText);
         ctx.fillText(damageTakenNumberText, 130 - damageTakenNumberMetrics.width / 2, 683);
 
@@ -216,7 +216,7 @@ export async function generateProfileV2(data: PlayerDTO, allHeroes: HeroesDTO[],
     }
     {
         ctx.fillStyle = '#a4ba7a';
-        const healNumberText = (heal / play_time * 60).toFixed(0);
+        const healNumberText = (heal / play_time * 60 || 0).toFixed(0);
         const healNumberMetrics = ctx.measureText(healNumberText);
         ctx.fillText(healNumberText, 130 - healNumberMetrics.width / 2, 719);
 
@@ -230,7 +230,7 @@ export async function generateProfileV2(data: PlayerDTO, allHeroes: HeroesDTO[],
     const killsMetrics = ctx.measureText(killsText);
     ctx.fillText(killsText, 992 - killsMetrics.width / 2, 325);
 
-    const kdaText = kdaRatio.toString();
+    const kdaText = (kdaRatio || 0).toString();
     const kdaMetrics = ctx.measureText(kdaText);
     ctx.fillText(kdaText, 1_112 - kdaMetrics.width / 2, 325);
 

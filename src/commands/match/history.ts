@@ -34,6 +34,9 @@ const options = {
         }, {
             name: 'S2: Hellfire Gala',
             value: 2
+        }, {
+            name: 'S2.5: Hellfire Gala',
+            value: 2.5
         }] as const,
         locales: {
             name: 'commands.commonOptions.season.name',

@@ -25,6 +25,7 @@ import type {
 
 import { parseNameForRivalSkins } from '../../utils/functions/skins';
 import { capitalize } from '../../utils/functions/capitalize';
+import { getHeroHistoryLink } from '../../utils/images/_';
 import { STICKY_CDN_DOMAIN } from '../../utils/env';
 import { Role } from '../../types/dtos/HeroesDTO';
 
@@ -116,15 +117,16 @@ export default class About extends SubCommand {
             colorPerRole[capitalize(hero.role) as Role] as ColorResolvable
         );
         const heroNameParsed = parseNameForRivalSkins(hero.name);
-        baseEmbed.setThumbnail(`${STICKY_CDN_DOMAIN}/heroes/transformations/${hero.id}/0.png`);
+        baseEmbed.setThumbnail(`${STICKY_CDN_DOMAIN}/Content/Marvel_LQ/UI/Textures/HeroPortrait/SelectHero/img_selecthero_${hero.id}001.png`);
         baseEmbed.setAuthor({
             name: `${hero.real_name} (${heroNameParsed})`,
             iconUrl:
-                `${STICKY_CDN_DOMAIN}/heroes/kill_icons/${hero.id}/2.png`
+                `${STICKY_CDN_DOMAIN}/Content/Marvel_LQ/UI/Textures/Item/Kill/item_kill_2${hero.id}13.png`
         });
+
         baseEmbed.setDescription(hero.bio)
             .setImage(
-                `${STICKY_CDN_DOMAIN}/heroes/history/${hero.id}.png`
+                getHeroHistoryLink(hero.id)
             );
         baseEmbed.setFooter({
             text: capitalize(hero.role)

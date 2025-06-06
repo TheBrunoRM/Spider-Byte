@@ -41,7 +41,7 @@ export function loadHeroHistory(heroID: number) {
     return loadImageFromCache(
         'hero_history',
         heroID,
-        `${STICKY_CDN_DOMAIN}/heroes/history/${heroID}.png`
+        getHeroHistoryLink(heroID)
     );
 }
 
@@ -58,6 +58,16 @@ export function loadHeroSquare(hero_id: number) {
     return loadImageFromCache(
         'hero_square',
         hero_id,
-        `${STICKY_CDN_DOMAIN}/heroes/transformations/${hero_id}/0.png`
+        `${STICKY_CDN_DOMAIN}/Content/Marvel_LQ/UI/Textures/HeroPortrait/SelectHero/img_selecthero_${hero_id}001.png`
     );
+}
+
+export function getHeroHistoryLink(heroID: number | string) {
+    switch (heroID) {
+        // hulk
+        case '1011':
+        case 1_011:
+            return `${STICKY_CDN_DOMAIN}/Content/Marvel/UI/Textures/HeroGallery_V3/HeroDetail/Story/Dynamic/img_herostory_${heroID}11_hover.png`;
+    }
+    return `${STICKY_CDN_DOMAIN}/Content/Marvel/UI/Textures/HeroGallery_V3/HeroDetail/Story/Dynamic/img_herostory_${heroID}01_hover.png`;
 }

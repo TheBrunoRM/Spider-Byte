@@ -41,7 +41,7 @@ export enum AttackType {
 export interface Costume {
   readonly id: string;
   readonly name: string;
-  readonly icon: string;
+  readonly icon: string | null;
   readonly quality: Quality;
   readonly description: string;
   readonly appearance: string;

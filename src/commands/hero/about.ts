@@ -4,7 +4,6 @@ import type { ColorResolvable, MakeRequired } from 'seyfert/lib/common';
 import {
     createStringOption,
     StringSelectOption,
-    AttachmentBuilder,
     StringSelectMenu,
     SubCommand,
     ActionRow,
@@ -195,11 +194,7 @@ export default class About extends SubCommand {
             const abilityID = interaction.customId.slice(6);
             await interaction.deferReply(MessageFlags.Ephemeral);
             await interaction.editOrReply({
-                files: [
-                    new AttachmentBuilder()
-                        .setName('video.mp4')
-                        .setFile('url', `${STICKY_CDN_DOMAIN}/Content/Marvel/Movies_HeroSkill/Windows/En-US/${hero.id}/${hero.id}0010/${abilityID}_High.mp4`)
-                ],
+                content: `${STICKY_CDN_DOMAIN}/Content/Marvel/Movies_HeroSkill/Windows/En-US/${hero.id}/${hero.id}0010/${abilityID}_High.mp4`,
                 flags: MessageFlags.Ephemeral
             });
         });

@@ -204,7 +204,7 @@ export class Api {
   }
 
   // Players
-  updatePlayer(id: number) {
+  updatePlayer(id: number | string) {
     return this.fetchWithRetry({
       domain: this.marvelRivalsApiUrlV1,
       endpoint: `player/${id}/update`,

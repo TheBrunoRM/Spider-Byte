@@ -49,7 +49,7 @@ export default class UpdateCommand extends SubCommand {
             });
         }
 
-        const player = await ctx.client.api.getPlayer(nameOrId);
+        const player = await ctx.client.api.searchPlayer(nameOrId);
         if (!player) {
             return ctx.editOrReply({
                 content: ctx.t.commands.commonErrors.playerNotFound.get()
@@ -61,7 +61,6 @@ export default class UpdateCommand extends SubCommand {
             return ctx.editOrReply({
                 content: ctx.t.commands.player.update.cantUpdate(
                     player.name,
-                    player.player.team.club_team_id,
                     player.uid
                 ).get()
             });
@@ -74,7 +73,6 @@ export default class UpdateCommand extends SubCommand {
         return ctx.editOrReply({
             content: ctx.t.commands.player.update.success(
                 player.name,
-                player.player.team.club_team_id,
                 player.uid
             ).get()
         });

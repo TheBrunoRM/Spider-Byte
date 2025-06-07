@@ -119,12 +119,8 @@ const commands = {
             name: 'actualizar',
             description: 'Actualiza las estadísticas de un jugador.',
             updatedRecently: (playerName) => `:warning: **${playerName}** ya se actualizó recientemente. Intenta de nuevo más tarde.`,
-            cantUpdate: (playerName, clubTeamId, uid) => `No se puede actualizar **${playerName}${clubTeamId === ''
-                ? '** '
-                : `#${clubTeamId}** `}(${uid}). Intenta de nuevo más tarde.`,
-            success: (playerName, clubTeamId, uid) => `:white_check_mark: **${playerName}${clubTeamId === ''
-                ? '** '
-                : `#${clubTeamId}** `}(${uid}) estadísticas actualizadas. Los datos pueden tardar unos minutos en aparecer.`
+            cantUpdate: (playerName, uid) => `No se puede actualizar **${playerName}(${uid}). Intenta de nuevo más tarde.`,
+            success: (playerName, uid) => `:white_check_mark: **${playerName}(${uid}) estadísticas actualizadas. Los datos pueden tardar unos minutos en aparecer.`
         },
         uid: {
             name: 'uid',

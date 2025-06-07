@@ -113,8 +113,8 @@ export const commands = {
             name: 'update',
             description: 'Update a player\'s stats.',
             updatedRecently: (playerName: string) => `:warning: **${playerName}** has been updated recently. Try again later.`,
-            cantUpdate: (playerName: string, uid: number | string) => `Can't update **${playerName}(${uid}) stats. Try again later.`,
-            success: (playerName: string, uid: number | string) => `:white_check_mark: **${playerName}(${uid}) stats has been updated. Data may take up to a while to reflect.`
+            cantUpdate: (playerName: string, uid: number | string) => `Can't update **${playerName}(${uid})** stats. Try again later.`,
+            success: (playerName: string, uid: number | string) => `:white_check_mark: **${playerName}(${uid})** stats has been updated. Data may take up to a while to reflect.`
         },
         uid: {
             name: 'uid',

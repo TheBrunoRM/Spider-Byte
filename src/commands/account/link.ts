@@ -51,7 +51,8 @@ export default class LinkCommand extends SubCommand {
         await ctx.client.prisma.user.create({
             data: {
                 userID: ctx.author.id,
-                rivalsUUID: player.uid.toString()
+                rivalsUUID: player.uid.toString(),
+                rivalsUsername: player.name
             }
         });
         return ctx.editOrReply({

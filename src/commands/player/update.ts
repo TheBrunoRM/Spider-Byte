@@ -3,11 +3,11 @@ import type { CommandContext } from 'seyfert';
 import { createStringOption, SubCommand, LocalesT, Declare, Options } from 'seyfert';
 
 const options = {
-    'name-or-id': createStringOption({
+    name: createStringOption({
         description: 'Enter the player name or ID to identify the player.',
         locales: {
-            name: 'commands.commonOptions.nameOrId.name',
-            description: 'commands.commonOptions.nameOrId.description'
+            name: 'commands.commonOptions.name.name',
+            description: 'commands.commonOptions.name.description'
         }
     })
 };
@@ -28,14 +28,14 @@ export default class UpdateCommand extends SubCommand {
     async run(ctx: CommandContext<typeof options>) {
         await ctx.deferReply(true);
 
-        const nameOrId = ctx.options['name-or-id'] || (await ctx.client.prisma.user.findFirst({
+        const nameOrId = ctx.options.name || (await ctx.client.prisma.user.findFirst({
             where: {
                 userID: ctx.author.id
             }
-        }))?.rivalsUUID;
+        }))?.rivalsUsername;
         if (!nameOrId) {
             return ctx.editOrReply({
-                content: ctx.t.commands.commonErrors.noNameOrId.get()
+                content: ctx.t.commands.commonErrors.noName.get()
             });
         }
 

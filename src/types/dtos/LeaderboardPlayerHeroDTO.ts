@@ -21,7 +21,7 @@ export interface Player {
 
 export interface Info {
     name: string;
-    cur_head_icon_id: string;
+    cur_head_icon_id?: undefined | string;
     rank_season: RankSeason;
     login_os: string;
 }

@@ -36,7 +36,8 @@ export enum Type {
 export enum AttackType {
   HitscanHeroes = 'Hitscan Heroes',
   MeleeHeroes = 'Melee Heroes',
-  Projectile = 'Projectile'
+  Projectile = 'Projectile',
+  ProjectileHeroes = 'Projectile Heroes'
 }
 
 export interface Costume {

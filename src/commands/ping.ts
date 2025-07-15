@@ -14,15 +14,13 @@ import { LocalesT, Command, Declare } from 'seyfert';
         }
     }
 })
+
 @LocalesT('commands.ping.name', 'commands.ping.description')
 export default class Ping extends Command {
     async run(ctx: CommandContext) {
         const avgLatency = ctx.client.gateway.latency;
-        let shardPing = Infinity;
         const shard = ctx.client.gateway.get(ctx.shardId);
-        if (shard) {
-            shardPing = Math.floor(await shard.ping());
-        }
+        const shardPing = shard ? Math.floor(await shard.ping()) : Infinity;
 
         await ctx.editOrReply({
             content: ctx.t.commands.ping.content(avgLatency, shardPing).get()

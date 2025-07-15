@@ -12,13 +12,15 @@ import { WEBHOOK_TOKEN, TOPGG_TOKEN, WEBHOOK_ID, API_KEY } from './utils/env';
 import { PrismaClient } from '../prisma/client';
 import { middlewares } from './middlewares';
 import { Api } from './lib/managers/api';
-// Register fonts
-GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'Inter', 'Inter_28pt-Regular.ttf'), 'InterRegular');
-GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'Inter', 'Inter_28pt-Black.ttf'), 'InterBlack');
-GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'Inter', 'Inter_28pt-SemiBold.ttf'), 'InterSemiBold');
-GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'Inter', 'Inter_28pt-Bold.ttf'), 'InterBold');
-GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'RefrigeratorDeluxeBold.otf'), 'RefrigeratorDeluxeBold');
-GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'leaderboard.ttf'), 'leaderboard');
+
+// register fonts
+const fontsFolder = join(process.cwd(), 'assets', 'fonts');
+GlobalFonts.registerFromPath(join(fontsFolder, 'Inter', 'Inter_28pt-Regular.ttf'), 'InterRegular');
+GlobalFonts.registerFromPath(join(fontsFolder, 'Inter', 'Inter_28pt-Black.ttf'), 'InterBlack');
+GlobalFonts.registerFromPath(join(fontsFolder, 'Inter', 'Inter_28pt-SemiBold.ttf'), 'InterSemiBold');
+GlobalFonts.registerFromPath(join(fontsFolder, 'Inter', 'Inter_28pt-Bold.ttf'), 'InterBold');
+GlobalFonts.registerFromPath(join(fontsFolder, 'RefrigeratorDeluxeBold.otf'), 'RefrigeratorDeluxeBold');
+GlobalFonts.registerFromPath(join(fontsFolder, 'leaderboard.ttf'), 'leaderboard');
 
 const client = new Client({
     commands: {

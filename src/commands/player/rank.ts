@@ -4,6 +4,7 @@ import { createIntegerOption, createStringOption, createNumberOption, Attachment
 import { createIs } from 'typia';
 
 import { type ExpectedScoreInfo, generateRankChart } from '../../utils/images/ranked';
+import { Seasons } from '../../utils/constants';
 
 const options = {
     'name-or-id': createStringOption({
@@ -15,22 +16,7 @@ const options = {
     }),
     season: createNumberOption({
         description: 'Season',
-        choices: [{
-            name: 'S0: Doom\'s rise',
-            value: 0
-        }, {
-            name: 'S1: Eternal Night Falls',
-            value: 1
-        }, {
-            name: 'S1.5: Eternal Night Falls',
-            value: 1.5
-        }, {
-            name: 'S2: Hellfire Gala',
-            value: 2
-        }, {
-            name: 'S2.5: Hellfire Gala',
-            value: 2.5
-        }] as const,
+        choices: Seasons,
         locales: {
             name: 'commands.commonOptions.season.name',
             description: 'commands.commonOptions.season.description'

@@ -12,6 +12,7 @@ import type { UpdateDTO } from '../../types/dtos/UpdateDTO';
 import type { HeroDTO } from '../../types/dtos/HeroDTO';
 import type { MapsDTO } from '../../types/dtos/MapsDTO';
 import type { MapDTO } from '../../types/dtos/MapsDTO';
+import type { Seasons } from '../../utils/constants';
 
 import { MARVELRIVALS_DOMAIN } from '../../utils/env';
 import { isProduction } from '../constants';
@@ -62,7 +63,7 @@ export class Api {
   }
 
   // Utils
-  async getRankHistory(userId: string, season: 1.5 | 2.5 | 0 | 1 | 2 = 2.5, limit = Infinity) {
+  async getRankHistory(userId: string, season: typeof Seasons[number]['value'] = 3, limit = Infinity) {
     const history: MatchHistory[] = [];
     let data: MatchHistoryDTO | null;
     let page = 0;
@@ -176,7 +177,7 @@ export class Api {
 
   // Matches
   public getMatchHistory(userNameOrId: string, options: {
-    season?: 1.5 | 2.5 | 0 | 1 | 2;
+    season?: typeof Seasons[number]['value'];
     page?: number;
     limit?: number;
     skip?: number;
@@ -184,7 +185,7 @@ export class Api {
     timestamp?: number;
   } = {}) {
     options = MergeOptions({
-      season: 2.5,
+      season: 3,
       page: 1,
       limit: 40,
       skip: 0,
@@ -237,10 +238,10 @@ export class Api {
   }
 
   fetchPlayer(id: string, options: {
-    season?: 1.5 | 2.5 | 0 | 1 | 2;
+    season?: typeof Seasons[number]['value'];
   } = {}) {
     options = MergeOptions({
-      season: 2.5
+      season: 3
     }, options);
     return this.fetchWithRetry({
       domain: this.marvelRivalsApiUrlV1,

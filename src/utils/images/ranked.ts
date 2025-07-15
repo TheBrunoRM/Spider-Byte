@@ -9,33 +9,19 @@ import type { PlayerDTO } from '../../types/dtos/PlayerDTO';
 import { getRankDetails } from '../functions/rank-utils';
 import { loadRankIcon, loadUserIcon } from './_';
 import { drawCircularImage } from './utils';
+import { Seasons } from '../constants';
 
 export interface ExpectedScoreInfo extends MakeRequired<ScoreInfo> {
     match_time_stamp: number;
 }
 
-const seasons = [{
-    name: 'S0: Doom\'s rise',
-    value: 0
-}, {
-    name: 'S1: Eternal Night Falls',
-    value: 1
-}, {
-    name: 'S1.5: Eternal Night Falls',
-    value: 1.5
-}, {
-    name: 'S2: Hellfire Gala',
-    value: 2
-}, {
-    name: 'S2.5: Hellfire Gala',
-    value: 2.5
-}] as const;
 
-function getSeasonName(season?: number): typeof seasons[number]['name'] {
+
+function getSeasonName(season?: number): typeof Seasons[number]['name'] {
     if (season === undefined) {
-        return seasons[seasons.length - 1].name;
+        return Seasons[Seasons.length - 1].name;
     }
-    const seasonData = seasons.find((s) => s.value === season) ?? seasons[seasons.length - 1];
+    const seasonData = Seasons.find((s) => s.value === season) ?? Seasons[Seasons.length - 1];
     return seasonData.name;
 }
 

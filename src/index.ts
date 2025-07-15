@@ -106,15 +106,15 @@ const client = new Client({
                 });
             },
             async onAfterRun(ctx) {
-                if (Math.random() < 0.15) {
-                    const hasVoted = await ctx.client.topgg.hasVoted(ctx.author.id).catch(() => false);
-                    if (!hasVoted) {
-                        await ctx.followup({
-                            content: ctx.t.commands.others.noVoted.get(),
-                            flags: MessageFlags.Ephemeral
-                        });
-                    }
-                }
+                if (Math.random() >= 0.15) return;
+                
+                const hasVoted = await ctx.client.topgg.hasVoted(ctx.author.id).catch(() => false);
+                if (hasVoted) return;
+
+                await ctx.followup({
+                    content: ctx.t.commands.others.noVoted.get(),
+                    flags: MessageFlags.Ephemeral
+                });
             }
         }
     },

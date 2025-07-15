@@ -101,13 +101,16 @@ const client = new Client({
                     metadata
                 );
                 return ctx.editOrReply({
-                    content: Object.entries(metadata).filter(([, value]) => value.failed).map(([key, value]) => `${key}: ${value.value as string}`).join('\n'),
+                    content: Object.entries(metadata)
+                        .filter(([, value]) => value.failed)
+                        .map(([key, value]) => `${key}: ${value.value as string}`)
+                        .join('\n'),
                     flags: MessageFlags.Ephemeral
                 });
             },
             async onAfterRun(ctx) {
                 if (Math.random() >= 0.15) return;
-                
+
                 const hasVoted = await ctx.client.topgg.hasVoted(ctx.author.id).catch(() => false);
                 if (hasVoted) return;
 

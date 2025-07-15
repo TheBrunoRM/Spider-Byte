@@ -12,13 +12,15 @@ import { WEBHOOK_TOKEN, TOPGG_TOKEN, WEBHOOK_ID, API_KEY } from './utils/env';
 import { PrismaClient } from '../prisma/client';
 import { middlewares } from './middlewares';
 import { Api } from './lib/managers/api';
-// Register fonts
-GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'Inter', 'Inter_28pt-Regular.ttf'), 'InterRegular');
-GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'Inter', 'Inter_28pt-Black.ttf'), 'InterBlack');
-GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'Inter', 'Inter_28pt-SemiBold.ttf'), 'InterSemiBold');
-GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'Inter', 'Inter_28pt-Bold.ttf'), 'InterBold');
-GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'RefrigeratorDeluxeBold.otf'), 'RefrigeratorDeluxeBold');
-GlobalFonts.registerFromPath(join(process.cwd(), 'assets', 'fonts', 'leaderboard.ttf'), 'leaderboard');
+
+// register fonts
+const fontsFolder = join(process.cwd(), 'assets', 'fonts');
+GlobalFonts.registerFromPath(join(fontsFolder, 'Inter', 'Inter_28pt-Regular.ttf'), 'InterRegular');
+GlobalFonts.registerFromPath(join(fontsFolder, 'Inter', 'Inter_28pt-Black.ttf'), 'InterBlack');
+GlobalFonts.registerFromPath(join(fontsFolder, 'Inter', 'Inter_28pt-SemiBold.ttf'), 'InterSemiBold');
+GlobalFonts.registerFromPath(join(fontsFolder, 'Inter', 'Inter_28pt-Bold.ttf'), 'InterBold');
+GlobalFonts.registerFromPath(join(fontsFolder, 'RefrigeratorDeluxeBold.otf'), 'RefrigeratorDeluxeBold');
+GlobalFonts.registerFromPath(join(fontsFolder, 'leaderboard.ttf'), 'leaderboard');
 
 const client = new Client({
     commands: {
@@ -99,16 +101,19 @@ const client = new Client({
                     metadata
                 );
                 return ctx.editOrReply({
-                    content: Object.entries(metadata).filter(([, value]) => value.failed).map(([key, value]) => `${key}: ${value.value as string}`).join('\n'),
+                    content: Object.entries(metadata)
+                        .filter(([, value]) => value.failed)
+                        .map(([key, value]) => `${key}: ${value.value as string}`)
+                        .join('\n'),
                     flags: MessageFlags.Ephemeral
                 });
             },
             async onAfterRun(ctx) {
                 if (Math.random() >= 0.15) return;
-                
+
                 const hasVoted = await ctx.client.topgg.hasVoted(ctx.author.id).catch(() => false);
                 if (hasVoted) return;
-                
+
                 await ctx.followup({
                     content: ctx.t.commands.others.noVoted.get(),
                     flags: MessageFlags.Ephemeral

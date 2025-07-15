@@ -29,12 +29,14 @@ export enum Type {
   Normal = 'Normal',
   Passive = 'Passive',
   Ultimate = 'Ultimate',
-  Weapon = 'Weapon'
+  Weapon = 'Weapon',
+  Movement = 'Movement'
 }
 
 export enum AttackType {
   HitscanHeroes = 'Hitscan Heroes',
   MeleeHeroes = 'Melee Heroes',
+  Projectile = 'Projectile',
   ProjectileHeroes = 'Projectile Heroes'
 }
 
